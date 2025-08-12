@@ -58,7 +58,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $photo = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: true)]
     private ?Campus $campus = null;
 
     /**
