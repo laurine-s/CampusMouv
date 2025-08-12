@@ -28,6 +28,7 @@ class Interets
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'interets')]
+    #[ORM\JoinColumn(nullable: true)]
     private Collection $users;
 
     public function __construct()
