@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties disponibles{% endblock %}
+
+{% block main %}
+
+    <section class="uk-section uk-section-default uk-flex uk-flex-center">
+        <div class="uk-container">
+            <h1>Création d'une activité</h1>
+        </div>
+    </section>
+
+    {{ form_start(form) }}
+    {{ form_row(form.nom) }}
+    <button class="uk-button uk-border-pill uk-button-primary" type="submit">Envoyer</button>
+    {{ form_end(form) }}
+
+{% endblock %}
