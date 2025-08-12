@@ -74,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true)]
     private Collection $sorties;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Promo $promo = null;
+
     public function __construct()
     {
         $this->interets = new ArrayCollection();
@@ -263,6 +266,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $sorty->setOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): static
+    {
+        $this->promo = $promo;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Etat;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -59,6 +60,10 @@ class Sortie
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties')]
     private Collection $participants;
+
+    // Lien avec l'enum Etat
+    #[ORM\Column(enumType: Etat::class)]
+    private ?Etat $etat = null;
 
     public function __construct()
     {
@@ -235,6 +240,18 @@ class Sortie
     {
         $this->participants->removeElement($participant);
 
+        return $this;
+    }
+
+    // Getter et setter pour l'état
+    public function getEtat(): ?Etat
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(Etat $etat): static
+    {
+        $this->etat = $etat;
         return $this;
     }
 }
