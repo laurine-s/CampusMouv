@@ -1,0 +1,42 @@
+    <div class="uk-container uk-section cm-background-persian-green cm-footer">
+        <div class="uk-grid uk-child-width-1-3@l" data-uk-grid>
+            <div>
+                <h4 class="uk-text-left uk-text-bold">Campus Mouv'</h4>
+                <ul class="uk-list uk-text-left">
+                    <li><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ut nibh odio. Vestibulum porttitor nisl a convallis pellentesque. Pellentesque cursus nisi et sapien varius ultrices. Pellentesque vel nulla orci. </p></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="uk-text-bold">Nos Campus</h4>
+                <ul class="uk-list">
+                    {# Lien pour chaque campus présent en BDD #}
+                    {% for campus in campusList %}
+                        <li><a href="{{ path('sorties_parCampus', {'id': campus.id}) }}" title="Rennes">{{ campus.nom }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h4 class="uk-text-bold">En savoir plus</h4>
+                <ul class="uk-list">
+                    <li><a href="#" >Qui sommes nous ?</a></li>
+                    <li><a href="{{ path('sorties_home')}}" >Les événements</a></li>
+                    <li><a href="{{ path('app_register') }}" >S'inscrire</a></li>
+                    <li><a href="#" >Nous contacter</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="uk-section uk-section-xsmall cm-background-charcoal" >
+        <div class="uk-container">
+            <div class="uk-grid uk-child-width-1-2@s uk-text-center uk-text-left@s" data-uk-grid>
+                <div class="uk-text-small uk-text-muted">
+                    Copyright 2025 - All rights reserved.
+                </div>
+                <div class="uk-text-small uk-text-muted uk-text-center uk-text-right@s">
+                    <a href="https://github.com/zzseba78/Kick-Off">Créé par Les Poufsouffles avec ❤</a>
+                </div>
+            </div>
+        </div>
+    </div>

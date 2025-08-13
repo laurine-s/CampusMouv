@@ -1,3 +1,32 @@
+/* CSS HEX */
+/*--charcoal: #264653ff;*/
+/*--persian-green: #2a9d8fff;*/
+/*--saffron: #e9c46aff;*/
+/*--sandy-brown: #f4a261ff;*/
+/*--burnt-sienna: #e76f51ff;*/
+
+
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main {
+    flex: 1;
+    padding: 5px;
+}
+footer {
+    background-color: #2a9d8fff;
+    height: 2em;
+    text-align: center;
+}
+
+.cm-footer{
+    min-width: 100vw;
+}
+
 .img-allsorties{
     max-width: 600px;
     width: 100%;
