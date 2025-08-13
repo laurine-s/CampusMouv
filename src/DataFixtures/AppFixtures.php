@@ -12,9 +12,15 @@ use App\Entity\Ville;
 use App\Enum\Etat;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    {
+    }
+
     public function load(ObjectManager $manager): void
     {
         $faker = \Faker\Factory::create('fr_FR');
@@ -100,6 +106,7 @@ class AppFixtures extends Fixture
             $prenom = $faker->lastName();
             $user->setNom($nom);                 // () obligatoires
             $user->setPrenom($prenom);
+            $user->setPseudo($faker->unique()->word());
             $local = $faker->unique()->userName();
             $user->setEmail($prenom . '.' . $nom . '@' . $domain);
             $user->setPassword($faker->password());
@@ -112,6 +119,75 @@ class AppFixtures extends Fixture
             $usersAll[] = $user;
         }
 
+        //----User en dur----
+        $user = new User();
+        $nom = 'Boulier';
+        $prenom = 'romane';
+        $user->setNom($nom);                 // () obligatoires
+        $user->setPrenom($prenom);
+        $user->setPseudo('MamanRomane');
+        $user->setEmail($prenom . '@' . $domain);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, "16-Avril2007");
+        $user->setPassword($hashedPassword);
+        // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+        $user->setCampus($faker->randomElement($campuses));
+        $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+        $user->addInteret($faker->randomElement($interetsAll));
+        $user->setPromo($faker->randomElement($promoAll));
+        $manager->persist($user);
+
+        //----User en dur----
+        $user = new User();
+        $nom = 'Guillevic';
+        $prenom = 'laurence';
+        $user->setNom($nom);                 // () obligatoires
+        $user->setPrenom($prenom);
+        $user->setPseudo("LuxAndLyraLover's");
+        $user->setEmail($prenom . '@' . $domain);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, "@Lux56700");
+        $user->setPassword($hashedPassword);
+        // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+        $user->setCampus($faker->randomElement($campuses));
+        $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+        $user->addInteret($faker->randomElement($interetsAll));
+        $user->setPromo($faker->randomElement($promoAll));
+        $manager->persist($user);
+
+        //----User en dur----
+        $user = new User();
+        $nom = 'Süss';
+        $prenom = 'laurine';
+        $user->setNom($nom);                 // () obligatoires
+        $user->setPrenom($prenom);
+        $user->setPseudo('McGonagall');
+        $user->setEmail($prenom . '@' . $domain);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+        $user->setPassword($hashedPassword);
+        // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+        $user->setCampus($faker->randomElement($campuses));
+        $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+        $user->addInteret($faker->randomElement($interetsAll));
+        $user->setPromo($faker->randomElement($promoAll));
+        $manager->persist($user);
+
+        //----User en dur----
+        $user = new User();
+        $nom = 'Minel';
+        $prenom = 'jonathan';
+        $user->setNom($nom);                 // () obligatoires
+        $user->setPrenom($prenom);
+        $user->setPseudo('Jojo');
+        $user->setEmail($prenom . '@' . $domain);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+        $user->setPassword($hashedPassword);
+        // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+        $user->setCampus($faker->randomElement($campuses));
+        $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+        $user->addInteret($faker->randomElement($interetsAll));
+        $user->setPromo($faker->randomElement($promoAll));
+        $manager->persist($user);
+
+
         // --- Sorties ---
         for ($i = 0; $i < 10; $i++) {
             $sortie = new Sortie();
@@ -123,17 +199,14 @@ class AppFixtures extends Fixture
             $sortie->setDateHeureDebut(\DateTimeImmutable::createFromMutable($dateDebut));
             $sortie->setDuree($faker->numberBetween(30, 180));
             $sortie->setDateLimiteInscription(\DateTimeImmutable::createFromMutable($dateLimite));
-            $sortie->setNbInscriptionMax($faker->numberBetween(5, 20));
-            // Vérifie le nom exact du setter: NbInscriptionMin vs NbInscriptionmin
-            if (method_exists($sortie, 'setNbInscriptionMin')) {
-                $sortie->setNbInscriptionMin($faker->numberBetween(1, 4));
-            } else {
-                $sortie->setNbInscriptionmin($faker->numberBetween(1, 4));
-            }
+            $nbInscritsMax = $faker->numberBetween(5, 20);
+            $sortie->setNbInscriptionMax($nbInscritsMax);
+            $sortie->setNbInscriptionMin($faker->numberBetween(1, $nbInscritsMax));
             $sortie->setNbInscrits($faker->numberBetween(1, 10));
             $sortie->setInfos($faker->realText(200));
             $sortie->setEtat($faker->randomElement(Etat::cases()));
             $sortie->setCampus($faker->randomElement($campuses));
+            $sortie->setLieu($faker->randomElement($lieuxAll));
 
             // Selon ton modèle, c'est peut-être setInteret() (singulier) ou addInteret()
             if (method_exists($sortie, 'setInterets')) {
