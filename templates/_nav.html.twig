@@ -9,33 +9,15 @@
                             <ul class="uk-nav uk-navbar-dropdown-nav">
                                 <li class="uk-nav-header uk-text-small uk-text-primary uk-text-bold">Nos campus</li>
 
-                                <li class="uk-margin-small-top ">
-                                    <a href="#" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                        <span uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
-                                        Rennes
-                                    </a>
-                                </li>
-
-                                <li class="uk-margin-small-top">
-                                    <a href="#" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                        <span data-uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
-                                        Nantes
-                                    </a>
-                                </li>
-
-                                <li class="uk-margin-small-top">
-                                    <a href="#" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                        <span data-uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
-                                        Niort
-                                    </a>
-                                </li>
-
-                                <li class="uk-margin-small-top">
-                                    <a href="#" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                        <span data-uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
-                                        Quimper
-                                    </a>
-                                </li>
+                                {# Boutons pour chaque campus présent en BDD #}
+                                {% for campus in campusList %}
+                                    <li class="uk-margin-small-top ">
+                                        <a href="{{ path('sorties_parCampus', {'id': campus.id}) }}" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
+                                            <span uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
+                                            {{ campus.nom }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
 
                                 <li class="uk-nav-divider uk-margin-small"></li>
 

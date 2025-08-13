@@ -10,10 +10,10 @@
             <div>
                 <h4 class="uk-text-bold">Nos Campus</h4>
                 <ul class="uk-list">
-                    <li><a href="#" title="Rennes">Rennes</a></li>
-                    <li><a href="#" title="Nantes">Nantes</a></li>
-                    <li><a href="#" title="Niort">Niort</a></li>
-                    <li><a href="#" title="Quimper">Quimper</a></li>
+                    {# Lien pour chaque campus présent en BDD #}
+                    {% for campus in campusList %}
+                        <li><a href="{{ path('sorties_parCampus', {'id': campus.id}) }}" title="Rennes">{{ campus.nom }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
             <div>

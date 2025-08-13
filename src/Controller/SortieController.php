@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\SortieRepository;
@@ -22,7 +23,7 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/detail', name: 'detail', methods: ['GET'])]
+    #[Route('/{id}/detail', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function detail(int $id, SortieRepository $sortieRepository): Response
     {
         $sortieParId = $sortieRepository->sortieParId($id);
@@ -52,6 +53,15 @@ final class SortieController extends AbstractController
 
         return $this->render('sortie/create.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/campus/{id}', name: 'parCampus', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function parCampus(SortieRepository $sortieRepository, Campus $campus): Response
+    {
+        $allSorties = $sortieRepository->findBy(['campus' => $campus]);
+        return $this->render('sortie/sorties.html.twig', [
+            'allSorties' => $allSorties,
         ]);
     }
 
