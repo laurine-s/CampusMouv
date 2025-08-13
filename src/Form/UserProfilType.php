@@ -18,24 +18,22 @@ class UserProfilType extends AbstractType
         $builder
             ->add('email', null, ['label' => 'Email :'])
             ->add('prenom', null, ['label' => 'Prénom :'])
-            ->add('password', null, ['label' => 'Mot de passe :'])
             ->add('nom', null, ['label' => 'Nom :'])
             ->add('bio', null, ['label' => 'Bio :'])
             ->add('photo', null, ['label' => 'Photo de profil :'])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
             ])
             ->add('interets', EntityType::class, [
                 'class' => Interets::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
                 'multiple' => true,
             ])
             ->add('promo', EntityType::class, [
                 'class' => Promo::class,
-                'choice_label' => 'id',
-            ])
-        ;
+                'choice_label' => 'nom',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
