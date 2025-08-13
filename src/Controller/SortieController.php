@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class SortieController extends AbstractController
 {
     #[Route('/', name: 'home', methods: ['GET'])]
-    public function index(SortieRepository $sortieRepository): Response
+    public function home(SortieRepository $sortieRepository): Response
     {
         $allSorties = $sortieRepository->findAll();
         return $this->render('sortie/sorties.html.twig', [
