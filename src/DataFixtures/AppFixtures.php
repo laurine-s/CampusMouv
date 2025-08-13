@@ -118,7 +118,7 @@ class AppFixtures extends Fixture
             $sortie->setNom($faker->word());
 
             $dateDebut = $faker->dateTimeBetween('-30 days', '+15 days');
-            $dateLimite = (clone $dateDebut)->modify('-3 days');
+            $dateLimite = (clone $dateDebut)->modify('+3 days');
 
             $sortie->setDateHeureDebut(\DateTimeImmutable::createFromMutable($dateDebut));
             $sortie->setDuree($faker->numberBetween(30, 180));
