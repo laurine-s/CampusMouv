@@ -39,15 +39,18 @@ final class SortieController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Enregistrer ou traiter les données
-            $em->persist($sortie);
-            $em->flush();
+            if ($form->get('create')->isClicked()) {
+                // Enregistrer ou traiter les données
+                $em->persist($sortie);
+                $em->flush();
 
-            // Message temporaire success
-            $this->addFlash('success', 'Message envoyé !');
+                // Message temporaire success
+                $this->addFlash('success', 'Message envoyé !');
 
-            //Rediriger
-            return $this->redirectToRoute('sortie_home');
+                //Rediriger
+                return $this->redirectToRoute('sortie_home');
+            }
+
         }
 
         return $this->render('sortie/create.html.twig', [
