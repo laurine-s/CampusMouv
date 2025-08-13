@@ -21,14 +21,16 @@
         <div class="uk-margin">
             <label class="uk-form-label" for="username">Email</label>
             <div class="uk-form-controls">
-                <input class="uk-input" type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus>
+                <input class="uk-input" type="email" value="{{ last_username }}" name="_username" id="username"
+                       autocomplete="email" required autofocus>
             </div>
         </div>
 
         <div class="uk-margin">
             <label class="uk-form-label" for="password">Mot de passe</label>
             <div class="uk-form-controls">
-                <input class="uk-input" type="password" name="_password" id="password" autocomplete="current-password" required>
+                <input class="uk-input" type="password" name="_password" id="password" autocomplete="current-password"
+                       required>
             </div>
         </div>
 
@@ -46,21 +48,11 @@
         </div>
     </form>
 
-        <div class="uk-margin uk-text-center cm-text-persian-green">
-            <p class="uk-margin-remove-bottom">Vous n'avez pas encore de compte ?</p>
-            <a class="cm-text-persian-green" href="{{ path('app_register') }}">Inscrivez-vous</a>
-        </div>
+    <div class="uk-margin uk-text-center cm-text-persian-green">
+        <p class="uk-margin-remove-bottom">Vous n'avez pas encore de compte ?</p>
+        <a class="cm-text-persian-green" href="{{ path('app_register') }}">Inscrivez-vous</a>
+    </div>
 
 
 {% endblock %}
 
-
-
-
-
-
-
-<div class="uk-margin uk-text-center cm-text-persian-green">
-    <p class="uk-margin-remove-bottom">Vous n'avez pas encore de compte ?</p>
-    <a class="cm-text-persian-green" href="{{ path('app_register') }}">Inscrivez-vous</a>
-</div>

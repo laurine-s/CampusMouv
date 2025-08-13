@@ -58,7 +58,7 @@ class Sortie
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties' )]
     private Collection $participants;
 
     // Lien avec l'enum Etat
@@ -72,6 +72,8 @@ class Sortie
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->nbInscrits = 1;
+        $this->etat = Etat::CREEE;
     }
 
     public function getId(): ?int
