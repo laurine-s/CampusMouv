@@ -41,6 +41,7 @@ final class SortieController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('create')->isClicked()) {
+                $sortie->addParticipant($this->getUser());
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
                 $em->flush();
