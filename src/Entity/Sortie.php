@@ -65,6 +65,10 @@ class Sortie
     #[ORM\Column(enumType: Etat::class)]
     private ?Etat $etat = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lieu $lieu = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -252,6 +256,18 @@ class Sortie
     public function setEtat(Etat $etat): static
     {
         $this->etat = $etat;
+        return $this;
+    }
+
+    public function getLieu(): ?Lieu
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): static
+    {
+        $this->lieu = $lieu;
+
         return $this;
     }
 }
