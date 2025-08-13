@@ -23,13 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-
-
-    #[Assert\Regex(
-        pattern: '/^[^@]+@campus-eni\.fr$/',
-    )]
-
-
+    #[Assert\Regex(pattern: '/^[^@]+@campus-eni\.fr$/')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -58,6 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $photo = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Campus $campus = null;
 
     /**
@@ -74,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $sorties;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Promo $promo = null;
 
     public function __construct()
