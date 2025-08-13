@@ -1,73 +1,231 @@
+{# {% extends 'base.html.twig' %} #}
+
+{# {% block title %}Sorties disponibles{% endblock %} #}
+
+{# {% block main %} #}
+{#    <section class="uk-section uk-section-default uk-flex uk-flex-center"> #}
+{#        <div class="uk-container"> #}
+{#            <h1>Les sorties disponibles</h1> #}
+{#        </div> #}
+{#    </section> #}
+
+{#    <section class="uk-section uk-section-default uk-flex uk-flex-center"> #}
+{#        <div class="uk-container"> #}
+{#            <div class="uk-grid uk-grid-small"> #}
+{#                <div class=""> #}
+{#                    {% for sortie in allSorties %} #}
+{#                        <div class="uk-card uk-card-default uk-card-hover uk-border-rounded uk-margin-medium-bottom "> #}
+{#                            <a class="uk-text-decoration-none" href=" #}
+{# {{ path('sortie_detail', {id: sortie.id}) }} #}
+{# "> #}
+{#                                <div class="uk-card uk-card-default uk-border-rounded"> #}
+{#                                    <div class="uk-card-header"> #}
+{#                                        <img class="lazy uk-align-center img-allsorties" #}
+{#                                             data-src="https://picsum.photos/400/300/?random=5" #}
+{#                                             data-uk-img alt="" src="img/transp.gif"> #}
+{#                                                                                                    <img src="{{ sortie.photo }}"> #}
+{#                                    </div> #}
+{#                                    <div class="uk-card-body"> #}
+{#                                        <div class="">nom #}
+{#                                            {{ sortie.nom }} #}
+{#                                        </div> #}
+{#                                        <div class=""> infos #}
+{#                                            {{ sortie.infos }} #}
+{#                                        </div> #}
+
+{#                                    </div> #}
+{#                                    <div class="uk-card-footer"> #}
+{#                                        <div class="uk-flex uk-flex-left uk-flex-middle uk-flex-between uk-grid-small" #}
+{#                                             uk-grid> #}
+{#                                            <div class="uk-border-pill uk-border-rounded"> #}
+{#                                                <p>Début : #}
+{#                                                    {{ sortie.dateHeureDebut |date('d/m/Y H:i') }} #}
+{#                                                </p> #}
+{#                                                <p>Fin d'inscription : #}
+{#                                                    {{ sortie.dateLimiteInscription |date('d/m/Y H:i') }} #}
+{#                                                </p> #}
+{#                                            </div> #}
+{#                                            <div class="uk-border-pill uk-border-rounded"> #}
+{#                                                <p>Participants :</p> #}
+{#                                                {{ sortie.nbInscrits }} #}
+{#                                                <p> #}
+{#                                                    sur #}
+{#                                                    {{ sortie.nbInscriptionMax }} #}
+{#                                                </p> #}
+{#                                            </div> #}
+{#                                            <div class="uk-border-pill uk-border-rounded"> #}
+{#                                                <p>Campus de : {{ sortie.campus.nom }}</p> #}
+{#                                                <p>Organisé par : {{ sortie.organisateur.nom }}</p> #}
+{#                                            </div> #}
+{#                                        </div> #}
+{#                                    </div> #}
+{#                                </div> #}
+{#                            </a> #}
+{#                        </div> #}
+{#                    {% endfor %} #}
+{#                </div> #}
+{#            </div> #}
+{#        </div> #}
+{#    </section> #}
+
+{# {% endblock %} #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Sorties disponibles{% endblock %}
 
 {% block main %}
-    <section class="uk-section uk-section-default uk-flex uk-flex-center">
-        <div class="uk-container">
-            <h1>Les sorties disponibles</h1>
-        </div>
-    </section>
-
-    <section class="uk-section uk-section-default uk-flex uk-flex-center">
-        <div class="uk-container">
-            <div class="uk-grid uk-grid-small">
-                <div class="uk-width-1-3@m">
-                    {% for sortie in allSorties %}
-                        <a class="uk-text-decoration-none" href="
- {{ path('sortie_detail', {id: sortie.id}) }}
-">
-                            <div class="uk-card uk-card-default uk-border-rounded">
-                                <div class="uk-card-header">
-                                    {#                                                        <img src="{{ sortie.photo }}"> #}
-                                </div>
-                                <div class="uk-card-header">
-                                    {#                                                            <img src="{{ sortie.photo }}"> #}
-                                    Image
-                                </div>
-                                <div class="uk-card-body">
-                                    <div class="">nom
-                                        {{ sortie.nom }}
-                                    </div>
-                                    <div class=""> infos
-                                        {{ sortie.infos }}
-                                    </div>
-
-                                </div>
-                                <div class="uk-card-footer">
-                                    <div class="uk-flex uk-flex-left uk-flex-middle uk-flex-wrap uk-grid-small" uk-grid>
-                                        <div class="uk-border-pill uk-border-rounded">
-                                            <p>Début :
-{#                                                                                             {{ sortie.dateHeureDebut }}#}
-                                            </p>
-                                            <p>Fin d'inscription :
-{#                                                                                             {{ sortie.dateHeureFin }}#}
-                                            </p>
-                                        </div>
-
-                                        <div class="uk-border-pill uk-border-rounded">
-                                            <p>Participants :</p>
-                                                                                                                                    {{ sortie.nbInscrits }}
-                                            <p>
-                                                sur
-                                                                                             {{ sortie.nbInscriptionMax }}
-                                                </p>
-                                        </div>
-
-                                        <div class="uk-border-pill uk-border-rounded">
-                                            <p>Campus de : Rennes</p>
-                                            <p>Organisé par : TOTO</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
+    <!-- Header Section avec gradient -->
+    <section class="uk-section uk-preserve-color">
+        <div class="uk-container uk-container-large">
+            <div class="uk-text-center">
+                <h1 class="uk-heading-large uk-margin-remove-bottom">Les sorties disponibles</h1>
+                <p class="uk-text-large uk-margin-small-top">Découvrez toutes les activités proposées</p>
             </div>
         </div>
     </section>
 
+
+
+    <!-- Grid des sorties -->
+    <section class="uk-section uk-section-default">
+        <div class="uk-container uk-container-large">
+            <div class="uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@l" uk-grid="masonry: true"
+                 uk-scrollspy="cls: uk-animation-slide-bottom-small; target: .uk-card; delay: 100; repeat: false">
+                {% for sortie in allSorties %}
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-hover uk-border-rounded uk-overflow-hidden uk-height-1-1">
+
+                            <!-- Image avec overlay -->
+                            <div class="uk-card-media-top uk-inline uk-transition-toggle">
+
+                                <img class="uk-transition-scale-up uk-transition-opaque"
+                                     data-src="https://picsum.photos/400/300/?random={{ sortie.id }}"
+                                     alt="{{ sortie.nom }}"
+                                     uk-img>
+                                </a>
+
+                                <!-- Badge statut -->
+                                <div class="uk-position-top-right uk-position-small">
+                                    {% if sortie.nbInscrits >= sortie.nbInscriptionMax %}
+                                        <span class="uk-label uk-label-danger">Complet</span>
+                                    {% elseif sortie.dateLimiteInscription|date('U') < 'now'|date('U') %}
+                                        <span class="uk-label uk-label-warning">Inscriptions fermées</span>
+                                    {% else %}
+                                        <span class="uk-label uk-label-success">Disponible</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Quick actions overlay -->
+                                <a class="uk-text-decoration-none uk-display-block uk-height-1-1"
+                                   href="{{ path('sorties_detail', {id: sortie.id}) }}">
+                                    <div class="uk-position-cover uk-overlay uk-overlay-primary uk-transition-fade uk-flex uk-flex-center uk-flex-middle">
+                                        <div class="uk-text-center">
+                                            <span uk-icon="icon: plus; ratio: 2" class="uk-text-secondary"></span>
+                                            <p class="uk-text-small uk-margin-small-top">Voir les détails</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Contenu de la carte -->
+                            <div class="uk-card-body uk-padding-small">
+                                <!-- Titre et description -->
+                                <div class="uk-margin-small-bottom">
+                                    <h3 class="uk-card-title uk-margin-remove-bottom uk-text-truncate">
+                                        {{ sortie.nom }}
+                                    </h3>
+                                    <p class="uk-text-meta uk-margin-small-top uk-text-small">
+                                        {{ sortie.infos|length > 100 ? sortie.infos|slice(0, 100) ~ '...' : sortie.infos }}
+                                    </p>
+                                </div>
+
+                                <!-- Informations principales -->
+                                <div class="uk-margin-small">
+                                    <!-- Dates -->
+                                    <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
+                                        <span uk-icon="icon: calendar; ratio: 0.8"
+                                              class="uk-text-muted uk-margin-small-right"></span>
+                                        <div>
+                                            <div class="uk-text-small uk-text-bold">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</div>
+                                            <div class="uk-text-meta uk-text-small">Début de l'activité</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Limite d'inscription -->
+                                    <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
+                                        <span uk-icon="icon: clock; ratio: 0.8"
+                                              class="uk-text-warning uk-margin-small-right"></span>
+                                        <div>
+                                            <div class="uk-text-small uk-text-bold">{{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</div>
+                                            <div class="uk-text-meta uk-text-small">Limite d'inscription</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Participants avec barre de progression -->
+                                    <div class="uk-margin-small-bottom">
+                                        <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-bottom">
+                                                <span class="uk-flex uk-flex-middle">
+                                                    <span uk-icon="icon: users; ratio: 0.8"
+                                                          class="uk-text-primary uk-margin-small-right"></span>
+                                                    <span class="uk-text-small">Participants</span>
+                                                </span>
+                                            <span class="uk-text-small uk-text-bold">
+                                                    {{ sortie.nbInscrits }} / {{ sortie.nbInscriptionMax }}
+                                                </span>
+                                        </div>
+
+                                        <!-- Barre de progression -->
+                                        <progress class="uk-progress uk-progress-small"
+                                                  value="{{ sortie.nbInscrits }}"
+                                                  max="{{ sortie.nbInscriptionMax }}">
+                                        </progress>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer de la carte -->
+                            <div class="uk-card-footer uk-padding-small uk-background-muted">
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <div class="uk-width-expand">
+                                        <div class="uk-flex uk-flex-middle">
+                                            <span uk-icon="icon: location; ratio: 0.8"
+                                                  class="uk-text-muted uk-margin-small-right"></span>
+                                            <span class="uk-text-small uk-text-bold">{{ sortie.campus.nom }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-auto">
+                                        <div class="uk-flex uk-flex-middle">
+                                            <span uk-icon="icon: user; ratio: 0.8"
+                                                  class="uk-text-muted uk-margin-small-right"></span>
+                                            <span class="uk-text-small">{{ sortie.organisateur.nom }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Message si aucune sortie -->
+            {% if allSorties is empty %}
+                <div class="uk-text-center uk-margin-large">
+                    <span uk-icon="icon: warning; ratio: 3" class="uk-text-muted"></span>
+                    <h3 class="uk-text-muted">Aucune sortie disponible pour le moment</h3>
+                    <p class="uk-text-muted">Revenez plus tard pour découvrir de nouvelles activités !</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Section Call-to-Action (optionnelle) -->
+    <section class="uk-section uk-section-secondary uk-light uk-section-large">
+        <div class="uk-container uk-text-center">
+            <h2 class="uk-heading-medium">Envie d'organiser une sortie ?</h2>
+            <p class="uk-text-large uk-margin-medium-bottom">Proposez votre propre activité à la communauté</p>
+            <a href="#" class="uk-button uk-button-primary uk-button-large">
+                <span uk-icon="plus"></span> Créer une sortie
+            </a>
+        </div>
+    </section>
 {% endblock %}
