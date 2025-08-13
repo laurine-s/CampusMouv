@@ -61,37 +61,24 @@ class AppFixtures extends Fixture
             $lieuxAll[] = $lieu;
         }
 
-        // --- Promos ---
-//        $cursus = ['D2WM', 'CDA', 'BAC+5'];
-//        $nbrPromo = ['01', '02', '03'];
-//        $promoAll = [];
-//        for ($i = 0; $i < 10; $i++) {
-//            $promo = new Promo();
-//            // ATTENTION: concaténer des chaînes en PHP = ".", pas "-"
-//            $promo->setNom(sprintf(
-//                '%d-%s-%s',
-//                $faker->numberBetween(2000, 2025),
-//                $faker->randomElement($cursus),
-//                $faker->randomElement($nbrPromo)
-//            ));
-//            $promo->setVille($faker->randomElement($villesAll));
-//            $manager->persist($promo);
-//            $promoAll[] = $promo;
-//        }
+
         // --- Promos ---
         $cursus = ['D2WM', 'CDA', 'BAC+5'];
-        $nbrPromo = ['01','02','03'];
+        $nbrPromo = ['01', '02', '03'];
         $promoAll = [];
         $used = [];
 
         for ($i = 0; $i < 10; $i++) {
-            $annee  = $faker->numberBetween(2020, 2025);
-            $cur    = $faker->randomElement($cursus);
-            $num    = $faker->randomElement($nbrPromo);
-            $code   = sprintf('%d-%s-%s', $annee, $cur, $num);
+            $annee = $faker->numberBetween(2020, 2025);
+            $cur = $faker->randomElement($cursus);
+            $num = $faker->randomElement($nbrPromo);
+            $code = sprintf('%d-%s-%s', $annee, $cur, $num);
 
             // éviter les doublons si nécessaire
-            if (isset($used[$code])) { $i--; continue; }
+            if (isset($used[$code])) {
+                $i--;
+                continue;
+            }
             $used[$code] = true;
 
             $promo = new Promo();
@@ -103,15 +90,18 @@ class AppFixtures extends Fixture
         }
 
 
-
-
         // --- Users ---
         $usersAll = [];
+        $domain = 'campus-eni.fr';
+
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
-            $user->setNom($faker->lastName());                 // () obligatoires
-            $user->setPrenom($faker->firstName());
-            $user->setEmail($faker->unique()->safeEmail());
+            $nom = $faker->firstName();
+            $prenom = $faker->lastName();
+            $user->setNom($nom);                 // () obligatoires
+            $user->setPrenom($prenom);
+            $local = $faker->unique()->userName();
+            $user->setEmail($prenom . '.' . $nom . '@' . $domain);
             $user->setPassword($faker->password());
             // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
             $user->setCampus($faker->randomElement($campuses));
@@ -156,7 +146,7 @@ class AppFixtures extends Fixture
             $sortie->setOrganisateur($organisateur);
 
             // éviter d’avoir le même en participant
-            $participant = $faker->randomElement(array_filter($usersAll, fn ($u) => $u !== $organisateur));
+            $participant = $faker->randomElement(array_filter($usersAll, fn($u) => $u !== $organisateur));
             $sortie->addParticipant($participant);
 
             $manager->persist($sortie);
