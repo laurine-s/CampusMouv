@@ -1,9 +1,9 @@
-{% extends 'base.html.twig' %}
+{#  {% extends 'base.html.twig' %}
 
 {% block title %}Register{% endblock %}
 
 {% block main %}
-    <h1>Register</h1>
+    <h1>S'inscrire</h1>
 
     {{ form_errors(registrationForm) }}
 
@@ -16,6 +16,73 @@
         }) }}
 
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn">Valider</button>
     {{ form_end(registrationForm) }}
+{% endblock %}
+#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}S'inscrire{% endblock %}
+
+{% block main %}
+    <div class="uk-container uk-margin-large-top uk-width-1-2@m">
+        <h1 class="uk-heading-bullet">Créer un compte</h1>
+
+        {{ form_start(registrationForm, {'attr': {'class': 'uk-form-stacked uk-width-1-1'}}) }}
+
+        {# Prenom #}
+        <div class="uk-margin">
+            {{ form_label(registrationForm.prenom, 'Prénom', {'label_attr': {'class': 'uk-form-label'}}) }}
+            <div class="uk-form-controls">
+                {{ form_widget(registrationForm.prenom, {'attr': {'class': 'uk-input'}}) }}
+                {{ form_errors(registrationForm.prenom) }}
+            </div>
+        </div>
+
+        {# Nom #}
+        <div class="uk-margin">
+            {{ form_label(registrationForm.nom, 'Nom', {'label_attr': {'class': 'uk-form-label'}}) }}
+            <div class="uk-form-controls">
+                {{ form_widget(registrationForm.nom, {'attr': {'class': 'uk-input'}}) }}
+                {{ form_errors(registrationForm.nom) }}
+            </div>
+        </div>
+
+        {# Email #}
+        <div class="uk-margin">
+            {{ form_label(registrationForm.email, 'Email @campus-hero.fr', {'label_attr': {'class': 'uk-form-label'}}) }}
+            <div class="uk-form-controls uk-inline">
+                <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'uk-input uk-form-large'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+        </div>
+
+        {# Mot de passe + confirmation #}
+        <div class="uk-margin">
+            {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'uk-form-label'}}) }}
+            <div class="uk-form-controls">
+                {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'uk-input'}}) }}
+                {{ form_errors(registrationForm.plainPassword.first) }}
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            {{ form_label(registrationForm.plainPassword.second, 'Confirmer le mot de passe', {'label_attr': {'class': 'uk-form-label'}}) }}
+            <div class="uk-form-controls">
+                {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'uk-input'}}) }}
+                {{ form_errors(registrationForm.plainPassword.second) }}
+            </div>
+        </div>
+
+        {# Bouton submit #}
+        <div class="uk-margin">
+            <button type="submit" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
+                Valider
+            </button>
+        </div>
+
+        {{ form_end(registrationForm) }}
+    </div>
 {% endblock %}
