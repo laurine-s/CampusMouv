@@ -19,8 +19,8 @@ class UserProfilType extends AbstractType
             ->add('email', null, ['label' => 'Email :'])
             ->add('prenom', null, ['label' => 'Prénom :'])
             ->add('nom', null, ['label' => 'Nom :'])
+            ->add('pseudo', null, ['label' => 'Pseudo :'])
             ->add('bio', null, ['label' => 'Bio :'])
-            ->add('photo', null, ['label' => 'Photo de profil :'])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
@@ -40,6 +40,9 @@ class UserProfilType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'csrf_protection' => true,            // activé par défaut
+            'csrf_field_name' => '_token',
+            'csrf_token_id'   => 'profile_item',  // identifiant unique pour ce formulaire
         ]);
     }
 }
