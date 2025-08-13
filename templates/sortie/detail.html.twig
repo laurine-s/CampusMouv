@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la sortie{% endblock %}
+
+{% block main %}
+    <!-- Section titre -->
+    <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
+        <div class="uk-container uk-container-large uk-text-center">
+            <h1 class="uk-heading-medium uk-margin-remove-bottom">{{ sortie.nom }}</h1>
+            <p class="uk-text-large uk-margin-small-top cm-text-saffron">Tous les détails de l'activité</p>
+        </div>
+    </section>
+
+    <!-- Section détails -->
+    <section class="uk-section uk-section-default">
+        <div class="uk-container uk-container-large">
+
+            <div class="uk-grid-large" uk-grid>
+                <!-- Photos -->
+                <section class="uk-section">
+                    <div class="uk-container uk-container-small">
+                        <div class="uk-card uk-card-default uk-overflow-hidden uk-margin-bottom">
+                            <div class="uk-card-media-top uk-inline uk-transition-toggle">
+                                <img class="uk-transition-scale-up uk-transition-opaque"
+                                     data-src="https://picsum.photos/800/400/?random={{ sortie.id }}"
+                                     alt="{{ sortie.nom }}"
+                                     uk-img>
+                            </div>
+                        </div>
+
+                            <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
+                            <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+                        </div>
+
+                        <ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
+                    </div>
+                </div>
+
+                <!-- Infos principales -->
+                <div class="uk-width-1-2@s">
+                    <ul class="uk-list uk-list-divider uk-text-small cm-text-charcoal">
+                        <li>
+                            <span uk-icon="icon: location; ratio: 0.9" class="cm-text-persian-green uk-margin-small-right"></span>
+                            <strong>Lieu :</strong> {{ sortie.campus.nom }}
+                        </li>
+                        <li>
+                            <span uk-icon="icon: calendar; ratio: 0.9" class="cm-text-persian-green uk-margin-small-right"></span>
+                            <strong>Date :</strong> {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}
+                        </li>
+                        <li>
+                            <span uk-icon="icon: users; ratio: 0.9" class="cm-text-persian-green uk-margin-small-right"></span>
+                            <strong>Groupe :</strong> {{ sortie.nbInscrits }} participants
+                        </li>
+                        <li>
+                            <span uk-icon="icon: clock; ratio: 0.9" class="cm-text-persian-green uk-margin-small-right"></span>
+                            <strong>Durée :</strong> {{ sortie.duree }} min
+                        </li>
+                        <li>
+                            <span uk-icon="icon: user; ratio: 0.9" class="cm-text-sandy-brown uk-margin-small-right"></span>
+                            <strong>Organisateur :</strong> {{ sortie.organisateur.nom }}
+                        </li>
+                    </ul>
+
+                    <!-- Bouton participation -->
+                    <div class="uk-margin-top">
+                            <button class="uk-button cm-background-burnt-sienna uk-light" disabled>Complet</button>
+                            <a href="{{ path('sorties_detail', {id: sortie.id}) }}" class="uk-button cm-background-persian-green uk-light">
+                                <span uk-icon="check"></span> Je participe
+                            </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -32,7 +32,12 @@ class RegistrationController extends AbstractController
 
             // do anything else you need here, like send an email
 
+            // TODO : Rediriger sur une page avec message succès
+            // Envoyer un message succès
+            $this->addFlash("success", "Votre compte a été enregistré avec succès !");
+
             return $this->redirectToRoute('app_login');
+
         }
 
         return $this->render('registration/register.html.twig', [
