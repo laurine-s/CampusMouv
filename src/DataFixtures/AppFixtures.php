@@ -111,7 +111,7 @@ class AppFixtures extends Fixture
             $user->setNom($nom);                 // () obligatoires
             $user->setPrenom($prenom);
             $user->setPseudo($faker->unique()->word());
-            $local = $faker->unique()->userName();
+
             $user->setEmail($prenom . '.' . $nom . '@' . $domain);
             $user->setPassword($faker->password());
             // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
@@ -130,7 +130,7 @@ class AppFixtures extends Fixture
         $user->setNom($nom);                 // () obligatoires
         $user->setPrenom($prenom);
         $user->setPseudo('MamanRomane');
-        $user->setEmail($prenom . '@' . $domain);
+        $user->setEmail($prenom . '.' . $nom . '@' . $domain);
         $hashedPassword = $this->passwordHasher->hashPassword($user, "16-Avril2007");
         $user->setPassword($hashedPassword);
         // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
@@ -147,7 +147,7 @@ class AppFixtures extends Fixture
         $user->setNom($nom);                 // () obligatoires
         $user->setPrenom($prenom);
         $user->setPseudo("LuxAndLyraLover's");
-        $user->setEmail($prenom . '@' . $domain);
+        $user->setEmail($prenom . '.' . $nom . '@' . $domain);
         $hashedPassword = $this->passwordHasher->hashPassword($user, "@Lux56700");
         $user->setPassword($hashedPassword);
         // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
@@ -164,7 +164,7 @@ class AppFixtures extends Fixture
         $user->setNom($nom);                 // () obligatoires
         $user->setPrenom($prenom);
         $user->setPseudo('McGonagall');
-        $user->setEmail($prenom . '@' . $domain);
+        $user->setEmail($prenom . '.' . $nom . '@' . $domain);
         $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
         $user->setPassword($hashedPassword);
         // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
@@ -181,7 +181,7 @@ class AppFixtures extends Fixture
         $user->setNom($nom);                 // () obligatoires
         $user->setPrenom($prenom);
         $user->setPseudo('Jojo');
-        $user->setEmail($prenom . '@' . $domain);
+        $user->setEmail($prenom . '.' . $nom . '@' . $domain);
         $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
         $user->setPassword($hashedPassword);
         // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
