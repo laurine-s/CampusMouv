@@ -45,18 +45,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # Routes publiques
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: PUBLIC_ACCESS }
-
-#        # Routes pour participants (users connectés = ROLE_USER)
-#        - { path: ^/profil, roles: ROLE_USER }
-#        - { path: ^/logout, roles: ROLE_USER }
-#
-#        # Routes pour organisateurs
-#        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
-
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:
