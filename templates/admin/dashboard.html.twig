@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord | Admin{% endblock %}
+
+{% block main %}
+
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-capitalize uk-text-center">
+        Hello {{ app.user.prenom }}</h1>
+
+    <div class="uk-grid uk-flex uk-position-center">
+
+
+        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
+            <div class="uk-margin uk-text-center">
+                <p>Envoyer un fichier CSV et ajouter plusieurs utilisateurs.</p>
+                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer" href="{{ path('admin_import') }}">Importer des
+                    utilisateurs</a>
+            </div>
+        </div>
+
+        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
+            <div class="uk-margin uk-text-center">
+                <p>Ajouter des utilisateurs, via un formulaire.</p>
+                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer" href="{{ path('admin_register') }}">Ajouter des
+                    utilisateurs</a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
