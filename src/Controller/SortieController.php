@@ -38,6 +38,46 @@ final class SortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function inscription(int $id, SortieRepository $sortieRepository, Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+
+
+        // inscription déjà effectuée
+        if ($sortie->getParticipants()->contains($user)) {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+            return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        }
+
+
+        // sinon tu es bien inscrit
+        $sortie->addParticipant($user);
+        $em->flush();
+
+        $this->addFlash('success', 'Vous êtes bien inscrit !');
+        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+    }
+
+    #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function desinscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, Request $request): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $user = $this->getUser();
+
+
+        //tu te désistes
+        if ($sortie->getParticipants()->contains($user)) {
+            $sortie->removeParticipant($user);
+            $em->flush();
+            $this->addFlash('success', 'Vous êtes désinscrit.');
+        }
+
+        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+    }
+
+
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository): Response
     {
