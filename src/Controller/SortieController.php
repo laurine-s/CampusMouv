@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Enum\Role;
 use App\Form\SortieType;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+
 
 #[Route('/sorties', name: 'sorties_')]
 //#[IsGranted(Role::PARTICIPANT->value)]
@@ -37,15 +39,17 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository): Response
     {
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
+        $allLieux = $lieuRepository->findAll();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('create')->isClicked()) {
                 $sortie->addParticipant($this->getUser());
+                $sortie->setOrganisateur($this->getUser());
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
                 dump($sortie);
@@ -55,13 +59,14 @@ final class SortieController extends AbstractController
                 $this->addFlash('success', 'Message envoyé !');
 
                 //Rediriger
-                return $this->redirectToRoute('sortie_home');
+                return $this->redirectToRoute('sorties_home');
             }
 
         }
 
         return $this->render('sortie/create.html.twig', [
             'form' => $form->createView(),
+            'allLieux' => $allLieux,
         ]);
     }
 

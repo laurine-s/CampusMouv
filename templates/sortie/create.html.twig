@@ -4,46 +4,61 @@
 
 {% block main %}
 
-{#    <section class="uk-section uk-section-default uk-flex uk-flex-center">#}
-{#        <div class="uk-container">#}
-{#            <h1>Création d'une activité</h1>#}
-{#        </div>#}
-{#    </section>#}
+    <section class="uk-section uk-section-default uk-flex uk-flex-center">
+        <div class="uk-container">
+            <h1>Création d'une activité</h1>
+        </div>
+    </section>
 
-{#    <section class="uk-section uk-section-default uk-flex uk-flex-center">#}
-{#        <div class="uk-container">#}
+    <section class="uk-section-large ">
+        <div class="uk-container-large">
             {{ form_start(form) }}
-{#            <div>#}
-{#                {{ form_row(form.nom) }}#}
-{#                {{ form_row(form.campus) }}#}
-{#                {{ form_row(form.dateHeureDebut) }}#}
-{#                {{ form_row(form.dateLimiteInscription) }}#}
-{#            </div>#}
-{#            <div class="photo">{{ form_row(form.photo) }}</div>#}
-{#            <div class="">#}
-{#                {{ form_row(form.nbInscriptionMin) }}#}
-{#                {{ form_row(form.nbInscriptionMax) }}#}
-{#            </div>#}
-{#            <div class="">#}
-{#                {{ form_row(form.duree) }}#}
+            <div>
+                {{ form_row(form.nom) }}
+                {{ form_row(form.campus) }}
+                {{ form_row(form.dateHeureDebut) }}
+                {{ form_row(form.dateLimiteInscription) }}
+            </div>
+            -----------separation------------
+            <div class="photo">{{ form_row(form.photo) }}</div>
+            -----------separation------------
+            <div class="">
+                {{ form_row(form.nbInscriptionMin) }}
+                {{ form_row(form.nbInscriptionMax) }}
+            </div>
+            -----------separation------------
+            <div class="">
+                {{ form_row(form.duree) }}
 
-{#            </div>#}
-{#            <div class="">#}
-{#                {{ form_row(form.infos) }}#}
-{#            </div>#}
-{#            <div class="">#}
-{#                {{ form_row(form.interets) }}#}
-{#            </div>#}
-{#            <div class="">#}
-{#                {{ form_row(form.create) }}#}
-{#                {{ form_row(form.cancel) }}#}
-{#            </div>#}
+            </div>
+            -----------separation------------
+            <div class="">
+                {{ form_row(form.infos) }}
+            </div>
+            -----------separation------------
+            <div class="">
+                {{ form_row(form.interets) }}
+            </div>
+            -----------separation------------
+            <div data-controller="lieu">
+                {{ form_row(form.lieu) }}
+                {{ form_row(form.adresse) }}
+                {{ form_row(form.ville) }}
+                {{ form_row(form.codePostal) }}
+            </div>
+
+            -----------separation------------
+            <div class="">
+                {{ form_row(form.create) }}
+                {{ form_row(form.cancel) }}
+            </div>
 
 
             {{ form_end(form) }}
 
-{#        </div>#}
-{#    </section>#}
+        </div>
+    </section>
+
 
 
 {#    <!-- Header Section -->#}
