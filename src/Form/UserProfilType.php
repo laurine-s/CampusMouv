@@ -8,8 +8,10 @@ use App\Entity\Promo;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserProfilType extends AbstractType
 {
@@ -33,8 +35,26 @@ class UserProfilType extends AbstractType
             ->add('promo', EntityType::class, [
                 'class' => Promo::class,
                 'choice_label' => 'nom',
-            ]);
-    }
+            ])
+
+            ->add('photo', FileType::class, [
+            'label' => 'Photo de profil (jpg/png)',
+            //car on ne stocke pas directement le fichier dans l’entité, on l’envoie à Cloudinary
+            'mapped' => false,
+            'required' => false,
+            'constraints' => [
+             new File([
+                    'maxSize' => '2M',
+                    'maxSizeMessage' => 'Votre photo doit faire moins de 2M.',
+                    'mimeTypes' => [
+                       'image/jpeg',
+                       'image/png',
+                  ],
+                  'mimeTypesMessage' => 'Merci de télécharger un fichier JPEG ou PNG valide',
+               ])
+         ],
+     ]);
+     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {

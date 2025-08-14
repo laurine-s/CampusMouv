@@ -8,6 +8,7 @@
     "ext-ctype": "*",
     "ext-iconv": "*",
     "bower-asset/uikit": "3",
+    "cloudinary/cloudinary_php": "^3.1",
     "doctrine/dbal": "*",
     "doctrine/doctrine-bundle": "^2.15",
     "doctrine/doctrine-fixtures-bundle": "^4.1",

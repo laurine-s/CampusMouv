@@ -4,6 +4,8 @@ namespace App\Controller;
 use App\Enum\Role;
 use App\Form\ChangePasswordType;
 use App\Form\UserProfilType;
+use App\Service\CloudinaryService;
+use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,10 +16,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
+    /**
+     * @throws ApiError
+     */
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
     //#[IsGranted(Role::PARTICIPANT->value)]
-    public function profil(Request $request, EntityManagerInterface $em): Response
+    public function profil(Request $request, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
+
         $user = $this->getUser();
         $form = $this->createForm(UserProfilType::class, $user);
 
@@ -25,6 +31,15 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $photoFile = $form->get('photo')->getData();
+
+            if ($photoFile) {
+                // On upload la photo sur Cloudinary
+                $result = $cloudinaryService->upload($photoFile->getPathname());
+
+                // on obtient l'URL publique est accessible via $result['secure_url']
+                $user->setPhoto($result['secure_url']);
+            }
 
             $em->persist($user);
             $em->flush();

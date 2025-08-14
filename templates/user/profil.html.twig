@@ -11,7 +11,12 @@
 
         {{ form_start(form, { attr: { class: 'uk-form-stacked' } }) }}
 
-
+        {% if app.user.photo %}
+            <img src="{{ app.user.photo }}" alt="Photo de profil" style="width:150px; height:150px; object-fit:cover; border-radius:50%;">
+        {% else %}
+            <img src="/images/default-avatar.png" alt="Avatar par défaut" style="width:150px; height:150px; border-radius:50%;">
+        {% endif %}
+        {{ form_row(form.photo) }}
         {{ form_row(form.prenom) }}
         {{ form_row(form.nom) }}
         {{ form_row(form.pseudo) }}
