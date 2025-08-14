@@ -4,11 +4,13 @@ namespace App\Form;
 
 use App\Entity\Campus;
 use App\Entity\Interets;
+use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -72,7 +74,57 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'placeholder' => 'Choisissez une catégorie',
 
             ])
-//            ->add('organisateur', EntityType::class, [
+            ->add('lieu', EntityType::class, [
+                'class' => Lieu::class,
+                'choice_label' => 'nom',
+                'label' => 'Catégorie de lieux',
+                'placeholder' => 'Choisissez un lieu existant',
+
+                // Données sur chaque <option>
+                'choice_attr' => function (Lieu $lieu) {
+                    return [
+                        'data-adresse'     => $lieu->getRue(),     // getters exacts de ton entité
+                        'data-ville'       => $lieu->getVille()->getNom(),
+                        'data-code-postal' => $lieu->getVille()->getCp(),
+                    ];
+                },
+
+                // Hook Stimulus
+                'attr' => [
+                    'data-action' => 'change->lieu#onChange',
+                    'data-lieu-target' => 'select',
+                ],
+            ])
+
+
+            ->add('adresse', TextType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'readonly' => 'readonly',
+                    'data-lieu-target' => 'adresse',
+                ],
+            ])
+            ->add('ville', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'readonly' => 'readonly',
+                    'data-lieu-target' => 'ville',
+                ],
+            ])
+            ->add('codePostal', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'readonly' => 'readonly',
+                    'data-lieu-target' => 'codePostal',
+                ],
+            ])
+
+
+
+            //            ->add('organisateur', EntityType::class, [
 //                'class' => User::class,
 //                'choice_label' => 'nom',
 //                'label' => 'Organisateur de la sortie',
