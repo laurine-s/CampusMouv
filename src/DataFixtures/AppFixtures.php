@@ -43,6 +43,10 @@ class AppFixtures extends Fixture
             $manager->persist($interet);
             $interetsAll[] = $interet;
         }
+        //----Intereret
+        $interet = new Interets();
+        $interet->setNom('Magic Escape Games');
+        $manager->persist($interet);
 
         // --- Villes ---
         $villesAll = [];

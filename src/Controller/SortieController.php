@@ -44,6 +44,7 @@ final class SortieController extends AbstractController
                 $sortie->addParticipant($this->getUser());
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
+                dump($sortie);
                 $em->flush();
 
                 // Message temporaire success
