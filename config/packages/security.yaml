@@ -5,7 +5,7 @@ security:
     # Hiérarchie des rôles
     role_hierarchy:
         ROLE_ORGANISATEUR: ROLE_USER
-        ROLE_ADMIN: [ ROLE_ORGANISATEUR, ROLE_PARTICIPANT ]
+        ROLE_ADMIN: [ ROLE_ORGANISATEUR, ROLE_USER ]
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -49,12 +49,9 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
 
-#        # Routes protégées
-#        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
-#        - { path: ^/profil, roles: ROLE_PARTICIPANT }
-#        - { path: ^/logout, roles: ROLE_PARTICIPANT }
-
-
+        # Routes protégées
+        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+        - { path: ^/profil, roles: ROLE_USER }
 
 
 when@test:
