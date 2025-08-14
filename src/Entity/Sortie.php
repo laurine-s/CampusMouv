@@ -69,6 +69,12 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    private ?\DateTimeImmutable $dateHeureFin = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $archived = false;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -101,7 +107,7 @@ class Sortie
     public function setDateHeureDebut(\DateTimeImmutable $dateHeureDebut): static
     {
         $this->dateHeureDebut = $dateHeureDebut;
-
+        $this->refreshDateHeureFin(); // garde dateHeureFin en phase
         return $this;
     }
 
@@ -113,7 +119,7 @@ class Sortie
     public function setDuree(int $duree): static
     {
         $this->duree = $duree;
-
+        $this->refreshDateHeureFin(); // garde dateHeureFin en phase
         return $this;
     }
 
@@ -271,5 +277,32 @@ class Sortie
         $this->lieu = $lieu;
 
         return $this;
+    }
+    public function getDateHeureFin(): \DateTimeImmutable
+    {
+        // sécurité : si non encore calculé (ex. entité fraîche)
+        if (!$this->dateHeureFin) { $this->refreshDateHeureFin(); }
+        return $this->dateHeureFin;
+    }
+
+    public function isArchived(): bool { return $this->archived; }
+    public function setArchived(bool $archived): static { $this->archived = $archived; return $this; }
+
+    /**
+     * Recalcule dateHeureFin depuis dateHeureDebut + duree (minutes).
+     * Appelé depuis setters et lifecycle callbacks.
+     */
+    private function refreshDateHeureFin(): void
+    {
+        if ($this->dateHeureDebut && $this->duree !== null) {
+            $this->dateHeureFin = $this->dateHeureDebut->modify('+' . (int)$this->duree . ' minutes');
+        }
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function onPersistOrUpdate(): void
+    {
+        $this->refreshDateHeureFin();
     }
 }
