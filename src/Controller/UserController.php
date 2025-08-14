@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Enum\Role;
 use App\Form\ChangePasswordType;
 use App\Form\UserProfilType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,10 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
+//    #[IsGranted(Role::PARTICIPANT->value)]
     public function profil(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
