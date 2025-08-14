@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class UserController extends AbstractController
 {
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
-    //#[IsGranted(Role::PARTICIPANT->value)]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function profil(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
