@@ -32,6 +32,10 @@ class UserRegistrationAdminType extends AbstractType
                     ])
                 ],
             ])
+            ->add('campus', EntityType::class, [
+                'class' => Campus::class,
+                'choice_label' => 'nom',
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
