@@ -48,14 +48,10 @@ security:
         # Routes publiques
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: PUBLIC_ACCESS }
 
-#        # Routes pour participants (users connectés = ROLE_USER)
-#        - { path: ^/profil, roles: ROLE_USER }
-#        - { path: ^/logout, roles: ROLE_USER }
-#
-#        # Routes pour organisateurs
-#        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+        # Routes protégées
+        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+        - { path: ^/profil, roles: ROLE_USER }
 
 
 when@test:
