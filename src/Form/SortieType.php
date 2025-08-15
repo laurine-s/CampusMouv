@@ -46,9 +46,7 @@ class SortieType extends AbstractType
                 'label' => 'Nombre minimum de participants',
                 'data' => 2
             ])
-//            ->add('nbInscrits', null, [
-//                'label' => 'Nombre d\'inscrits actuels'
-//            ])
+
             ->add('infos', null, [
                 'label' => 'Description de l\'activité',
                 'data' => "À l’approche de la fin du trimestre, la Salle Commune de Poufsouffle se transforme en un véritable repaire festif.
@@ -80,10 +78,10 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'label' => 'Catégorie de lieux',
                 'placeholder' => 'Choisissez un lieu existant',
 
-                // Données sur chaque <option>
+
                 'choice_attr' => function (Lieu $lieu) {
                     return [
-                        'data-adresse'     => $lieu->getRue(),     // getters exacts de ton entité
+                        'data-adresse'     => $lieu->getRue(),
                         'data-ville'       => $lieu->getVille()->getNom(),
                         'data-code-postal' => $lieu->getVille()->getCp(),
                     ];
@@ -122,29 +120,13 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 ],
             ])
 
-
-
-            //            ->add('organisateur', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'label' => 'Organisateur de la sortie',
-//                'placeholder' => 'Sélectionnez un organisateur'
-//            ])
-//            ->add('participants', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'multiple' => true,
-//                'label' => 'Participants inscrits',
-//                'required' => false,
-//                'help' => 'Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs participants'
-//            ])
             ->add('create', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'uk-button '],
+                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal'],
             ])
             ->add('cancel', SubmitType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => 'uk-button '],
+                'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right'],
             ]);
     }
 
