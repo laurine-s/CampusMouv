@@ -720,16 +720,21 @@
 {%- block button_widget -%}
     {%- if label is empty -%}
         {%- if label_format is not empty -%}
-            {% set label = label_format|replace({
-                '%name%': name,
-                '%id%': id,
-            }) %}
+            {% set label = label_format|replace({'%name%': name, '%id%': id}) %}
         {%- elseif label is not same as(false) -%}
             {% set label = name|humanize %}
         {%- endif -%}
     {%- endif -%}
+
+    {# 1) Définis tes classes “base” communes à tous les boutons #}
+    {% set base = 'uk-button uk-button-large uk-border-rounded uk-dark' %}
+
+    {# 2) Fusionne base + classes venant du FormType (attr.class) #}
+    {% set attr = attr|merge({'class': (base ~ ' ' ~ (attr.class|default(''))) | trim }) %}
+
     <div class="uk-margin-medium-top uk-text-center">
-        <button type="{{ type|default('button') }}" class="uk-button uk-button-large uk-border-rounded cm-background-persian-green uk-light uk-width-1-1 uk-width-auto@s" {{ block('button_attributes') }}>
+        {# 3) NE PAS remettre class="" ici : on laisse button_attributes le faire #}
+        <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
             {%- if translation_domain is same as(false) -%}
                 {%- if label_html is same as(false) -%}
                     {{- label -}}
@@ -747,10 +752,19 @@
     </div>
 {%- endblock button_widget -%}
 
+
 {%- block submit_widget -%}
     {%- set type = type|default('submit') -%}
+
+    {# 1) Classes de base #}
+    {% set base = 'uk-button uk-button-large uk-border-rounded uk-dark ' %}
+
+    {# 2) Fusion #}
+    {% set attr = attr|merge({'class': (base ~ ' ' ~ (attr.class|default(''))) | trim }) %}
+
     <div class="uk-margin-medium-top uk-text-center">
-        <button type="{{ type }}" class="uk-button uk-button-primary uk-button-large uk-border-rounded cm-background-persian-green uk-light uk-width-1-1 uk-width-auto@s" {{ block('button_attributes') }}>
+        {# 3) Pas de class="" en dur #}
+        <button type="{{ type }}" {{ block('button_attributes') }}>
             {%- if translation_domain is same as(false) -%}
                 {%- if label_html is same as(false) -%}
                     {{- label|default('Valider') -}}
@@ -767,6 +781,7 @@
         </button>
     </div>
 {%- endblock submit_widget -%}
+
 
 {%- block reset_widget -%}
     {%- set type = type|default('reset') -%}
