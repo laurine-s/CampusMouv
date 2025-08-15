@@ -1,0 +1,26 @@
+name: Build & Deploy (Symfony)
+on:
+  push:
+    branches: ["master"]  # change si ta branche est "master"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+            # Pack du repo + captain-definition
+      - uses: a7ul/tar-action@v1.1.0
+        with:
+          command: c
+          cwd: "./"
+          files: |
+            .
+            captain-definition
+          outPath: deploy.tar
+
+      # Déploiement vers CapRover
+      - uses: caprover/deploy-from-github@v1.0.1
+        with:
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app:    ${{ secrets.APP_NAME }}
+          token:  ${{ secrets.APP_TOKEN }}
