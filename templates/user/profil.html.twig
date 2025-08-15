@@ -6,16 +6,28 @@
     <div class="uk-width-1-2@m uk-margin-auto uk-margin-top">
         <h1 class="uk-heading-divider uk-text-center">Mon profil</h1>
 
-        {{ form_start(form, { attr: { class: 'uk-form-stacked' } }) }}
-
-        {{ form_errors(form) }}
+        {{ form_start(form, {
+            method: 'post',
+            attr: {
+                class: 'uk-form-stacked',
+                enctype: 'multipart/form-data'
+            }
+        }) }}
 
         {% if app.user.photo %}
-            <img src="{{ app.user.photo }}" alt="Photo de profil" style="width:150px; height:150px; object-fit:cover; border-radius:50%;">
+            <img src="{{ app.user.photo }}" alt="Photo de profil"
+                 style="width:150px; height:150px; object-fit:cover; border-radius:50%;">
         {% else %}
-            <img src="/images/default-avatar.png" alt="Avatar par défaut" style="width:150px; height:150px; border-radius:50%;">
+            <img src="/images/default-avatar.png" alt="Avatar par défaut"
+                 style="width:150px; height:150px; border-radius:50%;">
         {% endif %}
         {{ form_row(form.photo) }}
+        {% if form_errors(form.photo) %}
+            <div class="uk-alert-danger" uk-alert>
+                {{ form_errors(form.photo) }}
+            </div>
+        {% endif %}
+
         {{ form_row(form.prenom) }}
         {{ form_row(form.nom) }}
         <strong>{{ form_row(form.pseudo) }}</strong>
@@ -30,8 +42,9 @@
         </div>
 
         <div class="uk-margin uk-text-center">
-            <a class="uk-button uk-button-primary uk-width-1-1" href="{{ path('password')}}">Modifier le mot de passe</a>
+            <a class="uk-button uk-button-primary uk-width-1-1" href="{{ path('password') }}">Modifier le mot de
+                passe</a>
         </div>
-        {{ form_end(form)}}
+        {{ form_end(form) }}
     </div>
 {% endblock %}

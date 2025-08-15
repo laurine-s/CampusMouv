@@ -49,9 +49,9 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
 
-        # Routes protégées
-        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
-        - { path: ^/profil, roles: ROLE_USER }
+#        # Routes protégées
+#        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+#        - { path: ^/profil, roles: ROLE_USER }
 
 
 when@test:
