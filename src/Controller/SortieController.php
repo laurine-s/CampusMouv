@@ -8,6 +8,7 @@ use App\Enum\Role;
 use App\Form\SortieType;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,24 +80,27 @@ final class SortieController extends AbstractController
 
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository): Response
+    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository): Response
     {
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
         $allLieux = $lieuRepository->findAll();
+        $user = $userRepository->find($this->getUser());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('create')->isClicked()) {
                 $sortie->addParticipant($this->getUser());
                 $sortie->setOrganisateur($this->getUser());
+                $user->setRoles(['ROLE_ORGANISATEUR']);
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
+                $em->persist($user);
                 dump($sortie);
                 $em->flush();
 
                 // Message temporaire success
-                $this->addFlash('success', 'Message envoyé !');
+                $this->addFlash('success', 'Sortie créée !');
 
                 //Rediriger
                 return $this->redirectToRoute('sorties_home');

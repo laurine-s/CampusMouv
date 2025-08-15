@@ -50,18 +50,18 @@
 
     {#            -----------separation----------- -#}
     {#            <div class="uk-flex uk-flex-row uk-flex-center"> #}
-{#                    {{ form_row(form.create) }} #}
-{#                    {{ form_row(form.cancel) }} #}
+    {#                    {{ form_row(form.create) }} #}
+    {#                    {{ form_row(form.cancel) }} #}
     {#            </div> #}
 
 
-    {#            {{ form_end(form) }} #}
+    {#                {{ form_end(form) }} #}
 
     {#        </div> #}
     {#    </section> #}
 
     <!-- Form -->
-    <form class="uk-form-stacked">
+    <section>
         {{ form_start(form) }}
         <!-- Section 1: Informations principales -->
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
@@ -107,8 +107,10 @@
                     <span uk-icon="icon: camera; ratio: 2" class="uk-text-muted"></span>
                     <p class="uk-text-lead uk-margin-remove-bottom">Cliquez pour ajouter une photo</p>
                     <p class="uk-text-meta">Formats acceptés: JPG, PNG, GIF (max 5MB)</p>
+
                     <input type="file" id="photo" name="photo" accept="image/*"
                            class="uk-position-cover uk-margin-remove" style="opacity: 0; cursor: pointer;">
+                    {{ form_row(form.photo) }}
                 </div>
             </div>
         </div>
@@ -187,8 +189,8 @@
             </div>
         </div>
 
-    </form>
-    </div>
+        {{ form_end(form) }}
+
     </section>
 
 

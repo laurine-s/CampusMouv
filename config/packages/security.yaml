@@ -50,7 +50,8 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }
 
         # Routes protégées
-        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+#        - { path: ^/sorties/create, roles: ROLE_ORGANISATEUR }
+        - { path: ^/sorties/create, roles: ROLE_USER }
         - { path: ^/profil, roles: ROLE_USER }
 
 
