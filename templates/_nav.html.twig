@@ -56,6 +56,9 @@
                                   <li><a href="{{ path('profil') }}"><span data-uk-icon="icon: user"></span>Mon profil</a></li>
                                  <li><a href="#"><span data-uk-icon="icon: star"></span>Mes sorties</a></li>
                                   <li><a href="#"><span data-uk-icon="icon: heart"></span>Mes favoris</a></li>
+                                   {% if is_granted('ROLE_ADMIN') %}
+                                       <li><a href="{{ path('admin_dashboard') }}"><span data-uk-icon="icon: settings"></span>Administration</a></li>
+                                   {% endif %}
                                   <li class="uk-nav-divider"></li>
                                   <li><a href="{{ path('app_logout')}}"><span data-uk-icon="icon: sign-out"></span>Se déconnecter</a></li>
                               </ul>

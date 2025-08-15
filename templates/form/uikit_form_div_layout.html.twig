@@ -936,7 +936,7 @@
     {% set form_method = "POST" %}
 {%- endif -%}
 <div class="uk-flex uk-flex-center uk-margin-large-top">
-    <div class="uk-width-1-1 uk-width-2-3@s uk-width-1-2@m uk-width-2-5@l">
+    <div class="uk-width-1-1 uk-width-5-6@s uk-width-3-4@m uk-width-4-5@l">
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-box-shadow-medium">
             <form{% if name != '' %} name="{{ name }}"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %} class="uk-form-stacked"{{ block('attributes') }}{% if multipart %} enctype="multipart/form-data"{% endif %}>
                 {%- if form_method != method -%}

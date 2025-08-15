@@ -20,7 +20,7 @@ final class UserController extends AbstractController
      * @throws ApiError
      */
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
-    //#[IsGranted(Role::PARTICIPANT->value)]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function profil(Request $request, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
 
