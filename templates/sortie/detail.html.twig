@@ -3,6 +3,16 @@
 {% block title %}Détails de la sortie{% endblock %}
 
 {% block main %}
+    <!-- Affichage messages flash -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="uk-alert-{{ label }} uk-margin" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+
+    {% endfor %}
     <!-- Section titre -->
     <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
         <div class="uk-container uk-container-large uk-text-center">
@@ -61,12 +71,35 @@
                         </li>
                     </ul>
 
+
                     <!-- Bouton participation -->
                     <div class="uk-margin-top">
+                        {% if sortie.nbInscrits >= sortie.nbInscriptionMax and not (app.user and sortie.participants.contains(app.user)) %}
+
+                            <!-- Complet sauf si déjà inscrit -->
                             <button class="uk-button cm-background-burnt-sienna uk-light" disabled>Complet</button>
-                            <a href="{{ path('sorties_detail', {id: sortie.id}) }}" class="uk-button cm-background-persian-green uk-light">
-                                <span uk-icon="check"></span> Je participe
+                        {% elseif app.user and sortie.participants.contains(app.user) %}
+                            <!-- Bouton se désinscrire -->
+                            <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('desinscription' ~ sortie.id) }}">
+                                <button type="submit" class="uk-button uk-button-danger uk-light">
+                                    <span uk-icon="close"></span> Se désinscrire
+                                </button>
+                            </form>
+                        {% elseif app.user %}
+                            <!-- Bouton s'inscrire -->
+                            <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('inscription' ~ sortie.id) }}">
+                                <button type="submit" class="uk-button cm-background-persian-green uk-light">
+                                    <span uk-icon="check"></span> Je m'inscris
+                                </button>
+                            </form>
+                        {% else %}
+                            <!-- Pas connecté -->
+                            <a href="{{ path('app_login') }}" class="uk-button cm-background-persian-green uk-light">
+                                Connectez-vous pour vous inscrire
                             </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
