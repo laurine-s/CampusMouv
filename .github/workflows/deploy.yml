@@ -1,14 +1,21 @@
 name: Build & Deploy (Symfony)
 on:
   push:
-    branches: ["jo"]  # change si ta branche est "master"
+    branches: ['**']      # déclenche sur tout push
+  workflow_dispatch:       # permet de lancer à la main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-            # Pack du repo + captain-definition
+      - name: Front build (optional)
+        if: hashFiles('package.json') != ''
+        run: |
+          npm ci
+          npm run build
+
       - uses: a7ul/tar-action@v1.1.0
         with:
           command: c
@@ -18,7 +25,6 @@ jobs:
             captain-definition
           outPath: deploy.tar
 
-      # Déploiement vers CapRover
       - uses: caprover/deploy-from-github@v1.0.1
         with:
           server: ${{ secrets.CAPROVER_SERVER }}
