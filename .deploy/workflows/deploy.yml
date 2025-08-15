@@ -1,7 +1,7 @@
 name: Build & Deploy (Symfony)
 on:
   push:
-    branches: ["master"]  # change si ta branche est "master"
+    branches: ["jo"]  # change si ta branche est "master"
 jobs:
   deploy:
     runs-on: ubuntu-latest
