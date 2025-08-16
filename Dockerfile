@@ -13,16 +13,23 @@ RUN docker-php-ext-configure gd --with-jpeg --with-webp \
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# IMPORTANT: Définir l'environnement AVANT de copier le code
+ENV APP_ENV=prod
+ENV APP_DEBUG=false
+
 # Code app
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-# Dépendances PHP + cache warmup (sans faire échouer le build si pas de DB)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
- && php bin/console cache:clear --env=prod || true \
- && php bin/console cache:warmup --env=prod || true
+# Dépendances PHP SANS les scripts automatiques pour éviter les conflits
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
-RUN composer run-script post-install-cmd
+# Cache management avec les bonnes variables d'environnement
+RUN php bin/console cache:clear --env=prod --no-debug \
+ && php bin/console cache:warmup --env=prod --no-debug
+
+# Assets installation (remplace une partie des post-install-cmd)
+RUN php bin/console assets:install public --env=prod --no-debug || true
 
 # Config Nginx + Supervisor
 COPY .deploy/nginx.conf /etc/nginx/nginx.conf
