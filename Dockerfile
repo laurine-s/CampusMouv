@@ -22,6 +22,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
  && php bin/console cache:clear --env=prod || true \
  && php bin/console cache:warmup --env=prod || true
 
+RUN composer run-script post-install-cmd
+
 # Config Nginx + Supervisor
 COPY .deploy/nginx.conf /etc/nginx/nginx.conf
 COPY .deploy/symfony.conf /etc/nginx/conf.d/default.conf
