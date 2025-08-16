@@ -27,9 +27,10 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Dépendances PHP + cache warmup (sans faire échouer le build si pas de DB)
+ENV APP_ENV=prod APP_DEBUG=0 COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
- && php bin/console cache:clear --env=prod || true \
- && php bin/console cache:warmup --env=prod || true
+ && php bin/console cache:clear --env=prod  \
+ && php bin/console cache:warmup --env=prod 
 
 # Config Nginx + Supervisor
 COPY .deploy/nginx.conf /etc/nginx/nginx.conf
