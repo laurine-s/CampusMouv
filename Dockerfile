@@ -30,7 +30,7 @@ COPY . /var/www/html
 ENV APP_ENV=prod APP_DEBUG=0 COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
  && php bin/console cache:clear --env=prod  \
- && php bin/console cache:warmup --env=prod 
+ && php bin/console cache:warmup --env=prod
 
 # Config Nginx + Supervisor
 COPY .deploy/nginx.conf /etc/nginx/nginx.conf
@@ -51,6 +51,7 @@ RUN sed -ri 's/\blisten\s+80\b/listen 8080/g' /etc/nginx/conf.d/default.conf || 
 # --- Script de démarrage : prépare /run/* puis lance supervisord ---
 COPY .deploy/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
+CMD ["/usr/local/bin/start.sh"]
 
 # Permissions app (cache/logs/assets)
 RUN chown -R webapp:web /var/www/html/var /var/www/html/public || true
