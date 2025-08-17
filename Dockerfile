@@ -24,11 +24,10 @@ COPY . /var/www/html
 # Dépendances PHP SANS les scripts automatiques pour éviter les conflits
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
-# Permissions AVANT le cache (très important)
-RUN chown -R www-data:www-data /var/www/html/var/ \
- && chmod -R 775 /var/www/html/var/ \
- && mkdir -p /var/www/html/var/cache/prod/asset_mapper \
- && chown -R www-data:www-data /var/www/html/var/cache/prod/asset_mapper
+# Créer les dossiers et permissions AVANT le cache (très important)
+RUN mkdir -p /var/www/html/var/log /var/www/html/var/cache/prod/asset_mapper \
+ && chown -R www-data:www-data /var/www/html/var/ \
+ && chmod -R 775 /var/www/html/var/
 
 # Cache management avec les bonnes variables d'environnement
 RUN php bin/console cache:clear --env=prod --no-debug \
