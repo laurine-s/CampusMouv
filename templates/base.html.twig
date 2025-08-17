@@ -1,47 +1,77 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {#  UIKIT CSS #}
-        <link rel="stylesheet" type="text/css" href="{{ asset('styles/uikit/css/uikit.css') }}">
-        {#  ./UIKIT CSS #}
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CampusMouv{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {% block javascripts %}
-            {#  UIKIT CSS #}
-            <script src="{{ asset('styles/uikit/js/uikit.js') }}"></script>
-            <script src="{{ asset('styles/uikit/js/uikit-icons.js') }}"></script>
-            {#  ./UIKIT CSS #}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
+    {# UIKit CSS #}
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles/uikit/css/uikit.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles/app.css') }}">
 
-    {#  Pour chaque type de message temporaire (ex: [success, [messages]] #}
-    {% for label, messages in app.flashes %}
-        {#  Pour chaque message j'affiche une alert. ex: [Virement effectué, Connecté] #}
-        {% for message in messages %}
-            <div class="uk-alert-{{ label }}" uk-alert>
-                <a href class="uk-alert-close" uk-close></a>
-                <p>{{ message }}</p>
-            </div>
-        {% endfor %}
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+{# Messages flash #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="uk-alert-{{ label }}" uk-alert>
+            <a href class="uk-alert-close" uk-close></a>
+            <p>{{ message }}</p>
+        </div>
     {% endfor %}
+{% endfor %}
 
-        <header>
-            {% include '_nav.html.twig' %}
-        </header>
+<header>
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <a class="uk-navbar-item uk-logo" href="{{ path('main_home') }}">Campus Mouv'</a>
+        </div>
+        <div class="uk-navbar-center uk-visible@m">
+            <ul class="uk-navbar-nav">
+                <li><a href="#">Qui sommes nous ?</a></li>
+                <li><a href="{{ path('sorties_home') }}">Les événements</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li>
+                    {% if not app.user %}
+                        <a href="{{ path('app_login') }}" data-uk-icon="icon:user">Connexion</a>
+                    {% else %}
+                        <a href="#" data-uk-icon="icon:user">{{ app.user.prenom }}</a>
+                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                <li><a href="{{ path('profil') }}">Mon profil</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li><a href="{{ path('admin_dashboard') }}">Administration</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
 
-        <main>
-            {% block main %}{% endblock %}
-        </main>
+<main class="uk-container uk-margin-top">
+    {% block main %}{% endblock %}
+</main>
 
-        <footer class="uk-section-secondary">
-            {% include '_footer.html.twig' %}
-        </footer>
+<footer class="uk-section uk-section-secondary">
+    <div class="uk-container">
+        <p>&copy; 2025 Campus Mouv'</p>
+    </div>
+</footer>
 
-    </body>
+{# UIKit JS #}
+<script src="{{ asset('styles/uikit/js/uikit.js') }}"></script>
+<script src="{{ asset('styles/uikit/js/uikit-icons.js') }}"></script>
+<script src="{{ asset('app.js') }}"></script>
+
+{% block javascripts %}{% endblock %}
+</body>
 </html>
