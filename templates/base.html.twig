@@ -5,9 +5,13 @@
     <title>{% block title %}CampusMouv{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {# UIKit CSS #}
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles/uikit/css/uikit.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles/app.css') }}">
+    {# UIKit CSS via CDN - SOLUTION STABLE #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+
+    {# Votre CSS personnalisé (si nécessaire) #}
+    <style>
+        /* Vos styles personnalisés ici */
+    </style>
 
     {% block stylesheets %}{% endblock %}
 </head>
@@ -67,10 +71,9 @@
     </div>
 </footer>
 
-{# UIKit JS #}
-<script src="{{ asset('styles/uikit/js/uikit.js') }}"></script>
-<script src="{{ asset('styles/uikit/js/uikit-icons.js') }}"></script>
-<script src="{{ asset('app.js') }}"></script>
+{# UIKit JS via CDN - SOLUTION STABLE #}
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 
 {% block javascripts %}{% endblock %}
 </body>
