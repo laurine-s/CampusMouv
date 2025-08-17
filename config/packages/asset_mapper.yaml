@@ -2,10 +2,10 @@ framework:
   asset_mapper:
     paths:
       - assets/
-    missing_import_mode: ignore  # Plus permissif pour éviter les erreurs
+    missing_import_mode: strict  # Plus permissif pour éviter les erreurs
 
 when@prod:
   framework:
     asset_mapper:
-      missing_import_mode: ignore
+      missing_import_mode: warn
       public_prefix: '/assets'
