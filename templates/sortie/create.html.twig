@@ -13,56 +13,12 @@
         </div>
     </section>
 
-    {#    <section class=""> #}
-    {#        <div class=""> #}
-    {#            {{ form_start(form) }} #}
-    {#            <div class="uk-flex uk-flex-center"> #}
-    {#                {{ form_row(form.nom) }} #}
-    {#            </div> #}
-    {#            -----------separation----------- -#}
-    {#            <div class="uk-flex uk-flex-row uk-flex-between"> #}
-    {#                {{ form_row(form.dateHeureDebut) }} #}
-    {#                {{ form_row(form.dateLimiteInscription) }} #}
-    {#                {{ form_row(form.duree) }} #}
-    {#            </div> #}
-    {#            -----------separation----------- -#}
-    {#            <div class="uk-flex uk-flex-row uk-flex-between"><img class="cm-photo-create-sortie" #}
-    {#                                                                  src="{{ asset('images/add-image-photo-icon.svg') }}" #}
-    {#                                                                  alt="">{{ form_row(form.photo) }}</div> #}
-    {#            -----------separation----------- -#}
-    {#            <div class="uk-flex uk-flex-row uk-flex-between"> #}
-    {#                    {{ form_row(form.nbInscriptionMin) }} #}
-    {#                    {{ form_row(form.nbInscriptionMax) }} #}
-    {#                    {{ form_row(form.interets) }} #}
-    {#            </div> #}
-    {#            -----------separation----------- -#}
-    {#            <div class=""> #}
-    {#                {{ form_row(form.infos) }} #}
-    {#            </div> #}
-    {#            -----------separation----------- -#}
-    {#            <div class="uk-flex uk-flex-row uk-flex-between" data-controller="lieu"> #}
-    {#                    {{ form_row(form.campus) }} #}
-    {#                    {{ form_row(form.lieu) }} #}
-    {#                    {{ form_row(form.adresse) }} #}
-    {#                    {{ form_row(form.ville) }} #}
-    {#                    {{ form_row(form.codePostal) }} #}
-    {#            </div> #}
-
-    {#            -----------separation----------- -#}
-    {#            <div class="uk-flex uk-flex-row uk-flex-center"> #}
-    {#                    {{ form_row(form.create) }} #}
-    {#                    {{ form_row(form.cancel) }} #}
-    {#            </div> #}
-
-
-    {#                {{ form_end(form) }} #}
-
-    {#        </div> #}
-    {#    </section> #}
-
     <!-- Form -->
     <section>
-        {{ form_start(form) }}
+        {{ form_start(form, {
+            method: 'post',
+            attr: {enctype: 'multipart/form-data'}
+        }) }}
         <!-- Section 1: Informations principales -->
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
             <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
@@ -106,10 +62,8 @@
                 <div class="uk-placeholder uk-text-center cm-photo-upload uk-border-rounded">
                     <span uk-icon="icon: camera; ratio: 2" class="uk-text-muted"></span>
                     <p class="uk-text-lead uk-margin-remove-bottom">Cliquez pour ajouter une photo</p>
-                    <p class="uk-text-meta">Formats acceptés: JPG, PNG, GIF (max 5MB)</p>
+                    <p class="uk-text-meta">Formats acceptés: JPG et PNG (max 2MB)</p>
 
-                    <input type="file" id="photo" name="photo" accept="image/*"
-                           class="uk-position-cover uk-margin-remove" style="opacity: 0; cursor: pointer;">
                     {{ form_row(form.photo) }}
                 </div>
             </div>
@@ -192,9 +146,5 @@
         {{ form_end(form) }}
 
     </section>
-
-
-
-
 
 {% endblock %}
