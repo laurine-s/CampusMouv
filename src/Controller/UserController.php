@@ -31,40 +31,21 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted()) {
             $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
 
-             // Vérification erreur PHP avant validation Symfony pour la taille des fichiers
-            if ($photoFile && !$photoFile->isValid()) {
-                if ($photoFile->getError() === UPLOAD_ERR_INI_SIZE) {
-                    $this->addFlash('danger', 'Votre photo doit faire moins de 2M.');
-                } else {
-                    $this->addFlash('danger', 'Une erreur est survenue lors du téléchargement du fichier.');
-                }
-                return $this->redirectToRoute('profil');
-            }
-
-
-
-            // Vérification manuelle du format
             if ($photoFile) {
-                $finfo = new \finfo(FILEINFO_MIME_TYPE);
-                $mimeType = $finfo->file($photoFile->getPathname());
-                $allowedMimeTypes = ['image/jpeg', 'image/png'];
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
 
-                if (!in_array($mimeType, $allowedMimeTypes, true)) {
-                    $this->addFlash('danger', 'Seuls les fichiers JPEG ou PNG sont autorisés.');
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
                     return $this->redirectToRoute('profil');
                 }
             }
 
             if ($form->isValid()) {
 
-                if ($photoFile) {
-                    // On upload la photo sur Cloudinary
-                    $result = $cloudinaryService->upload($photoFile->getPathname());
-
-                    // on obtient l'URL publique est accessible via $result['secure_url']
-                    $user->setPhoto($result['secure_url']);
-                }
+                // on transmet l'url au user
+                $user->setPhoto($uploadPhoto['url']);
 
                 $em->persist($user);
                 $em->flush();
@@ -76,7 +57,6 @@ final class UserController extends AbstractController
             foreach ($form->getErrors(true) as $error) {
                 $this->addFlash('danger ', $error->getMessage());
             }
-
         }
 
         return $this->render('user/profil.html.twig', [
