@@ -1,0 +1,75 @@
+/* CSS HEX */
+/*--charcoal: #264653ff;*/
+/*--persian-green: #2a9d8fff;*/
+/*--saffron: #e9c46aff;*/
+/*--sandy-brown: #f4a261ff;*/
+/*--burnt-sienna: #e76f51ff;*/
+
+
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main {
+    flex: 1;
+    padding: 5px;
+}
+footer {
+    background-color: #2a9d8fff;
+    height: 2em;
+    text-align: center;
+}
+
+.cm-footer{
+    min-width: 100vw;
+}
+
+.img-allsorties{
+    max-width: 600px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.cm-text-charcoal{
+color: rgba(38, 70, 83, 1);
+}
+.cm-background-charcoal{
+    background-color: rgba(38, 70, 83, 1);
+}
+
+.cm-text-persian-green{
+    color: rgba(42, 157, 143, 1);
+}
+.cm-background-persian-green{
+    background-color: rgba(42, 157, 143, 1);
+}
+
+.cm-text-saffron{
+    color: rgba(233, 196, 106, 1);
+}
+.cm-background-saffron{
+    background-color: rgba(233, 196, 106, 1);
+}
+
+.cm-text-sandy-brown{
+    color: rgba(244, 162, 97, 1);
+}
+.cm-background-sandy-brown{
+    background-color: rgba(244, 162, 97, 1);
+}
+
+.cm-text-burnt-sienna{
+    color: rgba(231, 111, 81, 1);
+}
+.cm-background-burnt-sienna{
+    background-color: rgba(231, 111, 81, 1);
+}
+
+
+
+
+
+
