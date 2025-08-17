@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Controller;
+
 use App\Enum\Role;
 use App\Form\ChangePasswordType;
 use App\Form\UserProfilType;
+use App\Service\CloudinaryService;
+use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,35 +17,58 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
+    /**
+     * @throws ApiError
+     */
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
     #[IsGranted(Role::PARTICIPANT->value)]
-    public function profil(Request $request, EntityManagerInterface $em): Response
+    public function profil(Request $request, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
+
         $user = $this->getUser();
         $form = $this->createForm(UserProfilType::class, $user);
-
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
 
+            if ($photoFile) {
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
 
-            $em->persist($user);
-            $em->flush();
-            $this->addFlash('success', "Profil mis à jour avec succès");
-            return $this->redirectToRoute('profil');
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('profil');
+                }
+            }
+
+            if ($form->isValid()) {
+
+                // on transmet l'url au user
+                $user->setPhoto($uploadPhoto['url']);
+
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash('success', "Profil mis à jour avec succès");
+                return $this->redirectToRoute('profil');
+            }
+
+            foreach ($form->getErrors(true) as $error) {
+                $this->addFlash('danger ', $error->getMessage());
+            }
         }
-
 
         return $this->render('user/profil.html.twig', [
             // 'user' => $user,
             'form' => $form->createView(),
         ]);
 
-
     }
 
     #[Route('/profil/password', name: 'password')]
-    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response {
+    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
+    {
         // On récupère l'utilisateur connecté
         $user = $this->getUser();
 

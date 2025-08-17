@@ -16,7 +16,10 @@
 
     <!-- Form -->
     <section>
-        {{ form_start(form) }}
+        {{ form_start(form, {
+            method: 'post',
+            attr: {enctype: 'multipart/form-data'}
+        }) }}
         <!-- Section 1: Informations principales -->
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
             <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
@@ -60,10 +63,8 @@
                 <div class="uk-placeholder uk-text-center cm-photo-upload uk-border-rounded">
                     <span uk-icon="icon: camera; ratio: 2" class="uk-text-muted"></span>
                     <p class="uk-text-lead uk-margin-remove-bottom">Cliquez pour ajouter une photo</p>
-                    <p class="uk-text-meta">Formats acceptés: JPG, PNG, GIF (max 5MB)</p>
+                    <p class="uk-text-meta">Formats acceptés: JPG et PNG (max 2MB)</p>
 
-                    <input type="file" id="photo" name="photo" accept="image/*"
-                           class="uk-position-cover uk-margin-remove" style="opacity: 0; cursor: pointer;">
                     {{ form_row(form.photo) }}
                 </div>
             </div>
@@ -146,9 +147,5 @@
         {{ form_end(form) }}
 
     </section>
-
-
-
-
 
 {% endblock %}

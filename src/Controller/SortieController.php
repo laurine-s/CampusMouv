@@ -9,6 +9,8 @@ use App\Form\SortieType;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
+use App\Service\CloudinaryService;
+use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,8 +81,11 @@ final class SortieController extends AbstractController
     }
 
 
+    /**
+     * @throws ApiError
+     */
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository): Response
+    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService): Response
     {
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
@@ -88,15 +93,32 @@ final class SortieController extends AbstractController
         $user = $userRepository->find($this->getUser());
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('create')->isClicked()) {
+
+        if ($form->isSubmitted()) {
+            $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
+
+            if ($photoFile) {
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('sorties_create');
+                }
+            }
+
+            if ($form->isValid() && $form->get('create')->isClicked()) {
+                // on transmet l'url à la sortie
+                dump($uploadPhoto);
+                $sortie->setPhoto($uploadPhoto['url']);
+
                 $sortie->addParticipant($this->getUser());
                 $sortie->setOrganisateur($this->getUser());
                 $user->setRoles(['ROLE_ORGANISATEUR']);
+
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
                 $em->persist($user);
-                dump($sortie);
                 $em->flush();
 
                 // Message temporaire success
@@ -104,8 +126,8 @@ final class SortieController extends AbstractController
 
                 //Rediriger
                 return $this->redirectToRoute('sorties_home');
-            }
 
+            }
         }
 
         return $this->render('sortie/create.html.twig', [
