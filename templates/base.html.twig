@@ -87,6 +87,7 @@
     {#  UIKIT CSS #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
     {#  ./UIKIT CSS #}
+    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
     {% block stylesheets %}
     {% endblock %}
 
@@ -119,7 +120,7 @@
     {% block main %}{% endblock %}
 </main>
 
-<footer class="uk-section-secondary">
+<footer >
     {% include '_footer.html.twig' %}
 </footer>
 
