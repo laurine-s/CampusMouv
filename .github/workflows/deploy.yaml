@@ -1,7 +1,7 @@
 name: Build & Deploy (Symfony)
 on:
   push:
-    branches: ['**']      # déclenche sur tout push
+    branches: [jo]      # déclenche sur tout push
   workflow_dispatch:       # permet de lancer à la main depuis Actions
 
 jobs:
