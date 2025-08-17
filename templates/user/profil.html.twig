@@ -18,7 +18,7 @@
             <img src="{{ app.user.photo }}" alt="Photo de profil"
                  style="width:150px; height:150px; object-fit:cover; border-radius:50%;">
         {% else %}
-            <img src="/images/default-avatar.png" alt="Avatar par défaut"
+            <img src="{{ asset('images/default-avatar.jpg') }}" alt="Avatar par défaut"
                  style="width:150px; height:150px; border-radius:50%;">
         {% endif %}
 
