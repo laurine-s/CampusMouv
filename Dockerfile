@@ -44,28 +44,5 @@ COPY .deploy/supervisord.conf /etc/supervisord.conf
 # Permissions finales
 RUN chown -R www-data:www-data /var/www/html/var/ /var/www/html/public/
 
-# Étapes d'optimisation à ajouter dans votre Dockerfile
-
-# Créer le fichier CSS manquant
-RUN touch /var/www/html/assets/styles/app.css
-
-# Compilation des assets AVANT le cache clear
-RUN php bin/console asset-map:compile --env=prod || true
-
-# Création des répertoires nécessaires avec permissions
-RUN mkdir -p /var/www/html/var/log \
-             /var/www/html/var/cache/prod \
-             /var/www/html/var/sessions/prod \
-             /var/www/html/public/assets \
-    && chown -R www-data:www-data /var/www/html/var/ /var/www/html/public/ \
-    && chmod -R 775 /var/www/html/var/ /var/www/html/public/
-
-# Cache et warmup avec gestion d'erreur
-RUN php bin/console cache:clear --env=prod --no-debug || true \
-    && php bin/console cache:warmup --env=prod --no-debug || true
-
-# Assets install avec gestion d'erreur
-RUN php bin/console assets:install public --env=prod --no-debug || true
-
 EXPOSE 80
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
