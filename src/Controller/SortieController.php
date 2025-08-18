@@ -48,7 +48,8 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function inscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+    public function inscription(
+        int $id, SortieRepository $sortieRepository,EntityManagerInterface $em, SortieInscriptionService $policy): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -62,16 +63,17 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sorties_home');
         }
 
-        // Le service renvoi [$ok, $conditions]
+        // [$ok, $conditions] = (si deja_inscrit, pas_ouverte, delais_depasse, complet, ok)
         [$ok, $conditions] = $policy->inscription($sortie, $user);
         if (!$ok) {
             $this->addFlash('warning', $this->mapReasonToMessage($conditions));
             return $this->redirectToRoute('sorties_detail', ['id' => $id]);
         }
 
-        // OK : inscrit
+        // OK : inscrire
         $sortie->addParticipant($user);
-        // garder nbInscrits synchro :
+
+       //nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
 
         $em->flush();
@@ -95,15 +97,18 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sorties_home');
         }
 
+        // [$ok, $conditions] = (non_inscrit, ok)
         [$ok, $conditions] = $policy->desinscription($sortie, $user);
         if (!$ok) {
             $this->addFlash('warning', $this->mapReasonToMessage($conditions));
             return $this->redirectToRoute('sorties_detail', ['id' => $id]);
         }
 
+        // OK désinscrire
         $sortie->removeParticipant($user);
-        // (optionnel) garder nbInscrits synchro :
-         $sortie->setNbInscrits($sortie->getParticipants()->count());
+
+        // garder nbInscrits synchro
+        $sortie->setNbInscrits($sortie->getParticipants()->count());
 
         $em->flush();
 
@@ -114,14 +119,15 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit'          => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte'           => 'Cette sortie n’est pas ouverte aux inscriptions.',
-            'delais_depasse'        => 'La date limite d’inscription est dépassée.',
-            'pas_inscrit'           => 'Vous n’êtes pas inscrit à cette sortie.',
-            'complet'               => 'Cette sortie est complète.' ,
-            default                 => 'Action non autorisée.',
+            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'delais_depasse' => 'La date limite d’inscription est dépassée.',
+            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
+            'complet'        => 'Cette sortie est complète.',
+            default          => 'Action non autorisée.',
         };
     }
+
 
     /**
      * @throws ApiError
