@@ -68,7 +68,15 @@ color: rgba(38, 70, 83, 1);
     background-color: rgba(231, 111, 81, 1);
 }
 
+.cm-interets {
+    display: flex;
+    flex-wrap: wrap;       /* permet de passer à la ligne suivante */
+    gap: 10px;             /* espace entre les cases */
+}
 
+.cm-interets .form-check {
+    flex: 0 0 auto;
+}
 
 
 

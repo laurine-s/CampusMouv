@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Enum\Role;
 use App\Form\ChangePasswordType;
+use App\Form\UserProfilDetailType;
 use App\Form\UserProfilType;
 use App\Service\CloudinaryService;
+use App\Service\UserService;
 use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,8 +47,10 @@ final class UserController extends AbstractController
 
             if ($form->isValid()) {
 
-                // on transmet l'url au user
-                $user->setPhoto($uploadPhoto['url']);
+                if ($photoFile) {
+                    // on transmet l'url au user
+                    $user->setPhoto($uploadPhoto['url']);
+                }
 
                 $em->persist($user);
                 $em->flush();
@@ -101,16 +105,14 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profil/{prenomNom}/detail', name: 'profil_detail', methods: ['GET'])]
+    #[Route('/profil/{slug}/detail', name: 'profil_detail', methods: ['GET'])]
     //#[IsGranted(Role::PARTICIPANT->value)]
-    public function detail(string $prenomNom, int $id): Response
+    public function detail(Request $request, User $user): Response
     {
-
-        $user = $this->getUser();
-        $form = $this->createForm(UserProfilType::class, $user);
+        $form = $this->createForm(UserProfilDetailType::class, $user);
 
         return $this->render('user/detail.html.twig', [
-            // 'user' => $user,
+            'user'=> $user,
             'form' => $form->createView(),
         ]);
 
