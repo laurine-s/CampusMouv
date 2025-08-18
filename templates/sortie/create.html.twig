@@ -3,216 +3,149 @@
 {% block title %}Sorties disponibles{% endblock %}
 
 {% block main %}
-
-    <section class="uk-section uk-section-default uk-flex uk-flex-center">
-        <div class="uk-container">
-            <h1>Création d'une activité</h1>
+    <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
+        <div class="uk-container uk-container-large">
+            <div class="uk-text-center">
+                <h1 class="uk-heading-large uk-margin-remove-bottom">Création d'une activité</h1>
+                <p class="uk-text-large uk-margin-small-top cm-text-saffron">Découvrez toutes les activités
+                    proposées</p>
+            </div>
         </div>
     </section>
 
-    <section class="uk-section-large ">
-        <div class="uk-container-large">
-            {{ form_start(form) }}
-            <div>
-                {{ form_row(form.nom) }}
-                {{ form_row(form.campus) }}
-                {{ form_row(form.dateHeureDebut) }}
-                {{ form_row(form.dateLimiteInscription) }}
-            </div>
-            -----------separation------------
-            <div class="photo">{{ form_row(form.photo) }}</div>
-            -----------separation------------
-            <div class="">
-                {{ form_row(form.nbInscriptionMin) }}
-                {{ form_row(form.nbInscriptionMax) }}
-            </div>
-            -----------separation------------
-            <div class="">
-                {{ form_row(form.duree) }}
 
+    <!-- Form -->
+    <section>
+        {{ form_start(form, {
+            method: 'post',
+            attr: {enctype: 'multipart/form-data'}
+        }) }}
+        <!-- Section 1: Informations principales -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Informations principales
+            </h3>
+
+            <div class="uk-margin">
+                {{ form_row(form.nom) }}
             </div>
-            -----------separation------------
-            <div class="">
+        </div>
+
+        <!-- Section 2: Planning -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Planning et timing
+            </h3>
+
+            <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
+                <div>
+                    {{ form_row(form.dateHeureDebut) }}
+                </div>
+                <div>
+                    {{ form_row(form.dateLimiteInscription) }}
+                </div>
+                <div>
+                    {{ form_row(form.duree) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Photo -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Image de la sortie
+            </h3>
+
+            <div class="uk-margin">
+                <div class="uk-placeholder uk-text-center cm-photo-upload uk-border-rounded">
+                    <span uk-icon="icon: camera; ratio: 2" class="uk-text-muted"></span>
+                    <p class="uk-text-lead uk-margin-remove-bottom">Cliquez pour ajouter une photo</p>
+                    <p class="uk-text-meta">Formats acceptés: JPG et PNG (max 2MB)</p>
+
+                    {{ form_row(form.photo) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Participants -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Participants et centres d'intérets
+            </h3>
+
+
+            <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
+                <div>
+                    {{ form_row(form.nbInscriptionMin) }}
+                </div>
+                <div>
+                    {{ form_row(form.nbInscriptionMax) }}
+                </div>
+                <div>
+                    {{ form_row(form.interets) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Description -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Description de la sortie
+            </h3>
+
+            <div class="uk-margin">
                 {{ form_row(form.infos) }}
             </div>
-            -----------separation------------
-            <div class="">
-                {{ form_row(form.interets) }}
-            </div>
-            -----------separation------------
-            <div data-controller="lieu">
-                {{ form_row(form.lieu) }}
-                {{ form_row(form.adresse) }}
-                {{ form_row(form.ville) }}
-                {{ form_row(form.codePostal) }}
-            </div>
-
-            -----------separation------------
-            <div class="">
-                {{ form_row(form.create) }}
-                {{ form_row(form.cancel) }}
-            </div>
-
-
-            {{ form_end(form) }}
-
         </div>
+
+        <!-- Section 6: Localisation -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-bottom cm-form-section">
+            <h3 class="uk-card-title uk-flex uk-flex-middle uk-margin-medium-bottom">
+                <span class="cm-section-icon uk-margin-small-right"></span>
+                Localisation et lieu de rendez-vous
+            </h3>
+            <div data-controller="lieu">
+                <!-- Campus et Lieu -->
+                <div class="uk-grid-small uk-child-width-1-2@m uk-margin" uk-grid>
+                    <div>
+                        {{ form_row(form.campus) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.lieu) }}
+                    </div>
+                </div>
+
+                <!-- Adresse complète -->
+                <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
+                    <div>
+                        {{ form_row(form.adresse) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.ville) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.codePostal) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Boutons d'action -->
+        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-text-center">
+            <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
+                <div>{{ form_row(form.cancel) }}</div>
+                <div>{{ form_row(form.create) }}</div>
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+
     </section>
-
-
-
-{#    <!-- Header Section -->#}
-{#    <section class="uk-section cm-background-charcoal uk-light uk-preserve-color">#}
-{#        <div class="uk-container uk-container-large">#}
-{#            <div class="uk-text-center">#}
-{#                <h1 class="uk-heading-large uk-margin-remove-bottom">Créer une sortie</h1>#}
-{#                <p class="uk-text-large uk-margin-small-top cm-text-saffron">Organisez votre prochaine activité</p>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
-
-{#    <!-- Formulaire principal -->#}
-{#    <section class="uk-section uk-section-default">#}
-{#        <div class="uk-container uk-container-large">#}
-{#            <div class="uk-flex uk-flex-center">#}
-{#                <div class="uk-width-1-1 uk-width-5-6@s uk-width-4-5@m uk-width-5-6@l">#}
-
-{#                    {{ form_start(form) }}#}
-
-{#                    <!-- Card principale du formulaire -->#}
-{#                    <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-box-shadow-medium uk-margin-large-bottom">#}
-
-{#                        <!-- Titre de la section -->#}
-{#                        <div class="uk-margin-medium-bottom uk-text-center">#}
-{#                            <h2 class="uk-heading-small cm-text-charcoal uk-margin-remove-bottom">Informations de la sortie</h2>#}
-{#                            <hr class="uk-margin-small-top" style="border-color: rgba(42, 157, 143, 0.3);">#}
-{#                        </div>#}
-
-{#                        <!-- Grid en 3 colonnes sur desktop -->#}
-{#                        <div class="uk-grid-medium" uk-grid>#}
-
-{#                            <!-- Colonne 1 : Informations de base -->#}
-{#                            <div class="uk-width-1-1 uk-width-1-2@s uk-width-1-3@l">#}
-{#                                <h4 class="uk-heading-small cm-text-charcoal uk-margin-small-bottom uk-text-center">#}
-{#                                    <span uk-icon="icon: info; ratio: 1" class="cm-text-persian-green uk-margin-small-right"></span>#}
-{#                                    Détails#}
-{#                                </h4>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.nom) }}#}
-{#                                </div>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.campus) }}#}
-{#                                </div>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.interets) }}#}
-{#                                </div>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.duree) }}#}
-{#                                </div>#}
-{#                            </div>#}
-
-{#                            <!-- Colonne 2 : Dates et participants -->#}
-{#                            <div class="uk-width-1-1 uk-width-1-2@s uk-width-1-3@l">#}
-{#                                <h4 class="uk-heading-small cm-text-charcoal uk-margin-small-bottom uk-text-center">#}
-{#                                    <span uk-icon="icon: calendar; ratio: 1" class="cm-text-persian-green uk-margin-small-right"></span>#}
-{#                                    Planning#}
-{#                                </h4>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.dateHeureDebut) }}#}
-{#                                </div>#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.dateLimiteInscription) }}#}
-{#                                </div>#}
-
-{#                                <!-- Participants en sous-grid -->#}
-{#                                <div class="uk-margin-medium-top">#}
-{#                                    <h5 class="uk-text-small uk-text-bold cm-text-charcoal uk-margin-small-bottom">#}
-{#                                        <span uk-icon="icon: users; ratio: 0.8" class="cm-text-persian-green uk-margin-small-right"></span>#}
-{#                                        Participants#}
-{#                                    </h5>#}
-{#                                    <div class="uk-grid-small" uk-grid>#}
-{#                                        <div class="uk-width-1-2">#}
-{#                                            {{ form_row(form.nbInscriptionMin) }}#}
-{#                                        </div>#}
-{#                                        <div class="uk-width-1-2">#}
-{#                                            {{ form_row(form.nbInscriptionMax) }}#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-
-{#                            <!-- Colonne 3 : Description et photo -->#}
-{#                            <div class="uk-width-1-1 uk-width-1-1@s uk-width-1-3@l">#}
-{#                                <h4 class="uk-heading-small cm-text-charcoal uk-margin-small-bottom uk-text-center">#}
-{#                                    <span uk-icon="icon: file-text; ratio: 1" class="cm-text-persian-green uk-margin-small-right"></span>#}
-{#                                    Contenu#}
-{#                                </h4>#}
-
-{#                                <!-- Description compacte -->#}
-{#                                <div class="uk-margin">#}
-{#                                    {{ form_row(form.infos) }}#}
-{#                                </div>#}
-
-{#                                <!-- Photo compacte -->#}
-{#                                <div class="uk-margin-top">#}
-{#                                    <h5 class="uk-text-small uk-text-bold cm-text-charcoal uk-margin-small-bottom">#}
-{#                                        <span uk-icon="icon: image; ratio: 0.8" class="cm-text-persian-green uk-margin-small-right"></span>#}
-{#                                        Photo#}
-{#                                    </h5>#}
-{#                                    <div class="uk-card uk-card-muted uk-card-body uk-text-center uk-border-rounded uk-padding-small" style="border: 2px dashed rgba(42, 157, 143, 0.3);">#}
-{#                                        {{ form_row(form.photo) }}#}
-{#                                        <p class="uk-text-meta uk-margin-remove-top uk-text-small cm-text-charcoal" style="opacity: 0.7;">#}
-{#                                            <span uk-icon="icon: cloud-upload; ratio: 0.8"></span>#}
-{#                                            Image de la sortie#}
-{#                                        </p>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-
-{#                    <!-- Boutons d'action -->#}
-{#                    <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-box-shadow-medium uk-padding-small">#}
-{#                        <div class="uk-grid-small uk-flex-center uk-text-center" uk-grid>#}
-{#                            <div class="uk-width-auto">#}
-{#                                {{ form_row(form.create) }}#}
-{#                            </div>#}
-{#                            <div class="uk-width-auto">#}
-{#                                {{ form_row(form.cancel) }}#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-
-{#                    {{ form_end(form) }}#}
-
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
-
-{#    <!-- Section d'aide compacte -->#}
-{#    <section class="uk-section uk-section-muted uk-section-xsmall">#}
-{#        <div class="uk-container uk-container-large">#}
-{#            <div class="uk-flex uk-flex-center">#}
-{#                <div class="uk-width-1-1 uk-width-5-6@s uk-width-4-5@m uk-width-5-6@l">#}
-{#                    <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-text-center uk-padding-small">#}
-{#                        <div class="uk-grid-small uk-flex-middle uk-flex-center" uk-grid>#}
-{#                            <div class="uk-width-auto">#}
-{#                                <span uk-icon="icon: info; ratio: 1.5" class="cm-text-persian-green"></span>#}
-{#                            </div>#}
-{#                            <div class="uk-width-expand">#}
-{#                                <h4 class="cm-text-charcoal uk-margin-remove-bottom uk-text-small">Conseils pour votre sortie</h4>#}
-{#                                <p class="cm-text-charcoal uk-margin-remove-top uk-text-small" style="opacity: 0.8;">#}
-{#                                    Choisissez un nom accrocheur, précisez bien les horaires et détaillez votre activité pour attirer plus de participants !#}
-{#                                </p>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
-
-
 
 {% endblock %}

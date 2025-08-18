@@ -186,7 +186,12 @@
                             <!-- Image avec overlay -->
                             <div class="uk-card-media-top uk-inline uk-transition-toggle">
                                 <img class="uk-transition-scale-up uk-transition-opaque"
+
+                                     {% if sortie.photo %}
+                                        src="{{ sortie.photo }}"
+                                     {% else %}
                                      data-src="https://picsum.photos/400/300/?random={{ sortie.id }}"
+                                     {% endif %}
                                      alt="{{ sortie.nom }}"
                                      uk-img>
 

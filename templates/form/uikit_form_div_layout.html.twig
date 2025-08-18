@@ -486,6 +486,10 @@
 
 {# Widgets #}
 
+{%- block file_widget -%}
+    <input type="file" class="uk-input uk-border-rounded uk-form-width-large" style="border-color: rgba(42, 157, 143, 0.3); max-width: 100%;" {{ block('widget_attributes') }}{% if multiple|default(false) %} multiple="multiple"{% endif %} />
+{%- endblock file_widget -%}
+
 {%- block form_widget -%}
     {% if compound %}
         {{- block('form_widget_compound') -}}
@@ -538,7 +542,7 @@
             <div class="uk-margin-small-bottom">
                 <label class="uk-flex uk-flex-middle uk-text-small">
                     {{- form_widget(child) -}}
-                    <span class="uk-margin-small-left cm-text-charcoal">{{- form_label(child, null, {translation_domain: choice_translation_domain}) -}}</span>
+                    <span class="uk-margin-small-left uk-text-bold cm-text-charcoal">{{- form_label(child, null, {translation_domain: choice_translation_domain}) -}}</span>
                 </label>
             </div>
         {% endfor -%}
@@ -720,16 +724,21 @@
 {%- block button_widget -%}
     {%- if label is empty -%}
         {%- if label_format is not empty -%}
-            {% set label = label_format|replace({
-                '%name%': name,
-                '%id%': id,
-            }) %}
+            {% set label = label_format|replace({'%name%': name, '%id%': id}) %}
         {%- elseif label is not same as(false) -%}
             {% set label = name|humanize %}
         {%- endif -%}
     {%- endif -%}
+
+    {# 1) Définis tes classes “base” communes à tous les boutons #}
+    {% set base = 'uk-button uk-button-large uk-border-rounded uk-dark' %}
+
+    {# 2) Fusionne base + classes venant du FormType (attr.class) #}
+    {% set attr = attr|merge({'class': (base ~ ' ' ~ (attr.class|default(''))) | trim }) %}
+
     <div class="uk-margin-medium-top uk-text-center">
-        <button type="{{ type|default('button') }}" class="uk-button uk-button-large uk-border-rounded cm-background-persian-green uk-light uk-width-1-1 uk-width-auto@s" {{ block('button_attributes') }}>
+        {# 3) NE PAS remettre class="" ici : on laisse button_attributes le faire #}
+        <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
             {%- if translation_domain is same as(false) -%}
                 {%- if label_html is same as(false) -%}
                     {{- label -}}
@@ -747,10 +756,19 @@
     </div>
 {%- endblock button_widget -%}
 
+
 {%- block submit_widget -%}
     {%- set type = type|default('submit') -%}
+
+    {# 1) Classes de base #}
+    {% set base = 'uk-button uk-button-large uk-border-rounded uk-dark ' %}
+
+    {# 2) Fusion #}
+    {% set attr = attr|merge({'class': (base ~ ' ' ~ (attr.class|default(''))) | trim }) %}
+
     <div class="uk-margin-medium-top uk-text-center">
-        <button type="{{ type }}" class="uk-button uk-button-primary uk-button-large uk-border-rounded cm-background-persian-green uk-light uk-width-1-1 uk-width-auto@s" {{ block('button_attributes') }}>
+        {# 3) Pas de class="" en dur #}
+        <button type="{{ type }}" {{ block('button_attributes') }}>
             {%- if translation_domain is same as(false) -%}
                 {%- if label_html is same as(false) -%}
                     {{- label|default('Valider') -}}
@@ -767,6 +785,7 @@
         </button>
     </div>
 {%- endblock submit_widget -%}
+
 
 {%- block reset_widget -%}
     {%- set type = type|default('reset') -%}
@@ -820,13 +839,13 @@
             {% set label_attr = label_attr|merge({'for': id}) %}
         {%- endif -%}
         {% if required -%}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' uk-form-label cm-text-charcoal uk-text-bold uk-margin-small-bottom required')|trim}) %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' uk-form-label uk-text-bold cm-text-charcoal uk-margin-small-bottom required')|trim}) %}
         {%- else -%}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' uk-form-label cm-text-charcoal uk-margin-small-bottom')|trim}) %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' uk-form-label uk-text-bold cm-text-charcoal uk-margin-small-bottom')|trim}) %}
         {%- endif -%}
         <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
         {{- block('form_label_content') -}}
-        {%- if required -%}<span class="cm-text-burnt-sienna"> *</span>{%- endif -%}
+        {%- if required -%}<span class="cm-text-burnt-sienna uk-text-bold"> *</span>{%- endif -%}
         </{{ element|default('label') }}>
     {%- endif -%}
 {%- endblock form_label -%}
@@ -956,11 +975,11 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="uk-alert-danger uk-border-rounded uk-margin" uk-alert>
+        <div class="uk-alert-danger uk-border-rounded uk-margin uk-animation-shake" uk-alert>
             <a class="uk-alert-close" uk-close></a>
             <ul class="uk-list uk-margin-remove">
                 {%- for error in errors -%}
-                    <li class="cm-text-burnt-sienna uk-text-small">{{ error.message }}</li>
+                    <li class="cm-text-burnt-sienna uk-text-small uk-text-bold"><span uk-icon="icon: warning; ratio: 0.8"></span> {{ error.message }}</li>
                 {%- endfor -%}
             </ul>
         </div>

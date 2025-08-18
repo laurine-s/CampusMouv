@@ -20,6 +20,10 @@
     </head>
     <body>
 
+        <header>
+            {% include '_nav.html.twig' %}
+        </header>
+
     {#  Pour chaque type de message temporaire (ex: [success, [messages]] #}
     {% for label, messages in app.flashes %}
         {#  Pour chaque message j'affiche une alert. ex: [Virement effectué, Connecté] #}
@@ -30,10 +34,6 @@
             </div>
         {% endfor %}
     {% endfor %}
-
-        <header>
-            {% include '_nav.html.twig' %}
-        </header>
 
         <main>
             {% block main %}{% endblock %}

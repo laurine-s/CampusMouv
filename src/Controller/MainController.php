@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Controller;
 
-use App\Entity\Sortie;
-use App\Enum\Etat;
+use App\Repository\CampusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,8 +9,13 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MainController extends AbstractController
 {
     #[Route('/', name: 'main_home')]
-    public function home(): Response
+    public function home(CampusRepository $campusRepository): Response
     {
-        return $this->render('main/home.html.twig');
+        // Récupérer tous les campus pour la navigation si nécessaire
+        $campusList = $campusRepository->findAll();
+
+        return $this->render('main/home.html.twig', [
+            'campusList' => $campusList
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Enum\Role;
 use App\Form\ChangePasswordType;
 use App\Form\UserProfilType;
@@ -26,38 +27,48 @@ final class UserController extends AbstractController
 
         $user = $this->getUser();
         $form = $this->createForm(UserProfilType::class, $user);
-
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        if ($form->isSubmitted()) {
             $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
 
             if ($photoFile) {
-                // On upload la photo sur Cloudinary
-                $result = $cloudinaryService->upload($photoFile->getPathname());
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
 
-                // on obtient l'URL publique est accessible via $result['secure_url']
-                $user->setPhoto($result['secure_url']);
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('profil');
+                }
             }
 
-            $em->persist($user);
-            $em->flush();
-            $this->addFlash('success', "Profil mis à jour avec succès");
-            return $this->redirectToRoute('profil');
-        }
+            if ($form->isValid()) {
 
+                // on transmet l'url au user
+                $user->setPhoto($uploadPhoto['url']);
+
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash('success', "Profil mis à jour avec succès");
+                return $this->redirectToRoute('profil');
+            }
+
+            foreach ($form->getErrors(true) as $error) {
+                $this->addFlash('danger ', $error->getMessage());
+            }
+        }
 
         return $this->render('user/profil.html.twig', [
             // 'user' => $user,
             'form' => $form->createView(),
         ]);
 
-
     }
 
     #[Route('/profil/password', name: 'password')]
-    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response {
+    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
+    {
         // On récupère l'utilisateur connecté
         $user = $this->getUser();
 

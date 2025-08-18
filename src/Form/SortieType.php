@@ -9,10 +9,12 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class SortieType extends AbstractType
 {
@@ -46,9 +48,6 @@ class SortieType extends AbstractType
                 'label' => 'Nombre minimum de participants',
                 'data' => 2
             ])
-//            ->add('nbInscrits', null, [
-//                'label' => 'Nombre d\'inscrits actuels'
-//            ])
             ->add('infos', null, [
                 'label' => 'Description de l\'activité',
                 'data' => "À l’approche de la fin du trimestre, la Salle Commune de Poufsouffle se transforme en un véritable repaire festif.
@@ -57,8 +56,25 @@ Les élèves préparent une soirée conviviale autour d’un grand banquet impro
 Les rires résonneront sous les arches en pierre, et même le vieux tonneau d’entrée, d’ordinaire silencieux, semblera sourire aux invités.
 Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à tous, où chacun repartira le cœur aussi chaud qu’une tasse de Bièraubeurre."
             ])
-            ->add('photo', null, [
-                'label' => 'Photo de l\'activité'
+            ->add('photo', FileType::class, [
+                'label' => 'Photo de l\'activité',
+                //car on ne stocke pas directement le fichier dans l’entité, on l’envoie à Cloudinary
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'maxSizeMessage' => 'Votre photo doit faire moins de 2M.',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Merci de télécharger un fichier JPEG ou PNG valide',
+                    ])
+                ],
+                'attr' => [
+                    'accept' => 'image/jpeg,image/png'
+                ]
             ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
@@ -80,11 +96,11 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'label' => 'Catégorie de lieux',
                 'placeholder' => 'Choisissez un lieu existant',
 
-                // Données sur chaque <option>
+
                 'choice_attr' => function (Lieu $lieu) {
                     return [
-                        'data-adresse'     => $lieu->getRue(),     // getters exacts de ton entité
-                        'data-ville'       => $lieu->getVille()->getNom(),
+                        'data-adresse' => $lieu->getRue(),
+                        'data-ville' => $lieu->getVille()->getNom(),
                         'data-code-postal' => $lieu->getVille()->getCp(),
                     ];
                 },
@@ -95,8 +111,6 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                     'data-lieu-target' => 'select',
                 ],
             ])
-
-
             ->add('adresse', TextType::class, [
                 'required' => false,
                 'mapped' => false,
@@ -121,30 +135,13 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                     'data-lieu-target' => 'codePostal',
                 ],
             ])
-
-
-
-            //            ->add('organisateur', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'label' => 'Organisateur de la sortie',
-//                'placeholder' => 'Sélectionnez un organisateur'
-//            ])
-//            ->add('participants', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'multiple' => true,
-//                'label' => 'Participants inscrits',
-//                'required' => false,
-//                'help' => 'Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs participants'
-//            ])
             ->add('create', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'uk-button '],
+                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal'],
             ])
             ->add('cancel', SubmitType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => 'uk-button '],
+                'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right'],
             ]);
     }
 

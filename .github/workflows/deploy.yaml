@@ -1,0 +1,33 @@
+name: Build & Deploy (Symfony)
+on:
+  push:
+    branches: ['**']      # déclenche sur tout push
+  workflow_dispatch:       # permet de lancer à la main depuis Actions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # (optionnel) build front si tu utilises npm/Encore/Vite
+      - name: Front build (optional)
+        if: hashFiles('package.json') != ''
+        run: |
+          npm ci
+          npm run build
+
+      - uses: a7ul/tar-action@v1.2.0   # <- au lieu de v1.1.0
+        with:
+          command: c
+          cwd: "./"
+          files: |
+            .
+            captain-definition
+          outPath: deploy.tar
+
+      - uses: caprover/deploy-from-github@v1.1.2  # <- au lieu de @v1.0.1
+        with:
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app: ${{ secrets.APP_NAME }}
+          token: ${{ secrets.APP_TOKEN }}
