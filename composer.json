@@ -6,6 +6,7 @@
   "require": {
     "php": ">=8.1",
     "ext-ctype": "*",
+    "ext-fileinfo": "*",
     "ext-iconv": "*",
     "bower-asset/uikit": "3",
     "cloudinary/cloudinary_php": "^3.1",
@@ -17,6 +18,7 @@
     "fakerphp/faker": "*",
     "phpdocumentor/reflection-docblock": "^5.6",
     "phpstan/phpdoc-parser": "^2.2",
+    "stof/doctrine-extensions-bundle": "^1.14",
     "symfony/asset": "6.4.*",
     "symfony/asset-mapper": "6.4.*",
     "symfony/console": "6.4.*",
@@ -47,9 +49,9 @@
     "symfony/validator": "6.4.*",
     "symfony/web-link": "6.4.*",
     "symfony/yaml": "6.4.*",
+    "symfonycasts/reset-password-bundle": "^1.23",
     "twig/extra-bundle": "^2.12|^3.0",
-    "twig/twig": "^2.12|^3.0",
-    "ext-fileinfo": "*"
+    "twig/twig": "^2.12|^3.0"
   },
   "config": {
     "allow-plugins": {

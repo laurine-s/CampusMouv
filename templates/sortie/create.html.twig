@@ -111,41 +111,98 @@
             </h3>
             <div data-controller="lieu">
                 <!-- Campus et Lieu -->
-                <div class="uk-grid-small uk-child-width-1-2@m uk-margin" uk-grid>
-                    <div>
-                        {{ form_row(form.campus) }}
-                    </div>
-                    <div>
-                        {{ form_row(form.lieu) }}
-                    </div>
-                </div>
+                <div class="uk-grid-small uk-child-width-1-3@m uk-margin" uk-grid>
+                    <div data-controller="campus-filter lieu">
+                        <div>
+                            {{ form_widget(form.campus}) }}
+                        </div>
 
-                <!-- Adresse complète -->
-                <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
-                    <div>
-                        {{ form_row(form.adresse) }}
+                        <div>
+                            {{ form_widget(form.lieu}) }}
+                        </div>
+                        <div>
+                            <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #mon-modal">
+                                Ajouter un lieu
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        {{ form_row(form.ville) }}
+
+                    <!-- Adresse complète -->
+                    <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
+                        <div>
+                            <label class="uk-form-label">Adresse</label>
+                            <input type="text" class="uk-input" data-lieu-target="adresse" readonly
+                                   placeholder="Adresse du lieu">
+                        </div>
+                        <div>
+                            <label class="uk-form-label">Ville</label>
+                            <input type="text" class="uk-input" data-lieu-target="ville" readonly placeholder="Ville">
+                        </div>
+                        <div>
+                            <label class="uk-form-label">Code Postal</label>
+                            <input type="text" class="uk-input" data-lieu-target="codePostal" readonly
+                                   placeholder="Code postal">
+                        </div>
                     </div>
-                    <div>
-                        {{ form_row(form.codePostal) }}
-                    </div>
+
                 </div>
             </div>
-        </div>
 
 
-        <!-- Boutons d'action -->
-        <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-text-center">
-            <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
-                <div>{{ form_row(form.cancel) }}</div>
-                <div>{{ form_row(form.create) }}</div>
+            <!-- Boutons d'action -->
+            <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-text-center">
+                <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
+                    <div>{{ form_row(form.cancel) }}</div>
+                    <div>{{ form_row(form.create) }}</div>
+                </div>
             </div>
-        </div>
 
-        {{ form_end(form) }}
+            {{ form_end(form) }}
 
     </section>
 
+    <div id="mon-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Ajouter un lieu</h2>
+
+            <!-- Zone pour afficher les messages d'erreur/succès -->
+            <div id="messages"></div>
+
+            <!-- Formulaire corrigé -->
+            <form class="uk-form-stacked" id="form-lieu" action="">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="nom">Nom</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="nom" name="nom" type="text" placeholder="Nom du lieu" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="rue">N° et nom de la rue</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="rue" name="rue" type="text" placeholder="4 Privet Drive" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="ville">Ville</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="ville" name="ville" type="text" placeholder="Little Whinging"
+                               required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="code_postal">Code postal</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="code_postal" name="code_postal" type="text" placeholder="00934"
+                               required>
+                    </div>
+                </div>
+
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+                    <button class="uk-button uk-button-primary" type="submit" id="btn-sauver">Sauvegarder</button>
+                </p>
+            </form>
+        </div>
+    </div>
+    <script src="{{ asset('js/create-sortie.js') }}"></script>
 {% endblock %}

@@ -1,7 +1,41 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <h1>Hello World</h1>
+    <section class="container">
+        <div class="uk-cover-container uk-light uk-flex uk-flex-middle top-wrap-height uk-position-relative"
+             style="min-height: 100vh;">
+            <!-- Vidéo en arrière-plan -->
+            <video class="cm-video-home"
+                   autoplay
+                   loop
+                   muted
+                   playsinline
+                   src="{{ asset('videos/home.mp4') }}"
+                   style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1;">
+            </video>
+
+            <!-- Overlay optionnel pour améliorer la lisibilité -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 0;"></div>
+
+            <!-- Contenu au premier plan -->
+            <div class="uk-container uk-flex-auto top-container uk-position-relative uk-margin-medium-top"
+                 data-uk-parallax="y: 0,50; easing:0; opacity:0.2"
+                 style="z-index: 1;">
+                <div class="uk-width-1-2@s"
+                     data-uk-scrollspy="cls: uk-animation-slide-right-medium; target: > *; delay: 150">
+                    <h1 class="uk-margin-remove-top">Reconnectez-vous avec vos campus ENI.</h1>
+                    <p class="subtitle-text uk-visible@s">
+                        Retrouvez vos anciens camarades et rencontrez les étudiants actuels de l'ENI !
+                        Participez à des sorties, activités et événements près de chez vous.
+                        Escape games, soirées, jeux de société... L'aventure continue après les cours !
+                    </p>
+                    <a href="{{ path('app_register') }}" title="Rejoindre CampusMouv"
+                       class="uk-button uk-button-primary uk-border-pill"
+                       data-uk-scrollspy-class="uk-animation-fade">REJOINDRE LA COMMUNAUTÉ</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}
 

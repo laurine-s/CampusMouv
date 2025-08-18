@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Enum\Role;
 use App\Form\ChangePasswordType;
 use App\Form\UserProfilType;
@@ -21,7 +22,7 @@ final class UserController extends AbstractController
      * @throws ApiError
      */
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
-    #[IsGranted(Role::PARTICIPANT->value)]
+    //#[IsGranted(Role::PARTICIPANT->value)]
     public function profil(Request $request, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
 
@@ -99,4 +100,20 @@ final class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/profil/{prenomNom}/detail', name: 'profil_detail', methods: ['GET'])]
+    //#[IsGranted(Role::PARTICIPANT->value)]
+    public function detail(string $prenomNom, int $id): Response
+    {
+
+        $user = $this->getUser();
+        $form = $this->createForm(UserProfilType::class, $user);
+
+        return $this->render('user/detail.html.twig', [
+            // 'user' => $user,
+            'form' => $form->createView(),
+        ]);
+
+    }
+
 }
