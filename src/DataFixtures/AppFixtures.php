@@ -86,6 +86,7 @@ class AppFixtures extends Fixture
             $lieu->setLongitude($faker->randomFloat(6, -4.9, 8.2));
             $lieu->setVille($ville);
             $manager->persist($lieu);
+            $lieu->setCampus($faker->randomElement($campuses));
             $lieuxAll[] = $lieu;
         }
 

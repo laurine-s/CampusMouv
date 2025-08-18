@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Campus;
+use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
+use App\Form\LieuType;
 use App\Form\SortieType;
+use App\Repository\CampusRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
@@ -15,6 +18,7 @@ use App\Service\SortieInscriptionService;
 use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -129,11 +133,14 @@ final class SortieController extends AbstractController
      * @throws ApiError
      */
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService): Response
+    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService, CampusRepository $campusRepository): Response
     {
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
+        $lieu = new Lieu();
+        $formLieu = $this->createForm(LieuType::class, $lieu);
         $allLieux = $lieuRepository->findAll();
+        $allCampus = $campusRepository->findAll();
         $user = $userRepository->find($this->getUser());
 
         $form->handleRequest($request);
@@ -158,7 +165,12 @@ final class SortieController extends AbstractController
 
                 $sortie->addParticipant($this->getUser());
                 $sortie->setOrganisateur($this->getUser());
-                $user->setRoles(['ROLE_ORGANISATEUR']);
+                $roles = $user->getRoles();
+
+                if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+                    $user->setRoles(['ROLE_ORGANISATEUR']);
+                }
+
 
                 // Enregistrer ou traiter les données
                 $em->persist($sortie);
@@ -177,6 +189,7 @@ final class SortieController extends AbstractController
         return $this->render('sortie/create.html.twig', [
             'form' => $form->createView(),
             'allLieux' => $allLieux,
+            'allCampus' => $allCampus,
         ]);
     }
 
