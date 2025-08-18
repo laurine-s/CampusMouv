@@ -78,9 +78,10 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
             ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
-                'choice_label' => 'nom',
-                'label' => 'Campus organisateur',
-                'placeholder' => 'Sélectionnez un campus',
+                'choice_label' => 'nom', // Adapte selon ton entité Campus
+                'label' => 'Campus',
+                'placeholder' => 'Choisissez un campus',
+                'required' => false,
 
             ])
             ->add('interets', EntityType::class, [
@@ -97,44 +98,28 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'placeholder' => 'Choisissez un lieu existant',
 
 
-                'choice_attr' => function (Lieu $lieu) {
-                    return [
-                        'data-adresse' => $lieu->getRue(),
-                        'data-ville' => $lieu->getVille()->getNom(),
-                        'data-code-postal' => $lieu->getVille()->getCp(),
-                    ];
-                },
 
-                // Hook Stimulus
+                // Hook Stimulus (ton code existant + ajout)
                 'attr' => [
                     'data-action' => 'change->lieu#onChange',
                     'data-lieu-target' => 'select',
+                    'data-campus-filter-target' => 'lieuSelect', // AJOUT pour le filtrage
                 ],
             ])
-            ->add('adresse', TextType::class, [
-                'required' => false,
-                'mapped' => false,
-                'attr' => [
-                    'readonly' => 'readonly',
-                    'data-lieu-target' => 'adresse',
-                ],
-            ])
-            ->add('ville', TextType::class, [
-                'mapped' => false,
-                'required' => false,
-                'attr' => [
-                    'readonly' => 'readonly',
-                    'data-lieu-target' => 'ville',
-                ],
-            ])
-            ->add('codePostal', TextType::class, [
-                'mapped' => false,
-                'required' => false,
-                'attr' => [
-                    'readonly' => 'readonly',
-                    'data-lieu-target' => 'codePostal',
-                ],
-            ])
+//            ->add('adresse', TextType::class, [
+//                'label' => 'Adresse',
+//                'required' => false,
+//            ])
+//
+//            ->add('ville', TextType::class, [
+//                'label' => 'Ville',
+//                'required' => false,
+//            ])
+//
+//            ->add('codePostal', TextType::class, [
+//                'label' => 'Code Postal',
+//                'required' => false,
+//            ])
             ->add('create', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal'],
