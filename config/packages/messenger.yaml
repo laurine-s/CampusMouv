@@ -15,10 +15,12 @@ framework:
             failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
-        default_bus: messenger.bus.default
+        default_bus: messenger.bus
 
         buses:
-            messenger.bus.default: []
+            messenger.bus:
+                middleware:
+                    - router_context
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async

@@ -44,6 +44,8 @@ final class AdminController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            $this->addFlash('success', sprintf('Import réussi : 1 utilisateur créé.'));
+
             return $this->redirectToRoute('admin_dashboard'); // à changer par la vue admin
         }
 
