@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Campus;
 use App\Entity\Sortie;
+use App\Entity\User;
 use App\Enum\Role;
 use App\Form\SortieType;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
+use App\Service\SortieInscriptionService;
 use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,44 +44,80 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function inscription(int $id, SortieRepository $sortieRepository, Request $request, EntityManagerInterface $em): Response
+    public function inscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
     {
         $user = $this->getUser();
-        $sortie = $sortieRepository->find($id);
-
-
-        // inscription déjà effectuée
-        if ($sortie->getParticipants()->contains($user)) {
-            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
-            return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        if (!$user) {
+            $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
+            return $this->redirectToRoute('app_login');
         }
 
+        $sortie = $sortieRepository->find($id);
+        if (!$sortie) {
+            $this->addFlash('danger', 'Sortie introuvable.');
+            return $this->redirectToRoute('sorties_home');
+        }
 
-        // sinon tu es bien inscrit
+        // Le service renvoi [$ok, $conditions]
+        [$ok, $conditions] = $policy->inscription($sortie, $user);
+        if (!$ok) {
+            $this->addFlash('warning', $this->mapReasonToMessage($conditions));
+            return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+        }
+
+        // OK : inscrit
         $sortie->addParticipant($user);
+        // garder nbInscrits synchro :
+        $sortie->setNbInscrits($sortie->getParticipants()->count());
+
         $em->flush();
 
         $this->addFlash('success', 'Vous êtes bien inscrit !');
-        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        return $this->redirectToRoute('sorties_detail', ['id' => $id]);
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, Request $request): Response
+    public function desinscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
     {
-        $sortie = $sortieRepository->find($id);
         $user = $this->getUser();
-
-
-        //tu te désistes
-        if ($sortie->getParticipants()->contains($user)) {
-            $sortie->removeParticipant($user);
-            $em->flush();
-            $this->addFlash('success', 'Vous êtes désinscrit.');
+        if (!$user) {
+            $this->addFlash('warning', 'Connectez-vous pour vous désinscrire.');
+            return $this->redirectToRoute('app_login');
         }
 
-        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        $sortie = $sortieRepository->find($id);
+        if (!$sortie) {
+            $this->addFlash('danger', 'Sortie introuvable.');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+        [$ok, $conditions] = $policy->desinscription($sortie, $user);
+        if (!$ok) {
+            $this->addFlash('warning', $this->mapReasonToMessage($conditions));
+            return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+        }
+
+        $sortie->removeParticipant($user);
+        // (optionnel) garder nbInscrits synchro :
+         $sortie->setNbInscrits($sortie->getParticipants()->count());
+
+        $em->flush();
+
+        $this->addFlash('success', 'Vous êtes désinscrit.');
+        return $this->redirectToRoute('sorties_detail', ['id' => $id]);
     }
 
+    private function mapReasonToMessage(string $conditions): string
+    {
+        return match ($conditions) {
+            'deja_inscrit'          => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte'           => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'delais_depasse'        => 'La date limite d’inscription est dépassée.',
+            'pas_inscrit'           => 'Vous n’êtes pas inscrit à cette sortie.',
+            'complet'               => 'Cette sortie est complète.' ,
+            default                 => 'Action non autorisée.',
+        };
+    }
 
     /**
      * @throws ApiError
