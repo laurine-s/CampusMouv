@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Importer des utilisateur{% endblock %}
+
+{% block main %}
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Importer des utilisateurs (via fichier .csv)</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+    {{ form_row(form.csvFile) }}
+    <div class="uk-margin uk-text-center">
+        <button class="uk-button uk-button-primary uk-width-1-1 type=" submit
+        ">Importer</button>
+    </div>
+    <p class="uk-text-center">⚠️ Format attendu :
+        <code>email,prenom,nom,password,campus</code>
+    </p>
+
+    {{ form_end(form) }}
+
+
+{% endblock %}
