@@ -7,7 +7,6 @@ use App\Enum\Etat;
 
 final class SortieInscriptionService
 {
-
     // Règles inscription:
     //- sortie OUVERTE
     // - date limite non dépassée
@@ -21,14 +20,9 @@ final class SortieInscriptionService
             return [false, 'deja_inscrit'];
         }
 
-       if ($sortie->getEtat() !== Etat::OUVERTE) {
-           return [false, 'pas_ouverte'];
-        }
-
-       if($sortie->getParticipants()>get($user)){
-           return [false, 'complet'];
-       }
-
+//       if ($sortie->getEtat() !== Etat::OUVERTE) {
+//           return [false, 'pas_ouverte'];
+//        }
 
         $delais = $sortie->getDateLimiteInscription();
         $now = new \DateTimeImmutable();
@@ -44,19 +38,11 @@ final class SortieInscriptionService
             }
         }
         return [true, 'ok'];
-
-
-
-
-
-        return [true, 'ok'];
     }
 
     // Règle désinscription:
     // user doit être inscrit
-    /* @return array{0:bool,1:string}
-     */
-
+    /* @return array{0:bool,1:string} */
 
     public function desinscription(Sortie $sortie, User $user): array
     {
