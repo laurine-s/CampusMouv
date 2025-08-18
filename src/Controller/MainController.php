@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Repository\CampusRepository;
@@ -17,5 +18,11 @@ final class MainController extends AbstractController
         return $this->render('main/home.html.twig', [
             'campusList' => $campusList
         ]);
+    }
+
+    #[Route('/a-propos', name: 'main_apropos')]
+    public function apropos(): Response
+    {
+        return $this->render('main/apropos.html.twig');
     }
 }

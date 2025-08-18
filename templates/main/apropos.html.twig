@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos{% endblock %}
+
+{% block main %}
+    <!-- Hero section -->
+    <section class="uk-section cm-background-charcoal uk-light uk-section-large">
+        <div class="uk-container uk-container-large uk-text-center">
+            <h1 class="uk-heading-large uk-margin-remove-bottom">À propos de Campus Mouv’</h1>
+            <p class="uk-text-large uk-margin-small-top cm-text-saffron">
+                Créer du lien, au-delà des salles de classe
+            </p>
+        </div>
+    </section>
+
+    <!-- Contenu principal -->
+    <section class="uk-section uk-section-default">
+        <div class="uk-container uk-container-small">
+
+            <div class="uk-child-width-1-1@s" uk-grid
+                 uk-scrollspy="cls: uk-animation-slide-bottom-small; target: .uk-card; delay: 100">
+
+                <!-- Introduction -->
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
+                        <p class="uk-text-lead">
+                            Campus Mouv, c’est l’idée toute simple (mais ô combien salvatrice) que la vie étudiante ne
+                            devrait pas se limiter
+                            aux salles de cours, à la machine à café et aux ECF.
+                        </p>
+                        <p>
+                            Parce qu’entre deux révisions, on a aussi besoin de se rencontrer, de souffler, et de
+                            partager autre chose qu’un cerveau qui chauffe sur une ligne de code.
+                        </p>
+                        <p>
+                            <strong>Notre plateforme est née d’un constat : </strong> les événements entre étudiants sont souvent mal
+                            communiqués, difficiles à organiser, et réservés à ceux qui connaissent « les bons plans ».
+                            Résultat ? Beaucoup passent à côté de moments conviviaux où “réseauter” ne rime pas qu’avec
+                            “angoisse”. Et ça, on trouvait ça dommage.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Notre mission -->
+                <div>
+                    <div class="uk-card uk-card-secondary uk-card-body uk-border-rounded">
+                        <h2 class="uk-card-title">Notre mission</h2>
+                        <ul class="uk-list uk-list-bullet">
+                            <li>Faciliter les rencontres entre étudiants d’un même campus mais aussi entre les campus.
+                            </li>
+                            <li>Simplifier l’organisation d’événements (laser games, soirées quiz, ciné, blabla à la
+                                Planche…).
+                            </li>
+                            <li>Créer du lien au-delà des promos, des filières et des villes.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Comment ça marche -->
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
+                        <h2 class="uk-card-title">Comment ça marche ?</h2>
+                        <p>
+                            Un compte, un clic, une sortie. Campus Mouv permet à chaque élève de proposer ou rejoindre
+                            un événement.
+                        </p>
+                        <p>
+                            L’interface est pensée pour être intuitive (parce qu’on cherche assez dans la doc' pendant
+                            les cours),
+                            responsive (pour ceux qui organisent tout depuis leur téléphone), et sécurisée (pas de
+                            panique, vos données sont
+                            mieux gardées que vos bilans-modules).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Nos valeurs -->
+                <div>
+                    <div class="uk-card uk-card-secondary uk-card-body uk-border-rounded">
+                        <h2 class="uk-card-title">Nos valeurs</h2>
+                        <ul class="uk-list uk-list-bullet">
+                            <li><strong>Convivialité :</strong> pas besoin de CV ni de lettre de motivation pour
+                                participer (ça change de la recherche d’alternance, non ?).
+                            </li>
+                            <li><strong>Ouverture :</strong> tous les étudiants, de tous les campus, sont les bienvenus.
+                            </li>
+                            <li><strong>Dynamisme :</strong> on bouge, on crée, on profite de cette grande colo qu’est
+                                la formation.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citation finale -->
+            <blockquote class="uk-margin-large-top uk-text-center">
+                <p>Campus Mouv, c’est finalement un peu comme une soirée étudiante réussie :
+                    tout le monde est invité, l’ambiance est cool (loin du bizutage), et il y a toujours quelqu’un pour
+                    lancer la prochaine idée.</p>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- Call-to-action -->
+    <section class="uk-section cm-background-charcoal uk-light uk-section-large">
+        <div class="uk-container uk-text-center">
+            <h2 class="uk-heading-medium">Envie de rejoindre le mouvement ?</h2>
+            <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Créez un compte et découvrez les sorties
+                près de chez vous</p>
+            <a href="{{ path('app_register') }}"
+               class="uk-button cm-background-persian-green uk-light uk-button-large">
+                <span uk-icon="user-plus"></span> Rejoindre Campus Mouv'
+            </a>
+        </div>
+    </section>
+{% endblock %}
