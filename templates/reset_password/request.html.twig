@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block main %}
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+    <h1 class="uk-heading-bullet uk-text-center">Réinitialisez votre mot de passe</h1>
+
+    {{ form_start(requestForm) }}
+        {{ form_row(requestForm.email) }}
+        <div>
+            <small>
+                Entrez votre adresse @campus-eni.fr et vous recevrez un lien pour réinitialiser votre mot de passe.
+            </small>
+        </div>
+
+        <button class="uk-button uk-button-primary uk-width-1-1">Recevoir le lien</button>
+    {{ form_end(requestForm) }}
+{% endblock %}
