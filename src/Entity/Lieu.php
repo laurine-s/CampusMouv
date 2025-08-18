@@ -37,6 +37,9 @@ class Lieu
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'lieu')]
     private Collection $sorties;
 
+    #[ORM\ManyToOne(inversedBy: 'lieus')]
+    private ?Campus $campus = null;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -133,6 +136,18 @@ class Lieu
                 $sorty->setLieu(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): static
+    {
+        $this->campus = $campus;
 
         return $this;
     }

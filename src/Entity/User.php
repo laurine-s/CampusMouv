@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -75,8 +76,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Promo $promo = null;
 
-    #[ORM\Column(length: 180, unique:true, nullable: true)]
+    #[ORM\Column(length: 100, unique:true, nullable: true)]
     private ?string $pseudo = null;
+
+    #[Gedmo\Slug(fields: ['prenom', 'nom'], updatable: true, unique: true)]
+    //on passe le slug comme nullable au niveau PHP mais reste unique en DB
+    //ça permettra de ne pas avoir une erreur lors du chargement de fixtures
+    #[ORM\Column(length: 150, unique: true, nullable: true)]
+    private ?string $slug = null;
 
     public function __construct()
     {
@@ -295,4 +302,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getSlug(): string { return $this->slug; }
 }
