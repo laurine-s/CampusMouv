@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Enum\Etat;
 use App\Repository\SortieRepository;
 
 class SortieService
@@ -23,6 +24,11 @@ class SortieService
         return $this->sortieRepository->sortieParId($id);
     }
 
+    public function cancelEvent(Sortie $sortie): void
+    {
+        $sortie->setEtat(Etat::from('annulee'));
+        $this->entityManager->flush();
+    }
 
 
 }
