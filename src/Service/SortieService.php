@@ -20,7 +20,7 @@ class SortieService
 
     public function getSortieListeParticipants(int $id): ?Sortie
     {
-        return $this->sortieRepository->findDetailById($id);
+        return $this->sortieRepository->sortieParId($id);
     }
 
 

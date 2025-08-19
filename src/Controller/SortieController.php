@@ -148,6 +148,7 @@ final class SortieController extends AbstractController
 
         $em->flush();
 
+
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $id]);
     }
