@@ -201,6 +201,28 @@
         </div>
     </section>
 
+    {% if app.user is same as sortie.organisateur %}
+        <button class="uk-button uk-button-danger uk-dark uk-button-large uk-width-1-1" uk-toggle="target: #modal-delete-{{ sortie.id }}">
+            <span uk-icon="trash"></span> Supprimer la sortie
+        </button>
+
+        <div id="modal-delete-{{ sortie.id }}" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Confirmer la suppression</h2>
+                <p>Êtes-vous sûr de vouloir supprimer cette sortie ?</p>
+                <div class="uk-flex uk-flex-right uk-flex-middle uk-grid-small" uk-grid>
+                    <div>
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+                    </div>
+                    <div>
+                        <form method="post" action="{{ path('sorties_delete', {'id': sortie.id}) }}">
+                            <button type="submit" class="uk-button uk-button-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     <section class="uk-section cm-background-charcoal uk-light uk-section-large">
         <div class="uk-container uk-text-center">
