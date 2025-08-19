@@ -2,28 +2,26 @@
 
 namespace App\Service;
 
+use App\Entity\Sortie;
 use App\Entity\User;
+use App\Enum\Etat;
 use App\Repository\CampusRepository;
+use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class AdminUserService
+class AdminService
 {
     public function __construct(
         private UserRepository         $userRepository,
         private EntityManagerInterface $entityManager,
-        private CampusRepository       $campusRepository
+        private CampusRepository       $campusRepository,
+        private SortieRepository     $sortiesRepository
     )
     {
     }
 
-    /**
-     * Importe des utilisateurs depuis un fichier CSV.
-     *
-     * @param string $csvPath Chemin vers le fichier CSV
-     * @param bool $strict Mode strict : échoue s'il y a la moindre erreur
-     * @return array{success: int, errors: string[]}
-     */
+    // Fonctions concernant la gestion des utilisateurs
     public function importFromCsv(string $csvPath, bool $strict = true): array
     {
         if (!is_readable($csvPath)) {
@@ -134,4 +132,26 @@ class AdminUserService
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
+
+
+    // Fonctions concernant la gestion des sorties
+
+    public function findEventsOrderedByNom(): array
+    {
+        return $this->sortiesRepository->findEventsOrderedByNom();
+    }
+
+    public function cancelEvent(Sortie $sortie): void
+    {
+        $sortie->setEtat(Etat::from('annulee'));
+        $this->entityManager->flush();
+    }
+
+    // Fonctions concernant la gestion des campus
+
+
+
+    // Fonctions concernant la gestion des lieux
+
+
 }

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des sorties{% endblock %}
+
+{% block main %}
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des sorties</h1>
+
+    <div class="uk-align-center uk-text-center">
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir
+            au tableau de bord</a>
+    </div>
+
+    <div class="uk-container uk-margin-top">
+        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-responsive">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Date de début</th>
+                <th>Nombre d'inscrits</th>
+                <th>Etat</th>
+                <th class="uk-text-center">Annuler</th>
+                <th class="uk-text-center">Supprimer</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                    <td>{{ sortie.nbInscrits }}</td>
+                    <td>{{ sortie.etat.name }}</td>
+                    <td class="uk-text-center">
+                        {% if sortie.etat.name != 'ANNULEE' %}
+                            <a href="{{ path('admin_cancel', { id: sortie.id}) }}"
+                               class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                               onclick="return confirm('Voulez-vous vraiment annuler {{ sortie.nom }} ?');">
+                                Annuler
+                            </a>
+                        {% else %}
+                            <span class="uk-text-muted">Déjà annulée</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

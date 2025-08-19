@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
 use App\Form\UserRegistrationAdminType;
 use App\Form\ImportUserType;
-use App\Service\AdminUserService;
+use App\Service\AdminService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,7 @@ final class AdminController extends AbstractController
     }
 
 
+    // // Fonctions concernant la gestion des utilisateurs
     #[Route('/register', name: 'register')]
     #[IsGranted(Role::ADMIN->value)]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
@@ -57,7 +59,7 @@ final class AdminController extends AbstractController
 
     #[Route('/import', name: 'import', methods: ['GET', 'POST'])]
     #[IsGranted(Role::ADMIN->value)]
-    public function importUserCsv(Request $request, AdminUserService $adminUserService): Response
+    public function importUserCsv(Request $request, AdminService $adminUserService): Response
     {
         $form = $this->createForm(ImportUserType::class);
         $form->handleRequest($request);
@@ -105,24 +107,39 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users', name: 'list_users')]
-    public function listUsers(AdminUserService $adminUserService): Response
+    public function listUsers(AdminService $adminService): Response
     {
-        $users = $adminUserService->getAllUsers();
+        $users = $adminService->getAllUsers();
         return $this->render('admin/users.html.twig', ['users' => $users]);
     }
 
     #[Route('/users/{id}/desactivate', name: 'desactivate', methods: ['GET'])]
-    public function desactivateUser(User $user, AdminUserService $adminUserService): Response
+    public function desactivateUser(User $user, AdminService $adminService): Response
     {
-        $adminUserService->desactivateUser($user);
+        $adminService->desactivateUser($user);
         return $this->redirectToRoute('admin_list_users');
     }
 
     #[Route('/users/{id}/delete', name: 'delete', methods: ['GET'])]
-    public function deleteUser(User $user, AdminUserService $adminUserService): Response
+    public function deleteUser(User $user, AdminService $adminService): Response
     {
-        $adminUserService->deleteUser($user);
+        $adminService->deleteUser($user);
         return $this->redirectToRoute('admin_list_users');
+    }
+
+    // Fonctions concernant la gestion des sorties
+    #[Route('/sorties', name: 'list_sorties')]
+    public function listSorties(AdminService $adminService): Response
+    {
+        $sorties = $adminService->findEventsOrderedByNom();
+        return $this->render('admin/sorties.html.twig', ['sorties' => $sorties]);
+    }
+
+    #[Route('/sorties/{id}/cancel', name: 'cancel', methods: ['GET'])]
+    public function cancelEvent(Sortie $sortie, AdminService $adminService): Response
+    {
+        $adminService->cancelEvent($sortie);
+        return $this->redirectToRoute('admin_list_sorties');
     }
 
 }
