@@ -8,6 +8,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
 use App\Form\LieuType;
+use App\Form\SortieFilterType;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\LieuRepository;
@@ -15,6 +16,7 @@ use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
 use App\Service\SortieInscriptionService;
+use App\Service\SortieService;
 use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,12 +31,34 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 //#[IsGranted(Role::PARTICIPANT->value)]
 final class SortieController extends AbstractController
 {
-    #[Route('/', name: 'home', methods: ['GET'])]
-    public function home(SortieRepository $sortieRepository): Response
+    #[Route('/', name: 'home', methods: ['GET', 'POST'])]
+    public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository): Response
     {
+        $user = $this->getUser();
+        $form = $this->createForm(SortieFilterType::class);
+        $form->handleRequest($request);
+
         $allSorties = $sortieRepository->findAll();
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            // Récupération des filtres
+            $campus = $form->get('campus')->getData();
+            $isParticipant = $form->get('isParticipant')->getData();
+            $isOrganisateur = $form->get('isOrganisateur')->getData();
+
+            $filters = [
+                'campus' => $campus,
+                'isParticipant' => $isParticipant,
+                'isOrganisateur' => $isOrganisateur,
+            ];
+
+            $allSorties = $sortieService->filterSorties($filters, $user);
+        }
+
         return $this->render('sortie/sorties.html.twig', [
             'allSorties' => $allSorties,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -160,7 +184,6 @@ final class SortieController extends AbstractController
 
             if ($form->isValid() && $form->get('create')->isClicked()) {
                 // on transmet l'url à la sortie
-                dump($uploadPhoto);
                 $sortie->setPhoto($uploadPhoto['url']);
 
                 $sortie->addParticipant($this->getUser());
