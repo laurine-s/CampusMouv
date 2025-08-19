@@ -31,7 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 //#[IsGranted(Role::PARTICIPANT->value)]
 final class SortieController extends AbstractController
 {
-    #[Route('/{chemin}', name: 'home', defaults: ['chemin' => ''], methods: ['GET', 'POST'])]
+    #[Route('/filtre/{chemin}', name: 'home', defaults: ['chemin' => ''], methods: ['GET', 'POST'])]
     public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
         $user = $this->getUser();
@@ -40,7 +40,7 @@ final class SortieController extends AbstractController
 
         $allSorties = $sortieRepository->findAll();
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             // Récupération des filtres
             $campus = $form->get('campus')->getData();
@@ -54,7 +54,7 @@ final class SortieController extends AbstractController
             ];
 
             $allSorties = $sortieService->filterSorties($filters, $user);
-        }elseif ($chemin === 'mes_sorties'){
+        } elseif ($chemin === 'mes_sorties') {
 
             $filters = [
                 'campus' => null,
@@ -192,13 +192,13 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
             'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.',
-            'complet'        => 'Cette sortie est complète.',
-            'deja_debute'    => 'Cette sortie a déjà débuté',
-            default          => 'Action non autorisée.',
+            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.',
+            'complet' => 'Cette sortie est complète.',
+            'deja_debute' => 'Cette sortie a déjà débuté',
+            default => 'Action non autorisée.',
         };
     }
 
@@ -257,43 +257,44 @@ final class SortieController extends AbstractController
                 $photoFile = $formSortie->get('photo')->getData();
                 $uploadPhoto = [];
 
-            if ($photoFile) {
-                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
-
-                if (!$uploadPhoto['success']) {
-                    $this->addFlash('danger', $uploadPhoto['error']);
-                    return $this->redirectToRoute('sorties_create');
-                }
-            }
-
-            if ($form->isValid() && $form->get('create')->isClicked()) {
-
-                if ($photoFile) {
-                    // on transmet l'url à la sortie
-                    $sortie->setPhoto($uploadPhoto['url']);
-                }
                 if ($photoFile) {
                     $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+
                     if (!$uploadPhoto['success']) {
                         $this->addFlash('danger', $uploadPhoto['error']);
                         return $this->redirectToRoute('sorties_create');
                     }
-                    $sortie->setPhoto($uploadPhoto['url']);
                 }
 
-                $sortie->addParticipant($this->getUser());
-                $sortie->setOrganisateur($this->getUser());
+                if ($formSortie->isValid() && $formSortie->get('create')->isClicked()) {
 
-                if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-                    $user->setRoles(['ROLE_ORGANISATEUR']);
+                    if ($photoFile) {
+                        // on transmet l'url à la sortie
+                        $sortie->setPhoto($uploadPhoto['url']);
+                    }
+                    if ($photoFile) {
+                        $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+                        if (!$uploadPhoto['success']) {
+                            $this->addFlash('danger', $uploadPhoto['error']);
+                            return $this->redirectToRoute('sorties_create');
+                        }
+                        $sortie->setPhoto($uploadPhoto['url']);
+                    }
+
+                    $sortie->addParticipant($this->getUser());
+                    $sortie->setOrganisateur($this->getUser());
+
+                    if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+                        $user->setRoles(['ROLE_ORGANISATEUR']);
+                    }
+
+                    $em->persist($sortie);
+                    $em->persist($user);
+                    $em->flush();
+
+                    $this->addFlash('success', 'Sortie créée !');
+                    return $this->redirectToRoute('sorties_home');
                 }
-
-                $em->persist($sortie);
-                $em->persist($user);
-                $em->flush();
-
-                $this->addFlash('success', 'Sortie créée !');
-                return $this->redirectToRoute('sorties_home');
             }
         }
 
@@ -314,6 +315,13 @@ final class SortieController extends AbstractController
             'allSorties' => $allSorties,
             'form' => null,
         ]);
+    }
+
+    #[Route('/{id}/cancel', name: 'cancel', methods: ['GET'])]
+    public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
+    {
+        $sortieService->cancelEvent($sortie);
+        return $this->redirectToRoute('sorties_home');
     }
 
 }
