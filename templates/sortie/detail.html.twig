@@ -13,14 +13,14 @@
         {% endfor %}
     {% endfor %}
 
-    {#Règles d'inscription #}
+    {# Règles d'inscription #}
     {% set now = 'now'|date('U') %}
     {% set delais_depasse = sortie.dateLimiteInscription|date('U') < now %}
     {% set deja_debute = sortie.dateHeureDebut|date('U') <= now %}
     {% set inscrits = sortie.participants|length %}
     {% set complet = sortie.nbInscriptionMax is not null and inscrits >= sortie.nbInscriptionMax %}
 
-    {#{% set pas_ouverte = sortie.etat != constant('App\\\\Enum\\\\Etat::OUVERTE') %}#}
+    {# {% set pas_ouverte = sortie.etat != constant('App\\\\Enum\\\\Etat::OUVERTE') %} #}
 
 
 
@@ -57,7 +57,7 @@
                             {# Badge statut #}
                             <div class="uk-position-top-right uk-position-small">
                                 {# {% if pas_ouverte %}
-                                    <span class="uk-label cm-background-burnt-sienna uk-light uk-text-bold">Non ouverte</span>#}
+                                    <span class="uk-label cm-background-burnt-sienna uk-light uk-text-bold">Non ouverte</span> #}
                                 {% if delais_depasse %}
                                     <span class="uk-label cm-background-sandy-brown uk-light uk-text-bold">Inscriptions fermées</span>
                                 {% elseif complet and not (app.user and sortie.participants.contains(app.user)) %}
@@ -78,9 +78,12 @@
                     <div class="uk-card uk-card-default uk-border-rounded uk-height-1-1">
 
                         {# En-tête #}
-                        <div class="uk-card-header uk-padding-small" style="background-color:#f8f9fa;border-bottom:1px solid #e9ecef;">
-                            <h3 class="uk-card-title uk-margin-remove-bottom cm-text-charcoal">Informations de la sortie</h3>
-                            <p class="uk-text-meta uk-margin-small-top uk-text-small cm-text-charcoal" style="opacity:.7;">
+                        <div class="uk-card-header uk-padding-small"
+                             style="background-color:#f8f9fa;border-bottom:1px solid #e9ecef;">
+                            <h3 class="uk-card-title uk-margin-remove-bottom cm-text-charcoal">Informations de la
+                                sortie</h3>
+                            <p class="uk-text-meta uk-margin-small-top uk-text-small cm-text-charcoal"
+                               style="opacity:.7;">
                                 {{ sortie.infos ?: 'Découvrez tous les détails de cette activité' }}
                             </p>
                         </div>
@@ -90,7 +93,8 @@
 
                             {# Date début #}
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
-                                <span uk-icon="icon: calendar; ratio: .9" class="cm-text-persian-green uk-margin-small-right"></span>
+                                <span uk-icon="icon: calendar; ratio: .9"
+                                      class="cm-text-persian-green uk-margin-small-right"></span>
                                 <div>
                                     <div class="uk-text-small uk-text-bold cm-text-charcoal">
                                         {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}
@@ -101,7 +105,8 @@
 
                             {# Limite d'inscription #}
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
-                                <span uk-icon="icon: clock; ratio: 0.8" class="cm-text-sandy-brown uk-margin-small-right"></span>
+                                <span uk-icon="icon: clock; ratio: 0.8"
+                                      class="cm-text-sandy-brown uk-margin-small-right"></span>
                                 <div>
                                     <div class="uk-text-small uk-text-bold cm-text-charcoal">
                                         {{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}
@@ -112,16 +117,20 @@
 
                             {# Durée #}
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
-                                <span uk-icon="icon: clock; ratio: .9" class="cm-text-sandy-brown uk-margin-small-right"></span>
+                                <span uk-icon="icon: clock; ratio: .9"
+                                      class="cm-text-sandy-brown uk-margin-small-right"></span>
                                 <div>
-                                    <div class="uk-text-small uk-text-bold cm-text-charcoal">{{ sortie.duree }} minutes</div>
+                                    <div class="uk-text-small uk-text-bold cm-text-charcoal">{{ sortie.duree }}
+                                        minutes
+                                    </div>
                                     <div class="uk-text-meta uk-text-small">Durée de l'activité</div>
                                 </div>
                             </div>
 
                             {# Lieu #}
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
-                                <span uk-icon="icon: location; ratio: .9" class="cm-text-persian-green uk-margin-small-right"></span>
+                                <span uk-icon="icon: location; ratio: .9"
+                                      class="cm-text-persian-green uk-margin-small-right"></span>
                                 <div>
                                     <div class="uk-text-small uk-text-bold cm-text-charcoal">{{ sortie.campus.nom }}</div>
                                     <div class="uk-text-meta uk-text-small">Lieu de rendez-vous</div>
@@ -130,11 +139,14 @@
 
                             {# Organisateur #}
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
-                                <span uk-icon="icon: user; ratio: .9" class="cm-text-sandy-brown uk-margin-small-right"></span>
+                                <span uk-icon="icon: user; ratio: .9"
+                                      class="cm-text-sandy-brown uk-margin-small-right"></span>
                                 <div>
                                     <div class="uk-text-small uk-text-bold cm-text-charcoal">
                                         {% if sortie.organisateur %}
-                                            {{ sortie.organisateur.nom }}
+                                            <a class="uk-text-small cm-text-charcoal"
+                                               href="{{ path('profil_detail', {slug: sortie.organisateur.slug}) }}">
+                                                {{ sortie.organisateur.prenom | capitalize ~ ' ' ~ sortie.organisateur.nom | first ~ '.' }}</a>
                                         {% else %}
                                             L'utilisateur organisateur a été supprimé
                                         {% endif %}
@@ -148,7 +160,8 @@
                             <div class="uk-margin-small-bottom">
                                 <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-bottom">
                                     <span class="uk-flex uk-flex-middle">
-                                        <span uk-icon="icon: users; ratio: .9" class="cm-text-persian-green uk-margin-small-right"></span>
+                                        <span uk-icon="icon: users; ratio: .9"
+                                              class="cm-text-persian-green uk-margin-small-right"></span>
                                         <span class="uk-text-small cm-text-charcoal">Participants inscrits</span>
                                     </span>
                                     <span class="uk-text-small uk-text-bold cm-text-charcoal">
@@ -180,16 +193,23 @@
                                     <li class="uk-flex uk-flex-middle uk-flex-between">
                                         <div class="uk-flex uk-flex-middle">
                                             {% if u.photo is defined and u.photo %}
-                                                <img src="{{ u.photo }}" alt="{{ u.nom ?? u.username }}" class="uk-border-circle uk-margin-small-right" width="32" height="32">
+                                                <img src="{{ u.photo }}" alt="Photo de profil de {{ u.prenom ~ u.nom }}"
+                                                     class="uk-border-circle uk-margin-small-right" width="32"
+                                                     height="32">
                                             {% else %}
-                                                <div class="uk-border-circle uk-background-muted uk-flex uk-flex-center uk-flex-middle uk-margin-small-right" style="width:32px;height:32px;">
-                                                    {{ (u.prenom ?? u.nom ?? u.username)|first|upper }}
+                                                <div class="uk-border-circle uk-background-muted uk-flex uk-flex-center uk-flex-middle uk-margin-small-right"
+                                                     style="width:32px;height:32px;">
+                                                    {{ u.prenom|first|upper }}
                                                 </div>
                                             {% endif %}
 
                                             <div>
                                                 <div class="uk-text-small uk-text-bold">
-                                                    {{ (u.prenom is defined ? u.prenom ~ ' ' : '') ~ (u.nom is defined ? u.nom : (u.username ?? '')) }}
+
+                                                    <a class="uk-text-small cm-text-charcoal"
+                                                       href="{{ path('profil_detail', {slug: u.slug}) }}">
+                                                        {{ u.prenom | capitalize ~ ' ' ~ u.nom | first ~ '.' }}</a>
+
                                                     {% if app.user and u.id == app.user.id %}
                                                         <span class="uk-label uk-label-success uk-margin-small-left">vous</span>
                                                     {% endif %}
@@ -204,11 +224,14 @@
 
 
                         {# Footer : actions #}
-                        <div class="uk-card-footer uk-padding-small uk-text-center" style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
+                        <div class="uk-card-footer uk-padding-small uk-text-center"
+                             style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
                             {% if app.user and sortie.participants.contains(app.user) %}
                                 {# Déjà inscrit → se désinscrire #}
-                                <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post" class="uk-width-1-1">
-                                    <button type="submit" class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1">
+                                <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"
+                                      class="uk-width-1-1">
+                                    <button type="submit"
+                                            class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1">
                                         <span uk-icon="close"></span> Se désinscrire
                                     </button>
                                 </form>
@@ -216,24 +239,28 @@
                             {% elseif app.user %}
                                 {# Non inscrit : calcul des raisons d'indisponibilité #}
                                 {% set conditions = [] %}
-                                {# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %}#}
+                                {# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %} #}
                                 {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}
                                 {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}
                                 {% if deja_debute %}
-                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1" disabled
+                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1"
+                                            disabled
                                             title="La sortie a déjà débuté">
                                         <span uk-icon="ban"></span> Désinscription indisponible
                                     </button>
                                 {% endif %}
                                 {% if conditions|length > 0 %}
-                                    <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1" disabled
+                                    <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1"
+                                            disabled
                                             title="{{ conditions|join(' • ') }}">
                                         <span uk-icon="ban"></span> Inscription indisponible
                                     </button>
 
                                 {% else %}
-                                    <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post" class="uk-width-1-1">
-                                        <button type="submit" class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">
+                                    <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post"
+                                          class="uk-width-1-1">
+                                        <button type="submit"
+                                                class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">
                                             <span uk-icon="check"></span> Je m'inscris à cette sortie
                                         </button>
                                     </form>
@@ -241,7 +268,8 @@
 
                             {% else %}
                                 {# Pas connecté #}
-                                <a href="{{ path('app_login') }}" class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">
+                                <a href="{{ path('app_login') }}"
+                                   class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">
                                     <span uk-icon="sign-in"></span> Connectez-vous pour vous inscrire
                                 </a>
                             {% endif %}
@@ -254,7 +282,8 @@
     </section>
 
     {% if app.user is same as sortie.organisateur %}
-        <button class="uk-button uk-button-danger uk-dark uk-button-large uk-width-1-1" uk-toggle="target: #modal-delete-{{ sortie.id }}">
+        <button class="uk-button uk-button-danger uk-dark uk-button-large uk-width-1-1"
+                uk-toggle="target: #modal-delete-{{ sortie.id }}">
             <span uk-icon="trash"></span> Supprimer la sortie
         </button>
 
@@ -279,7 +308,8 @@
     <section class="uk-section cm-background-charcoal uk-light uk-section-large">
         <div class="uk-container uk-text-center">
             <h2 class="uk-heading-medium">Découvrez d'autres sorties</h2>
-            <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Explorez toutes les activités disponibles</p>
+            <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Explorez toutes les activités
+                disponibles</p>
             <a href="{{ path('sorties_home') }}" class="uk-button cm-background-persian-green uk-light uk-button-large">
                 <span uk-icon="grid"></span> Voir toutes les sorties
             </a>

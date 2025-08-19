@@ -15,18 +15,21 @@
     </section>
 
     <!-- Filtre -->
-    {# Ouvrir le formulaire #}
-    {{ form_start(form) }}
 
-    {# Afficher tout les champs #}
-    {{ form_widget(form) }}
+    {% if form %}
+        {# Ouvrir le formulaire #}
+        {{ form_start(form) }}
 
-    <div class="uk-margin uk-text-center">
-        <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Filtrer</button>
-    </div>
+        {# Afficher tout les champs #}
+        {{ form_widget(form) }}
 
-    {# Fermer le formulaire #}
-    {{ form_end(form) }}
+        <div class="uk-margin uk-text-center">
+            <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Filtrer</button>
+        </div>
+
+        {# Fermer le formulaire #}
+        {{ form_end(form) }}
+    {% endif %}
 
 
     <!-- Grid des sorties -->
