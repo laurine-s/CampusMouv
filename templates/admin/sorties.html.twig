@@ -31,7 +31,7 @@
                     <td>{{ sortie.etat.name }}</td>
                     <td class="uk-text-center">
                         {% if sortie.etat.name != 'ANNULEE' %}
-                            <a href="{{ path('admin_cancel', { id: sortie.id}) }}"
+                            <a href="{{ path('admin_cancel_event', { id: sortie.id}) }}"
                                class="uk-button uk-button-small uk-button-danger uk-border-pill"
                                onclick="return confirm('Voulez-vous vraiment annuler {{ sortie.nom }} ?');">
                                 Annuler
@@ -39,6 +39,13 @@
                         {% else %}
                             <span class="uk-text-muted">Déjà annulée</span>
                         {% endif %}
+                    </td>
+                    <td class="uk-text-center">
+                        <a href="{{ path('admin_delete_event', { id: sortie.id }) }}"
+                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment supprimer {{ sortie.nom }} ?');">
+                            Supprimer
+                        </a>
                     </td>
 
                 </tr>

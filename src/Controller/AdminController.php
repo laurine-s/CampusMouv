@@ -113,14 +113,14 @@ final class AdminController extends AbstractController
         return $this->render('admin/users.html.twig', ['users' => $users]);
     }
 
-    #[Route('/users/{id}/desactivate', name: 'desactivate', methods: ['GET'])]
+    #[Route('/users/{id}/desactivate', name: 'desactivate_user', methods: ['GET'])]
     public function desactivateUser(User $user, AdminService $adminService): Response
     {
         $adminService->desactivateUser($user);
         return $this->redirectToRoute('admin_list_users');
     }
 
-    #[Route('/users/{id}/delete', name: 'delete', methods: ['GET'])]
+    #[Route('/users/{id}/delete', name: 'delete_user', methods: ['GET'])]
     public function deleteUser(User $user, AdminService $adminService): Response
     {
         $adminService->deleteUser($user);
@@ -135,10 +135,17 @@ final class AdminController extends AbstractController
         return $this->render('admin/sorties.html.twig', ['sorties' => $sorties]);
     }
 
-    #[Route('/sorties/{id}/cancel', name: 'cancel', methods: ['GET'])]
+    #[Route('/sorties/{id}/cancel', name: 'cancel_event', methods: ['GET'])]
     public function cancelEvent(Sortie $sortie, AdminService $adminService): Response
     {
         $adminService->cancelEvent($sortie);
+        return $this->redirectToRoute('admin_list_sorties');
+    }
+
+    #[Route('/sorties/{id}/delete', name: 'delete_event', methods: ['GET'])]
+    public function deleteEvent(Sortie $sortie, AdminService $adminService): Response
+    {
+        $adminService->deleteEvent($sortie);
         return $this->redirectToRoute('admin_list_sorties');
     }
 

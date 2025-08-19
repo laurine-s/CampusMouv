@@ -147,6 +147,12 @@ class AdminService
         $this->entityManager->flush();
     }
 
+    public function deleteEvent(Sortie $sortie): void
+    {
+        $this->entityManager->remove($sortie);
+        $this->entityManager->flush();
+    }
+
     // Fonctions concernant la gestion des campus
 
 
