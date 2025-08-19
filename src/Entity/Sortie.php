@@ -52,7 +52,7 @@ class Sortie
     private ?Interets $interets = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $organisateur = null;
 
     /**
