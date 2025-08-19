@@ -4,39 +4,36 @@
 
 {% block main %}
     <div class="uk-width-1-2@m uk-margin-auto uk-margin-top">
-        <h1 class="uk-heading-divider uk-text-center">Mon profil</h1>
+        <h1 class="uk-heading-divider uk-text-center">Découvre le profil de {{ user.prenom }}</h1>
 
         {{ form_start(form, {
-            method: 'post',
+            method: '',
             attr: {
-                readonly: 'readonly',
-                class: 'uk-form-stacked',
-                enctype: 'multipart/form-data'
+                class: 'uk-form-stacked'
             }
         }) }}
 
         {% if app.user.photo %}
-            <img src="{{ app.user.photo }}" alt="Photo de profil"
+            <img src="{{ user.photo }}" alt="Photo de profil"
                  style="width:150px; height:150px; object-fit:cover; border-radius:50%;">
         {% else %}
             <img src="{{ asset('images/default-avatar.jpg') }}" alt="Avatar par défaut"
                  style="width:150px; height:150px; border-radius:50%;">
         {% endif %}
 
-        {{ form_row(form.photo) }}
-        {{ form_row(form.prenom) }}
-        {{ form_row(form.nom) }}
-        {{ form_row(form.pseudo) }}
-        {{ form_row(form.bio) }}
-        {{ form_row(form.campus) }}
-        {{ form_row(form.interets) }}
-        {{ form_row(form.promo) }}
-
-        {{ form_end(form) }}
+        {{ form_row(form.prenom, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.nom, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.pseudo, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.bio, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.campus, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.interets, {attr: {readonly: 'readonly', disabled:'true'}}) }}
+        {{ form_row(form.promo, {attr: {readonly: 'readonly', disabled:'true'}}) }}
 
         <div class="uk-margin uk-text-center">
-            <a class="uk-button uk-button-primary uk-width-1-1" href="#">Retour</a>
+            <a class="uk-button uk-button-primary uk-width-1-1" href="{{ path('sorties_home') }}">Retour</a>
         </div>
+
+        {{ form_end(form) }}
 
     </div>
 {% endblock %}
