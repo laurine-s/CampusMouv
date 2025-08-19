@@ -5,6 +5,10 @@
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Ajouter un membre</h1>
 
+    <div class="uk-align-center uk-text-center">
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir au tableau de bord</a>
+    </div>
+
     {{ form_errors(registrationForm) }}
 
     {{ form_start(registrationForm) }}
