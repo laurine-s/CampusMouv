@@ -208,18 +208,52 @@ final class SortieController extends AbstractController
     public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService, CampusRepository $campusRepository): Response
     {
         $sortie = new Sortie();
-        $form = $this->createForm(SortieType::class, $sortie);
+        $formSortie = $this->createForm(SortieType::class, $sortie);
+
         $lieu = new Lieu();
         $formLieu = $this->createForm(LieuType::class, $lieu);
-        $allLieux = $lieuRepository->findAll();
+        $lieuIdToSelect = $request->query->get('lieu_id');
+
+        $lieux = $lieuRepository->findAll();
         $allCampus = $campusRepository->findAll();
         $user = $userRepository->find($this->getUser());
 
-        $form->handleRequest($request);
+        // Préparer les données pour JavaScript
+        $lieuxArray = [];
+        foreach ($lieux as $lieuItem) {
+            $lieuxArray[] = [
+                'id' => $lieuItem->getId(),
+                'nom' => $lieuItem->getNom(),
+                'rue' => $lieuItem->getRue(),
+                'ville' => $lieuItem->getVille() ? $lieuItem->getVille()->getNom() : '',
+                'codePostal' => $lieuItem->getVille() ? $lieuItem->getVille()->getCp() : '',
+                'campus' => [
+                    'id' => $lieuItem->getCampus() ? $lieuItem->getCampus()->getId() : null,
+                    'nom' => $lieuItem->getCampus() ? $lieuItem->getCampus()->getNom() : null
+                ]
+            ];
+        }
 
-        if ($form->isSubmitted()) {
-            $photoFile = $form->get('photo')->getData();
-            $uploadPhoto = [];
+        // Gérer le formulaire lieu
+        $formLieu->handleRequest($request);
+        if ($formLieu->isSubmitted() && $formLieu->isValid()) {
+            if ($formLieu->get('createLieu')->isClicked()) {
+                $em->persist($lieu);
+                $em->flush();
+
+                $this->addFlash('success', 'Lieu créé avec succès !');
+                // Rediriger avec l'ID du lieu créé
+                return $this->redirectToRoute('sorties_create', ['lieu_id' => $lieu->getId()]);
+            }
+        }
+
+        // Gérer le formulaire sortie
+        $formSortie->handleRequest($request);
+        if ($formSortie->isSubmitted() && $formSortie->isValid()) {
+            if ($formSortie->get('createSortie')->isClicked()) {
+                // Votre logique existante pour la sortie
+                $photoFile = $formSortie->get('photo')->getData();
+                $uploadPhoto = [];
 
             if ($photoFile) {
                 $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
@@ -236,34 +270,37 @@ final class SortieController extends AbstractController
                     // on transmet l'url à la sortie
                     $sortie->setPhoto($uploadPhoto['url']);
                 }
+                if ($photoFile) {
+                    $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+                    if (!$uploadPhoto['success']) {
+                        $this->addFlash('danger', $uploadPhoto['error']);
+                        return $this->redirectToRoute('sorties_create');
+                    }
+                    $sortie->setPhoto($uploadPhoto['url']);
+                }
 
                 $sortie->addParticipant($this->getUser());
                 $sortie->setOrganisateur($this->getUser());
-                $roles = $user->getRoles();
 
                 if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
                     $user->setRoles(['ROLE_ORGANISATEUR']);
                 }
 
-
-                // Enregistrer ou traiter les données
                 $em->persist($sortie);
                 $em->persist($user);
                 $em->flush();
 
-                // Message temporaire success
                 $this->addFlash('success', 'Sortie créée !');
-
-                //Rediriger
                 return $this->redirectToRoute('sorties_home');
-
             }
         }
 
         return $this->render('sortie/create.html.twig', [
-            'form' => $form->createView(),
-            'allLieux' => $allLieux,
+            'formSortie' => $formSortie->createView(),
+            'formLieu' => $formLieu->createView(),
+            'lieux' => $lieuxArray,
             'allCampus' => $allCampus,
+            'lieuIdToSelect' => $lieuIdToSelect, // Nouveau paramètre
         ]);
     }
 

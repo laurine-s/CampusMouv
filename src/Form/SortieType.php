@@ -10,6 +10,7 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -81,7 +82,7 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'choice_label' => 'nom', // Adapte selon ton entité Campus
                 'label' => 'Campus',
                 'placeholder' => 'Choisissez un campus',
-                'required' => false,
+                'required' => true,
 
             ])
             ->add('interets', EntityType::class, [
@@ -89,6 +90,7 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'choice_label' => 'nom',
                 'label' => 'Catégorie d\'intérêt',
                 'placeholder' => 'Choisissez une catégorie',
+                'required' => false,
 
             ])
             ->add('lieu', EntityType::class, [
@@ -97,34 +99,13 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'label' => 'Catégorie de lieux',
                 'placeholder' => 'Choisissez un lieu existant',
 
-
-
-                // Hook Stimulus (ton code existant + ajout)
-                'attr' => [
-                    'data-action' => 'change->lieu#onChange',
-                    'data-lieu-target' => 'select',
-                    'data-campus-filter-target' => 'lieuSelect', // AJOUT pour le filtrage
-                ],
             ])
-//            ->add('adresse', TextType::class, [
-//                'label' => 'Adresse',
-//                'required' => false,
-//            ])
-//
-//            ->add('ville', TextType::class, [
-//                'label' => 'Ville',
-//                'required' => false,
-//            ])
-//
-//            ->add('codePostal', TextType::class, [
-//                'label' => 'Code Postal',
-//                'required' => false,
-//            ])
-            ->add('create', SubmitType::class, [
+            ->add('createSortie', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal'],
+                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal',
+                    'id'=>'submit-create'],
             ])
-            ->add('cancel', SubmitType::class, [
+            ->add('cancel', ResetType::class, [
                 'label' => 'Annuler',
                 'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right'],
             ]);
