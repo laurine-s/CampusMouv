@@ -154,15 +154,13 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+    public function desinscription(Sortie $sortie, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
     {
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous désinscrire.');
             return $this->redirectToRoute('app_login');
         }
-
-        $sortie = $sortieRepository->find($id);
 
 
         if (!$sortie) {
@@ -186,7 +184,7 @@ final class SortieController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Vous êtes désinscrit.');
-        return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
     }
 
     private function mapReasonToMessage(string $conditions): string

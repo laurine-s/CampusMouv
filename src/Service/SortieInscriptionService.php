@@ -54,6 +54,8 @@ final class SortieInscriptionService
 
     public function desinscription(Sortie $sortie, User $user): array
     {
+        //TODO : Rajouter une condition sur état
+
         if (!$sortie->getParticipants()->contains($user)) {
             return [false, 'non_inscrit'];
         }

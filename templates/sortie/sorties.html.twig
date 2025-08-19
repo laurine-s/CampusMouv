@@ -15,21 +15,23 @@
         </div>
     </section>
 
-    <!-- Filtre -->
+    <!-- Filtres -->
 
-    {% if form %}
-        {# Ouvrir le formulaire #}
-        {{ form_start(form) }}
+    {% if app.user %}
+        {% if form %}
+            {# Ouvrir le formulaire #}
+            {{ form_start(form) }}
 
-        {# Afficher tout les champs #}
-        {{ form_widget(form) }}
+            {# Afficher tout les champs #}
+            {{ form_widget(form) }}
 
-        <div class="uk-margin uk-text-center">
-            <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Filtrer</button>
-        </div>
+            <div class="uk-margin uk-text-center">
+                <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Filtrer</button>
+            </div>
 
-        {# Fermer le formulaire #}
-        {{ form_end(form) }}
+            {# Fermer le formulaire #}
+            {{ form_end(form) }}
+        {% endif %}
     {% endif %}
 
 
@@ -181,15 +183,17 @@
     </section>
 
     <!-- Section Call-to-Action -->
-    <section class="uk-section cm-background-charcoal uk-light uk-section-large">
-        <div class="uk-container uk-text-center">
-            <h2 class="uk-heading-medium">Envie d'organiser une sortie ?</h2>
-            <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Proposez votre propre activité à la
-                communauté</p>
-            <a href="{{ path('sorties_create') }}"
-               class="uk-button cm-background-persian-green uk-light uk-button-large">
-                <span uk-icon="plus"></span> Créer une sortie
-            </a>
-        </div>
-    </section>
+    {% if app.user %}
+        <section class="uk-section cm-background-charcoal uk-light uk-section-large">
+            <div class="uk-container uk-text-center">
+                <h2 class="uk-heading-medium">Envie d'organiser une sortie ?</h2>
+                <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Proposez votre propre activité à la
+                    communauté</p>
+                <a href="{{ path('sorties_create') }}"
+                   class="uk-button cm-background-persian-green uk-light uk-button-large">
+                    <span uk-icon="plus"></span> Créer une sortie
+                </a>
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}
