@@ -33,17 +33,20 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.campus', 'campus')->addSelect('campus')
             ->leftJoin('s.participants', 'part')->addSelect('part');
 
-        if($filters['campus']){
+        if ($filters['campus']) {
             $queryBuilder->andWhere('s.campus = :campus')
                 ->setParameter('campus', $filters['campus']);
         }
 
-        if($filters['isParticipant']){
+        if ($filters['isParticipant'] && $filters['isOrganisateur']) {
+            $queryBuilder
+                ->andWhere('( :user MEMBER OF s.participants OR s.organisateur = :organisateur )')
+                ->setParameter('user', $user)
+                ->setParameter('organisateur', $user);
+        } elseif ($filters['isParticipant']) {
             $queryBuilder->andWhere(':user MEMBER OF s.participants')
                 ->setParameter('user', $user);
-        }
-
-        if($filters['isOrganisateur']){
+        } elseif ($filters['isOrganisateur']) {
             $queryBuilder->andWhere('s.organisateur = :organisateur')
                 ->setParameter('organisateur', $user);
         }

@@ -31,8 +31,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 //#[IsGranted(Role::PARTICIPANT->value)]
 final class SortieController extends AbstractController
 {
-    #[Route('/', name: 'home', methods: ['GET', 'POST'])]
-    public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository): Response
+    #[Route('/{chemin}', name: 'home', defaults: ['chemin' => ''], methods: ['GET', 'POST'])]
+    public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(SortieFilterType::class);
@@ -54,7 +54,17 @@ final class SortieController extends AbstractController
             ];
 
             $allSorties = $sortieService->filterSorties($filters, $user);
+        }elseif ($chemin === 'mes_sorties'){
+
+            $filters = [
+                'campus' => null,
+                'isParticipant' => true,
+                'isOrganisateur' => true,
+            ];
+
+            $allSorties = $sortieService->filterSorties($filters, $user);
         }
+
 
         return $this->render('sortie/sorties.html.twig', [
             'allSorties' => $allSorties,
@@ -252,6 +262,7 @@ final class SortieController extends AbstractController
         $allSorties = $sortieRepository->findBy(['campus' => $campus]);
         return $this->render('sortie/sorties.html.twig', [
             'allSorties' => $allSorties,
+            'form' => null,
         ]);
     }
 
