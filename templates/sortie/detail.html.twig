@@ -16,13 +16,14 @@
     {#Règles d'inscription #}
     {% set now = 'now'|date('U') %}
     {% set delais_depasse = sortie.dateLimiteInscription|date('U') < now %}
-
+    {% set deja_debute = sortie.dateHeureDebut|date('U') <= now %}
+    {% set inscrits = sortie.participants|length %}
+    {% set complet = sortie.nbInscriptionMax is not null and inscrits >= sortie.nbInscriptionMax %}
 
     {#{% set pas_ouverte = sortie.etat != constant('App\\\\Enum\\\\Etat::OUVERTE') %}#}
 
 
-    {% set inscrits = sortie.participants|length %}
-    {% set complet = sortie.nbInscriptionMax is not null and inscrits >= sortie.nbInscriptionMax %}
+
 
     {# Header #}
     <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
@@ -172,7 +173,12 @@
                                 {# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %}#}
                                 {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}
                                 {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}
-
+                                {% if deja_debute %}
+                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1" disabled
+                                            title="La sortie a déjà débuté">
+                                        <span uk-icon="ban"></span> Désinscription indisponible
+                                    </button>
+                                {% endif %}
                                 {% if conditions|length > 0 %}
                                     <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1" disabled
                                             title="{{ conditions|join(' • ') }}">

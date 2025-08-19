@@ -170,12 +170,13 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
             'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
-            'complet' => 'Cette sortie est complète.',
-            default => 'Action non autorisée.',
+            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.',
+            'complet'        => 'Cette sortie est complète.',
+            'deja_debute'    => 'Cette sortie a déjà débuté',
+            default          => 'Action non autorisée.',
         };
     }
 
