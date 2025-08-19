@@ -20,9 +20,15 @@ class AdminUserService
         return $this->userRepository->findAll();
     }
 
-    public function toggleUser(User $user): void
+    public function desactivateUser(User $user): void
     {
         $user->setIsActive(!$user->isActive());
+        $this->entityManager->flush();
+    }
+
+    public function deleteUser(User $user): void
+    {
+        $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
 }

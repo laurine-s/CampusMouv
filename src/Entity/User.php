@@ -22,6 +22,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudo est déjà utilisé')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public $entityManager;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

@@ -12,7 +12,8 @@
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Statut</th>
-                <th class="uk-text-center">Action</th>
+                <th class="uk-text-center">Désactiver</th>
+                <th class="uk-text-center">Supprimer</th>
             </tr>
             </thead>
             <tbody>
@@ -29,8 +30,16 @@
                     </td>
                     <td class="uk-text-center">
                         <a href="{{ path('admin_desactivate', { id: user.id }) }}"
-                           class="uk-button uk-button-small {{ user.isActive ? 'uk-button-danger' : 'uk-button-primary' }} uk-border-pill">
+                           class="uk-button uk-button-small {{ user.isActive ? 'uk-button-danger' : 'uk-button-primary' }} uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment désactiver {{ user.email }} ?');">
                             {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                        </a>
+                    </td>
+                    <td class="uk-text-center">
+                        <a href="{{ path('admin_delete', { id: user.id }) }}"
+                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment supprimer {{ user.email }} ?');">
+                            Supprimer
                         </a>
                     </td>
                 </tr>

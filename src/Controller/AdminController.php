@@ -113,10 +113,17 @@ final class AdminController extends AbstractController
         return $this->render('admin/users.html.twig', ['users' => $users]);
     }
 
-    #[Route('/users/{id}/toggle', name: 'desactivate', methods: ['GET'])]
-    public function toggleUser(User $user, AdminUserService $adminUserService): Response
+    #[Route('/users/{id}/desactivate', name: 'desactivate', methods: ['GET'])]
+    public function desactivateUser(User $user, AdminUserService $adminUserService): Response
     {
-        $adminUserService->toggleUser($user);
+        $adminUserService->desactivateUser($user);
+        return $this->redirectToRoute('admin_list_users');
+    }
+
+    #[Route('/users/{id}/delete', name: 'delete', methods: ['GET'])]
+    public function deleteUser(User $user, AdminUserService $adminUserService): Response
+    {
+        $adminUserService->deleteUser($user);
         return $this->redirectToRoute('admin_list_users');
     }
 
