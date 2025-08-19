@@ -4,12 +4,15 @@ namespace App\Service;
 
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Enum\Etat;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SortieService
 {
 
-    public function __construct(private SortieRepository $sortieRepository)
+
+    public function __construct(private SortieRepository $sortieRepository, private EntityManagerInterface $entityManager,)
     {
     }
 
@@ -23,6 +26,11 @@ class SortieService
         return $this->sortieRepository->sortieParId($id);
     }
 
+    public function cancelEvent(Sortie $sortie): void
+    {
+        $sortie->setEtat(Etat::from('annulee'));
+        $this->entityManager->flush();
+    }
 
 
 }
