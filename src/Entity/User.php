@@ -55,6 +55,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
+    // Ajout d'un boolean pour la désactivation d'utilisateur
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isActive = true;
+
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Campus $campus = null;
@@ -304,4 +308,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getSlug(): string { return $this->slug; }
+
+
+    // Ajout d'un boolean pour la désactivation d'utilisateur
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
 }

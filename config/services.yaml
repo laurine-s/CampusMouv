@@ -30,3 +30,8 @@ services:
             $cloudName: '%env(CLOUDINARY_CLOUD_NAME)%'
             $apiKey: '%env(CLOUDINARY_API_KEY)%'
             $apiSecret: '%env(CLOUDINARY_API_SECRET)%'
+
+    #ajouter pour la désactivation d'un user par un administrateur
+    App\Security\UserChecker:
+            autowire: true
+            autoconfigure: true
