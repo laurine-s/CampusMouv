@@ -310,7 +310,7 @@
                                                   class="cm-text-sandy-brown uk-margin-small-right"></span>
                                             <a class="uk-text-small cm-text-charcoal"
                                                href="{{ path('profil_detail', {slug: sortie.organisateur.slug}) }}">
-                                                {{ sortie.organisateur.prenom ~ ' ' ~ sortie.organisateur.nom | first ~ '.' }}</a>
+                                                {{ sortie.organisateur.prenom | capitalize ~ ' ' ~ sortie.organisateur.nom | first ~ '.' }}</a>
                                         </div>
                                     </div>
                                 </div>
