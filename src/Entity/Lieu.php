@@ -43,6 +43,8 @@ class Lieu
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
+        $this->latitude = 51.690144;
+        $this->longitude = -0.418115;
     }
 
     public function getId(): ?int

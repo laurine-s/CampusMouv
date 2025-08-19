@@ -80,6 +80,7 @@ class Sortie
         $this->participants = new ArrayCollection();
         $this->nbInscrits = 1;
         $this->etat = Etat::CREEE;
+        $this->interets = null;
     }
 
     public function getId(): ?int
