@@ -100,15 +100,24 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService): Response
     {
+
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
             return $this->redirectToRoute('app_login');
         }
 
-        $sortie = $sortieRepository->find($id);
+
+        $sortie = $sortieService->getSortieListeParticipants($id);
+
+        if (!$sortie) {
+            $this->addFlash('danger', 'Sortie introuvable.');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
@@ -143,6 +152,8 @@ final class SortieController extends AbstractController
         }
 
         $sortie = $sortieRepository->find($id);
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');

@@ -20,6 +20,8 @@ class SortieRepository extends ServiceEntityRepository
     public function sortieParId(int $id): Sortie
     {
         return $this->createQueryBuilder('s')
+            ->leftJoin('s.participants', 'p')->addSelect('p')
+            ->leftJoin('s.organisateur', 'o')->addSelect('o')
             ->Where('s.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
@@ -53,3 +55,4 @@ class SortieRepository extends ServiceEntityRepository
 
 
 }
+
