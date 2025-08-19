@@ -44,7 +44,12 @@
                     <div class="uk-card uk-card-default uk-border-rounded uk-overflow-hidden uk-height-1-1">
                         <div class="uk-card-media-top uk-inline uk-transition-toggle">
                             <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1"
-                                 data-src="https://picsum.photos/800/500/?random={{ sortie.id }}"
+
+                                    {% if sortie.photo %}
+                                        src="{{ sortie.photo }}"
+                                    {% else %}
+                                        data-src="https://picsum.photos/400/300/?random={{ sortie.id }}"
+                                    {% endif %}
                                  alt="{{ sortie.nom }}"
                                  uk-img>
 
