@@ -7,8 +7,6 @@ use App\Enum\Role;
 use App\Form\UserRegistrationAdminType;
 use App\Form\ImportUserType;
 use App\Service\AdminUserService;
-use App\Service\DesactivateUserService;
-use App\Service\ImportUserCSV;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +57,7 @@ final class AdminController extends AbstractController
 
     #[Route('/import', name: 'import', methods: ['GET', 'POST'])]
     #[IsGranted(Role::ADMIN->value)]
-    public function importUserCsv(Request $request, ImportUserCSV $importer): Response
+    public function importUserCsv(Request $request, AdminUserService $adminUserService): Response
     {
         $form = $this->createForm(ImportUserType::class);
         $form->handleRequest($request);
@@ -84,7 +82,7 @@ final class AdminController extends AbstractController
             }
 
             // Import (mode strict)
-            $result = $importer->importFromCsv($csv->getPathname(), strict: true);
+            $result = $adminUserService->importFromCsv($csv->getPathname(), strict: true);
 
             if (!empty($result['errors'])) {
                 foreach ($result['errors'] as $e) {

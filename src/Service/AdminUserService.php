@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Repository\CampusRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -10,9 +11,111 @@ class AdminUserService
 {
     public function __construct(
         private UserRepository         $userRepository,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private CampusRepository       $campusRepository
     )
     {
+    }
+
+    /**
+     * Importe des utilisateurs depuis un fichier CSV.
+     *
+     * @param string $csvPath Chemin vers le fichier CSV
+     * @param bool $strict Mode strict : échoue s'il y a la moindre erreur
+     * @return array{success: int, errors: string[]}
+     */
+    public function importFromCsv(string $csvPath, bool $strict = true): array
+    {
+        if (!is_readable($csvPath)) {
+            return ['success' => 0, 'errors' => ["Fichier introuvable ou illisible : $csvPath"]];
+        }
+
+        $handle = fopen($csvPath, 'r');
+        if ($handle === false) {
+            return ['success' => 0, 'errors' => ["Impossible d’ouvrir le fichier : $csvPath"]];
+        }
+
+        $campusIndex = [];
+        foreach ($this->campusRepository->findAll() as $campus) {
+            $campusIndex[mb_strtolower(trim($campus->getNom()))] = $campus;
+        }
+
+        $lineNo = 1;
+        $errors = [];
+        $rows = [];
+        $seenEmails = [];
+
+        while (($data = fgetcsv($handle)) !== false) {
+            $lineNo++;
+            $data = array_map('trim', $data);
+
+            if (count($data) < 5) {
+                $errors[] = "Ligne $lineNo : le fichier doit contenir 5 colonnes (email, prénom, nom, mot de passe, campus).";
+                continue;
+            }
+
+            [$email, $prenom, $nom, $password, $campusName] = $data;
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Ligne $lineNo : email invalide ($email).";
+                continue;
+            }
+
+            if (!str_ends_with(mb_strtolower($email), '@campus-eni.fr')) {
+                $errors[] = "Ligne $lineNo : l'adresse email doit se terminer par @campus-eni.fr ($email).";
+                continue;
+            }
+
+            $emailKey = mb_strtolower($email);
+            if (isset($seenEmails[$emailKey])) {
+                $errors[] = "Ligne $lineNo : email dupliqué dans le fichier ($email).";
+                continue;
+            }
+            $seenEmails[$emailKey] = true;
+
+            if ($this->userRepository->findOneBy(['email' => $email])) {
+                $errors[] = "Ligne $lineNo : utilisateur déjà existant ($email).";
+                continue;
+            }
+
+            $campusKey = mb_strtolower(trim($campusName));
+            if (!isset($campusIndex[$campusKey])) {
+                $errors[] = "Ligne $lineNo : campus inconnu ($campusName).";
+                continue;
+            }
+
+            $rows[] = [
+                'email' => $email,
+                'prenom' => $prenom,
+                'nom' => $nom,
+                'password' => $password,
+                'campus' => $campusIndex[$campusKey],
+            ];
+        }
+
+        fclose($handle);
+
+        if ($strict && $errors) {
+            return ['success' => 0, 'errors' => $errors];
+        }
+
+        $created = 0;
+        foreach ($rows as $r) {
+            $user = (new User())
+                ->setEmail($r['email'])
+                ->setPrenom($r['prenom'])
+                ->setNom($r['nom'])
+                ->setPassword(password_hash($r['password'], PASSWORD_DEFAULT))
+                ->setCampus($r['campus'])
+                ->setRoles(['ROLE_USER']);
+
+            $this->entityManager->persist($user);
+            $created++;
+        }
+
+        $this->entityManager->flush();
+
+        return ['success' => $created, 'errors' => $errors];
     }
 
     public function getAllUsers(): array
