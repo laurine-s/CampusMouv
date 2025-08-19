@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des campus{% endblock %}
+
+{% block main %}
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des campus</h1>
+
+    <div class="uk-align-center uk-text-center">
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir
+            au tableau de bord</a>
+    </div>
+
+    <div class="uk-align-center uk-text-center">
+        <a href="{{ path('admin_register_campus') }}" class="uk-button uk-button-small uk-button-primary uk-border-pill">Ajouter un campus</a>
+    </div>
+
+    <div class="uk-container uk-margin-top">
+        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-responsive">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Nombre d'élèves</th>
+                <th class="uk-text-center">Supprimer</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for campus in campus %}
+                <tr>
+                    <td>{{ campus.nom }}</td>
+                    <td>{{ campus.users|length }}</td>
+
+                    <td class="uk-text-center">
+                        <a href="{{ path('admin_delete_campus', { id: campus.id }) }}"
+                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment supprimer le campus de {{ campus.nom }} ?');">
+                            Supprimer
+                        </a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

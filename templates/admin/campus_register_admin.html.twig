@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un campus {% endblock %}
+
+{% block main %}
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Ajouter un campus</h1>
+
+    <div class="uk-align-center uk-text-center">
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_list_campus') }}">Revenir à la liste des campus</a>
+    </div>
+
+    {{ form_errors(campusType) }}
+
+    {{ form_start(campusType) }}
+    {{ form_row(campusType.nom) }}
+
+
+
+    <button class="uk-button uk-border-pill uk-button-primary" type="submit">Valider</button>
+    {{ form_end(campusType) }}
+{% endblock %}
+

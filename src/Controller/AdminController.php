@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
+use App\Form\CampusType;
 use App\Form\UserRegistrationAdminType;
 use App\Form\ImportUserType;
 use App\Service\AdminService;
@@ -149,4 +151,41 @@ final class AdminController extends AbstractController
         return $this->redirectToRoute('admin_list_sorties');
     }
 
+    // Fonctions concernant la gestion des campus
+    #[Route('/campus', name: 'list_campus')]
+    public function listCampus(AdminService $adminService): Response
+    {
+        $campus = $adminService->findCampusOrderedByNom();
+        return $this->render('admin/campus.html.twig', ['campus' => $campus]);
+    }
+
+    #[Route('/campus/{id}/delete', name: 'delete_campus', methods: ['GET'])]
+    public function deleteCampus(Campus $campus, AdminService $adminService): Response
+    {
+        $adminService->deleteCampus($campus);
+        return $this->redirectToRoute('admin_list_campus');
+    }
+    #[Route('/register/campus', name: 'register_campus')]
+    #[IsGranted(Role::ADMIN->value)]
+    public function registerCampus(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $campus = new Campus();
+        $form = $this->createForm(CampusType::class, $campus);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+            $entityManager->persist($campus);
+            $entityManager->flush();
+
+            $this->addFlash('success', ('Import réussi : 1 campus créé.'));
+
+            return $this->redirectToRoute('admin_list_campus'); // à changer par la vue admin
+        }
+
+        return $this->render('admin/campus_register_admin.html.twig', [
+            'campusType' => $form->createView(),
+        ]);
+    }
 }
