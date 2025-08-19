@@ -125,7 +125,14 @@
                             <div class="uk-flex uk-flex-middle uk-margin-small-bottom">
                                 <span uk-icon="icon: user; ratio: .9" class="cm-text-sandy-brown uk-margin-small-right"></span>
                                 <div>
-                                    <div class="uk-text-small uk-text-bold cm-text-charcoal">{{ sortie.organisateur.nom }}</div>
+                                    <div class="uk-text-small uk-text-bold cm-text-charcoal">
+                                        {% if sortie.organisateur %}
+                                            {{ sortie.organisateur.nom }}
+                                        {% else %}
+                                            L'utilisateur organisateur a été supprimé
+                                        {% endif %}
+                                    </div>
+
                                     <div class="uk-text-meta uk-text-small">Organisateur</div>
                                 </div>
                             </div>
