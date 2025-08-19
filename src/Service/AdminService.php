@@ -16,7 +16,7 @@ class AdminService
         private UserRepository         $userRepository,
         private EntityManagerInterface $entityManager,
         private CampusRepository       $campusRepository,
-        private SortieRepository     $sortiesRepository
+        private SortieRepository       $sortiesRepository
     )
     {
     }
@@ -155,7 +155,16 @@ class AdminService
 
     // Fonctions concernant la gestion des campus
 
+    public function findCampusOrderedByNom(): array
+    {
+        return $this->campusRepository->findCampusOrderedByNom();
+    }
 
+    public function deleteCampus($campus)
+    {
+        $this->entityManager->remove($campus);
+        $this->entityManager->flush();
+    }
 
     // Fonctions concernant la gestion des lieux
 
