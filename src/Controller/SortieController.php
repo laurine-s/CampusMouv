@@ -71,9 +71,36 @@ final class SortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/delete', name: 'delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(int $id, SortieRepository $sortieRepository, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $sortieParId = $sortieRepository->sortieParId($id);
+
+        // Vérifier si l'entité existe
+        if (!$sortieParId) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+        $organisateur = $sortieParId->getOrganisateur();
+
+        // Vérifier si l'utilisateur est autorisé
+        if ($organisateur !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cette sortie');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+        // Suppression
+        $entityManager->remove($sortieParId);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Sortie supprimée avec succès');
+        return $this->redirectToRoute('sorties_home');
+    }
+
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository,EntityManagerInterface $em, SortieInscriptionService $policy): Response
+        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -97,7 +124,7 @@ final class SortieController extends AbstractController
         // OK : inscrire
         $sortie->addParticipant($user);
 
-       //nbInscrits synchro
+        //nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
 
         $em->flush();
@@ -143,12 +170,12 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
             'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
-            'complet'        => 'Cette sortie est complète.',
-            default          => 'Action non autorisée.',
+            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
+            'complet' => 'Cette sortie est complète.',
+            default => 'Action non autorisée.',
         };
     }
 
