@@ -60,6 +60,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private ?bool $isActive = true;
 
+    // Ajout d'un attribut "numéro de téléphone"
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^(\+33|0)[1-9](\d{2}){4}$/',
+        message: 'Veuillez saisir un numéro de téléphone français valide.'
+    )]
+    private ?string $numeroTelephone = null;
+
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Campus $campus = null;
@@ -321,6 +329,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+        return $this;
+    }
+
+    public function getNumeroTelephone(): ?string
+    {
+        return $this->numeroTelephone;
+    }
+
+    public function setNumeroTelephone(?string $numeroTelephone): static
+    {
+        $this->numeroTelephone = $numeroTelephone;
         return $this;
     }
 

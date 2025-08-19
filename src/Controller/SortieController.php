@@ -263,7 +263,7 @@ final class SortieController extends AbstractController
                     }
                 }
 
-                if ($formSortie->isValid() && $formSortie->get('create')->isClicked()) {
+                if ($formSortie->isValid() && $formSortie->get('createSortie')->isClicked()) {
 
                     if ($photoFile) {
                         // on transmet l'url à la sortie
@@ -314,7 +314,7 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/cancel', name: 'cancel', methods: ['GET'])]
+    #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
     public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
     {
         $sortieService->cancelEvent($sortie);
