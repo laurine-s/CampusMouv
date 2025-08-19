@@ -9,6 +9,7 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -23,6 +24,10 @@ class UserProfilType extends AbstractType
             ->add('prenom', null, ['label' => 'Prénom :'])
             ->add('nom', null, ['label' => 'Nom :'])
             ->add('pseudo', null, ['label' => 'Pseudo :'])
+            ->add('numeroTelephone', TelType::class, [
+                'required' => false,
+                'label' => 'Numéro de téléphone : ',
+            ])
             ->add('bio', null, ['label' => 'Bio :'])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
