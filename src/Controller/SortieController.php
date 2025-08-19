@@ -183,8 +183,11 @@ final class SortieController extends AbstractController
             }
 
             if ($form->isValid() && $form->get('create')->isClicked()) {
-                // on transmet l'url à la sortie
-                $sortie->setPhoto($uploadPhoto['url']);
+
+                if ($photoFile) {
+                    // on transmet l'url à la sortie
+                    $sortie->setPhoto($uploadPhoto['url']);
+                }
 
                 $sortie->addParticipant($this->getUser());
                 $sortie->setOrganisateur($this->getUser());
