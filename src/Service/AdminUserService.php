@@ -120,7 +120,7 @@ class AdminUserService
 
     public function getAllUsers(): array
     {
-        return $this->userRepository->findAll();
+        return $this->userRepository->findAllOrderedByNom();
     }
 
     public function desactivateUser(User $user): void
