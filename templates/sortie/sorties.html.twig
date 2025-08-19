@@ -63,6 +63,7 @@
                                     {% else %}
                                         <span class="uk-label cm-background-persian-green uk-light">Disponible</span>
                                     {% endif %}
+                                    <span class="uk-label cm-background-burnt-sienna uk-light">{{ sortie.etat.name }}</span>
                                 </div>
 
                                 <!-- Quick actions overlay -->
@@ -151,9 +152,13 @@
                                         <div class="uk-flex uk-flex-middle">
                                             <span uk-icon="icon: user; ratio: 0.8"
                                                   class="cm-text-sandy-brown uk-margin-small-right"></span>
-                                            <a class="uk-text-small cm-text-charcoal"
-                                               href="{{ path('profil_detail', {slug: sortie.organisateur.slug}) }}">
-                                                {{ sortie.organisateur.prenom | capitalize ~ ' ' ~ sortie.organisateur.nom | first ~ '.' }}</a>
+                                            {% if sortie.organisateur %}
+                                                <a href="{{ path('profil_detail', {slug: sortie.organisateur.slug}) }}">
+                                                    {{ sortie.organisateur.prenom | capitalize ~ ' ' ~ sortie.organisateur.nom | first ~ '.' }}
+                                                </a>
+                                            {% else %}
+                                                <span class="uk-text-muted">L'utilisateur organisateur a été supprimé</span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

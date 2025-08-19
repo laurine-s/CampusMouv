@@ -56,6 +56,15 @@ class SortieRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    // Ajout d'un findAll par ordre alphabétique pour les administrateurs
+    public function findEventsOrderedByNom(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
 }
 
