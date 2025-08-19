@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
 use App\Form\UserRegistrationAdminType;
 use App\Form\ImportUserType;
-use App\Service\ImportUserCSV;
+use App\Service\AdminService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +23,13 @@ final class AdminController extends AbstractController
 
     #[Route(('/'), name: 'dashboard', methods: ['GET'])]
     #[IsGranted(Role::ADMIN->value)]
-    public function dashboard(): Response{
+    public function dashboard(): Response
+    {
         return $this->render('admin/dashboard.html.twig');
     }
 
 
+    // // Fonctions concernant la gestion des utilisateurs
     #[Route('/register', name: 'register')]
     #[IsGranted(Role::ADMIN->value)]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
@@ -54,9 +57,9 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/import', name: 'import', methods: ['GET','POST'])]
+    #[Route('/import', name: 'import', methods: ['GET', 'POST'])]
     #[IsGranted(Role::ADMIN->value)]
-    public function importUserCsv(Request $request, ImportUserCSV $importer): Response
+    public function importUserCsv(Request $request, AdminService $adminUserService): Response
     {
         $form = $this->createForm(ImportUserType::class);
         $form->handleRequest($request);
@@ -81,7 +84,7 @@ final class AdminController extends AbstractController
             }
 
             // Import (mode strict)
-            $result = $importer->importFromCsv($csv->getPathname(), strict: true);
+            $result = $adminUserService->importFromCsv($csv->getPathname(), strict: true);
 
             if (!empty($result['errors'])) {
                 foreach ($result['errors'] as $e) {
@@ -101,6 +104,49 @@ final class AdminController extends AbstractController
         return $this->render('admin/user_import_admin.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/users', name: 'list_users')]
+    public function listUsers(AdminService $adminService): Response
+    {
+        $users = $adminService->getAllUsers();
+        return $this->render('admin/users.html.twig', ['users' => $users]);
+    }
+
+    #[Route('/users/{id}/desactivate', name: 'desactivate_user', methods: ['GET'])]
+    public function desactivateUser(User $user, AdminService $adminService): Response
+    {
+        $adminService->desactivateUser($user);
+        return $this->redirectToRoute('admin_list_users');
+    }
+
+    #[Route('/users/{id}/delete', name: 'delete_user', methods: ['GET'])]
+    public function deleteUser(User $user, AdminService $adminService): Response
+    {
+        $adminService->deleteUser($user);
+        return $this->redirectToRoute('admin_list_users');
+    }
+
+    // Fonctions concernant la gestion des sorties
+    #[Route('/sorties', name: 'list_sorties')]
+    public function listSorties(AdminService $adminService): Response
+    {
+        $sorties = $adminService->findEventsOrderedByNom();
+        return $this->render('admin/sorties.html.twig', ['sorties' => $sorties]);
+    }
+
+    #[Route('/sorties/{id}/cancel', name: 'cancel_event', methods: ['GET'])]
+    public function cancelEvent(Sortie $sortie, AdminService $adminService): Response
+    {
+        $adminService->cancelEvent($sortie);
+        return $this->redirectToRoute('admin_list_sorties');
+    }
+
+    #[Route('/sorties/{id}/delete', name: 'delete_event', methods: ['GET'])]
+    public function deleteEvent(Sortie $sortie, AdminService $adminService): Response
+    {
+        $adminService->deleteEvent($sortie);
+        return $this->redirectToRoute('admin_list_sorties');
     }
 
 }

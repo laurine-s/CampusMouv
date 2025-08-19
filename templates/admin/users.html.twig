@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block main %}
+    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des utilisateurs</h1>
+
+    <div class="uk-align-center uk-text-center">
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir au tableau de bord</a>
+    </div>
+
+    <div class="uk-container uk-margin-top">
+        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-responsive">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th class="uk-text-center">Désactiver</th>
+                <th class="uk-text-center">Supprimer</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.nom }}</td>
+                    <td>{{ user.prenom }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.isActive %}
+                            <span class="uk-label uk-label-success">Actif</span>
+                        {% else %}
+                            <span class="uk-label uk-label-danger">Inactif</span>
+                        {% endif %}
+                    </td>
+                    <td class="uk-text-center">
+                        <a href="{{ path('admin_desactivate_user', { id: user.id }) }}"
+                           class="uk-button uk-button-small {{ user.isActive ? 'uk-button-danger' : 'uk-button-primary' }} uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment désactiver {{ user.email }} ?');">
+                            {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                        </a>
+                    </td>
+                    <td class="uk-text-center">
+                        <a href="{{ path('admin_delete_user', { id: user.id }) }}"
+                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           onclick="return confirm('Voulez-vous vraiment supprimer {{ user.email }} ?');">
+                            Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="uk-text-center uk-text-muted">Aucun utilisateur trouvé.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

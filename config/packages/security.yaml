@@ -36,6 +36,9 @@ security:
                 # where to redirect after logout
                 # target: app_any_route
 
+            # ajout pour la désactivation d'un user par un administrateur
+            user_checker: App\Security\UserChecker
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

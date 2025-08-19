@@ -52,7 +52,7 @@ class Sortie
     private ?Interets $interets = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $organisateur = null;
 
     /**
@@ -80,6 +80,7 @@ class Sortie
         $this->participants = new ArrayCollection();
         $this->nbInscrits = 1;
         $this->etat = Etat::CREEE;
+        $this->interets = null;
     }
 
     public function getId(): ?int

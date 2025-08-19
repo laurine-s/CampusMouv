@@ -1,74 +1,80 @@
+<div class="uk-container">
+    <nav class="uk-navbar-transparent" data-uk-navbar>
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active">
+                    <a href="#" data-uk-icon="icon:menu"></a>
+                    <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left uk-box-shadow-large uk-text-white uk-width-auto ">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li class="uk-nav-header uk-text-small uk-text-primary uk-text-bold">Nos campus</li>
 
-    <div class="uk-container">
-        <nav class="uk-navbar-transparent" data-uk-navbar>
-            <div class="uk-navbar-left">
-                <ul class="uk-navbar-nav">
-                    <li class="uk-active">
-                        <a href="#" data-uk-icon="icon:menu"></a>
-                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left uk-box-shadow-large uk-text-white uk-width-auto ">
-                            <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li class="uk-nav-header uk-text-small uk-text-primary uk-text-bold">Nos campus</li>
-
-                                {# Boutons pour chaque campus présent en BDD #}
-                                {% for campus in campusList %}
-                                    <li class="uk-margin-small-top ">
-                                        <a href="{{ path('sorties_parCampus', {'id': campus.id}) }}" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                            <span uk-icon="location" class="uk-margin-small-left uk-margin-small-right"></span>
-                                            {{ campus.nom }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-
-                                <li class="uk-nav-divider uk-margin-small"></li>
-
-                                <li class="uk-margin-small-top">
-                                    <a href="{{ path('sorties_home')}}" class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
-                                        <span data-uk-icon="calendar" class="uk-margin-small-left uk-margin-small-right"></span>
-                                        <span class="uk-margin-small-right uk-text-bold">Tous les événements</span>
+                            {# Boutons pour chaque campus présent en BDD #}
+                            {% for campus in campusList %}
+                                <li class="uk-margin-small-top ">
+                                    <a href="{{ path('sorties_parCampus', {'id': campus.id}) }}"
+                                       class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
+                                        <span uk-icon="location"
+                                              class="uk-margin-small-left uk-margin-small-right"></span>
+                                        {{ campus.nom }}
                                     </a>
                                 </li>
+                            {% endfor %}
+
+                            <li class="uk-nav-divider uk-margin-small"></li>
+
+                            <li class="uk-margin-small-top">
+                                <a href="{{ path('sorties_home') }}"
+                                   class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
+                                    <span data-uk-icon="calendar"
+                                          class="uk-margin-small-left uk-margin-small-right"></span>
+                                    <span class="uk-margin-small-right uk-text-bold">Tous les événements</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <a class="uk-navbar-item uk-logo" href="{{ path('main_home') }}">Campus Mouv'</a>
+        </div>
+        <div class="uk-navbar-center uk-visible@m">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href="{{ path('main_apropos') }}">Qui sommes-nous ?</a></li>
+                <li class="uk-active"><a href="{{ path('sorties_home') }}">Les événements </a></li>
+                {% if app.user %}
+                    <li class="uk-active"><a href="{{ path('sorties_create') }}">Créer une sortie </a></li>
+                {% endif %}
+                <li class="uk-active"><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active">
+
+                    {% if not app.user %}
+                        <a href="{{ path('app_login') }}" data-uk-icon="icon:user">Connexion</a>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <a href="#" data-uk-icon="icon:user">{{ app.user.prenom }}</a>
+                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                <li class="uk-nav-header uk-text-small uk-text-primary">Mes infos</li>
+                                <li><a href="{{ path('profil') }}"><span data-uk-icon="icon: user"></span>Mon profil</a>
+                                </li>
+                                <li><a href="{{ path('sorties_home', {chemin: 'mes_sorties'}) }}"><span
+                                                data-uk-icon="icon: star"></span>Mes sorties</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li><a href="{{ path('admin_dashboard') }}"><span
+                                                    data-uk-icon="icon: settings"></span>Administration</a></li>
+                                {% endif %}
+                                <li class="uk-nav-divider"></li>
+                                <li><a href="{{ path('app_logout') }}"><span data-uk-icon="icon: sign-out"></span>Se
+                                        déconnecter</a></li>
                             </ul>
                         </div>
-                    </li>
-                </ul>
-                <a class="uk-navbar-item uk-logo" href="{{ path('main_home')}}">Campus Mouv'</a>
-            </div>
-            <div class="uk-navbar-center uk-visible@m">
-                <ul class="uk-navbar-nav">
-                    <li class="uk-active"><a href="{{ path('main_apropos') }}">Qui sommes-nous ?</a></li>
-                    <li class="uk-active"><a href="{{ path('sorties_home')}}">Les événements </a></li>
-                    {% if app.user %}
-                        <li class="uk-active"><a href="{{ path('sorties_create')}}">Créer une sortie </a></li>
                     {% endif %}
-                    <li class="uk-active"><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="uk-navbar-right">
-                <ul class="uk-navbar-nav">
-                    <li class="uk-active">
-
-                        {% if not app.user %}
-                            <a href="{{ path('app_login')}}" data-uk-icon="icon:user">Connexion</a>
-                        {% endif %}
-
-                        {% if app.user %}
-                            <a href="#" data-uk-icon="icon:user">{{ app.user.prenom }}</a>
-                            <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
-                               <ul class="uk-nav uk-navbar-dropdown-nav">
-                                  <li class="uk-nav-header uk-text-small uk-text-primary">Mes infos</li>
-                                  <li><a href="{{ path('profil') }}"><span data-uk-icon="icon: user"></span>Mon profil</a></li>
-                                 <li><a href="#"><span data-uk-icon="icon: star"></span>Mes sorties</a></li>
-                                  <li><a href="#"><span data-uk-icon="icon: heart"></span>Mes favoris</a></li>
-                                   {% if is_granted('ROLE_ADMIN') %}
-                                       <li><a href="{{ path('admin_dashboard') }}"><span data-uk-icon="icon: settings"></span>Administration</a></li>
-                                   {% endif %}
-                                  <li class="uk-nav-divider"></li>
-                                  <li><a href="{{ path('app_logout')}}"><span data-uk-icon="icon: sign-out"></span>Se déconnecter</a></li>
-                              </ul>
-                            </div>
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

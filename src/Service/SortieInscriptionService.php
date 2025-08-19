@@ -30,6 +30,13 @@ final class SortieInscriptionService
             return [false, 'delais_depasse'];
         }
 
+        $now = new \DateTimeImmutable();
+        $debut = $sortie->getDateHeureDebut();
+        if ($debut instanceof \DateTimeInterface && $debut <= $now) {
+            return [false, 'deja_debute'];
+        }
+
+
         $max = $sortie->getNbInscriptionMax();
         if ($max !== null) {
             $participants = $sortie->getParticipants()->count();
@@ -37,6 +44,7 @@ final class SortieInscriptionService
                 return [false, 'complet'];
             }
         }
+
         return [true, 'ok'];
     }
 
@@ -46,6 +54,8 @@ final class SortieInscriptionService
 
     public function desinscription(Sortie $sortie, User $user): array
     {
+        //TODO : Rajouter une condition sur état
+
         if (!$sortie->getParticipants()->contains($user)) {
             return [false, 'non_inscrit'];
         }
