@@ -2,6 +2,14 @@
 
 {% block title %}Détails de la sortie{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+{% endblock %}
+
 {% block main %}
     {# Messages flash #}
     {% for label, messages in app.flashes %}
@@ -43,8 +51,8 @@
                 {# -------- Colonne image -------- #}
                 <div class="uk-width-1-2@m">
                     <div class="uk-card uk-card-default uk-border-rounded uk-overflow-hidden uk-height-1-1">
-                        <div class="uk-card-media-top uk-inline uk-transition-toggle">
-                            <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1"
+                        <div class="uk-card-media-top uk-inline uk-transition-toggle uk-margin-medium-bottom">
+                            <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1 center"
 
                                     {% if sortie.photo %}
                                         src="{{ sortie.photo }}"
@@ -69,6 +77,19 @@
                                 {% endif %}
                                 <span class="uk-label cm-background-burnt-sienna uk-light">{{ sortie.etat.name }}</span>
                             </div>
+                        </div>
+                        <div>
+                            <label class="uk-form-label">Localisation</label>
+                            <div id="sortie-map"
+                                 data-nom="{{ sortie.lieu.nom }}"
+                                 data-rue="{{ sortie.lieu.rue }}"
+                                 data-ville="{{ sortie.lieu.ville.nom }}"
+                                 data-cp="{{ sortie.lieu.ville.cp }}"
+                                 data-lat="{{ sortie.lieu.latitude }}"
+                                 data-lng="{{ sortie.lieu.longitude }}"
+                                 style="height: 350px; width: 100%; border-radius: 5px; border: 1px solid #e5e5e5;">
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -318,4 +339,11 @@
             </a>
         </div>
     </section>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <!-- Scripts JavaScript de l'application -->
+{#    <script src="{{ asset('js/sortie-form.js') }}" defer></script>#}
+    <script src="{{ asset('js/sortie-map-detail.js') }}" defer></script>
 {% endblock %}
