@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Enum\Role;
 use App\Form\UserRegistrationAdminType;
 use App\Form\ImportUserType;
+use App\Service\AdminUserService;
+use App\Service\DesactivateUserService;
 use App\Service\ImportUserCSV;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +24,8 @@ final class AdminController extends AbstractController
 
     #[Route(('/'), name: 'dashboard', methods: ['GET'])]
     #[IsGranted(Role::ADMIN->value)]
-    public function dashboard(): Response{
+    public function dashboard(): Response
+    {
         return $this->render('admin/dashboard.html.twig');
     }
 
@@ -54,7 +57,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/import', name: 'import', methods: ['GET','POST'])]
+    #[Route('/import', name: 'import', methods: ['GET', 'POST'])]
     #[IsGranted(Role::ADMIN->value)]
     public function importUserCsv(Request $request, ImportUserCSV $importer): Response
     {
@@ -101,6 +104,27 @@ final class AdminController extends AbstractController
         return $this->render('admin/user_import_admin.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/users', name: 'list_users')]
+    public function listUsers(AdminUserService $adminUserService): Response
+    {
+        $users = $adminUserService->getAllUsers();
+        return $this->render('admin/users.html.twig', ['users' => $users]);
+    }
+
+    #[Route('/users/{id}/desactivate', name: 'desactivate', methods: ['GET'])]
+    public function desactivateUser(User $user, AdminUserService $adminUserService): Response
+    {
+        $adminUserService->desactivateUser($user);
+        return $this->redirectToRoute('admin_list_users');
+    }
+
+    #[Route('/users/{id}/delete', name: 'delete', methods: ['GET'])]
+    public function deleteUser(User $user, AdminUserService $adminUserService): Response
+    {
+        $adminUserService->deleteUser($user);
+        return $this->redirectToRoute('admin_list_users');
     }
 
 }

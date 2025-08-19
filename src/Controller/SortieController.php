@@ -8,6 +8,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Role;
 use App\Form\LieuType;
+use App\Form\SortieFilterType;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\LieuRepository;
@@ -15,6 +16,7 @@ use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
 use App\Service\SortieInscriptionService;
+use App\Service\SortieService;
 use Cloudinary\Api\Exception\ApiError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,12 +31,44 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 //#[IsGranted(Role::PARTICIPANT->value)]
 final class SortieController extends AbstractController
 {
-    #[Route('/', name: 'home', methods: ['GET'])]
-    public function home(SortieRepository $sortieRepository): Response
+    #[Route('/{chemin}', name: 'home', defaults: ['chemin' => ''], methods: ['GET', 'POST'])]
+    public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
+        $user = $this->getUser();
+        $form = $this->createForm(SortieFilterType::class);
+        $form->handleRequest($request);
+
         $allSorties = $sortieRepository->findAll();
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            // Récupération des filtres
+            $campus = $form->get('campus')->getData();
+            $isParticipant = $form->get('isParticipant')->getData();
+            $isOrganisateur = $form->get('isOrganisateur')->getData();
+
+            $filters = [
+                'campus' => $campus,
+                'isParticipant' => $isParticipant,
+                'isOrganisateur' => $isOrganisateur,
+            ];
+
+            $allSorties = $sortieService->filterSorties($filters, $user);
+        }elseif ($chemin === 'mes_sorties'){
+
+            $filters = [
+                'campus' => null,
+                'isParticipant' => true,
+                'isOrganisateur' => true,
+            ];
+
+            $allSorties = $sortieService->filterSorties($filters, $user);
+        }
+
+
         return $this->render('sortie/sorties.html.twig', [
             'allSorties' => $allSorties,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -76,15 +110,24 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService): Response
     {
+
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
             return $this->redirectToRoute('app_login');
         }
 
-        $sortie = $sortieRepository->find($id);
+
+        $sortie = $sortieService->getSortieListeParticipants($id);
+
+        if (!$sortie) {
+            $this->addFlash('danger', 'Sortie introuvable.');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
@@ -119,6 +162,8 @@ final class SortieController extends AbstractController
         }
 
         $sortie = $sortieRepository->find($id);
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
@@ -146,12 +191,13 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
             'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
-            'complet' => 'Cette sortie est complète.',
-            default => 'Action non autorisée.',
+            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.',
+            'complet'        => 'Cette sortie est complète.',
+            'deja_debute'    => 'Cette sortie a déjà débuté',
+            default          => 'Action non autorisée.',
         };
     }
 
@@ -159,97 +205,6 @@ final class SortieController extends AbstractController
     /**
      * @throws ApiError
      */
-//    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-//    public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService, CampusRepository $campusRepository): Response
-//    {
-//        $sortie = new Sortie();
-//        $formSortie = $this->createForm(SortieType::class, $sortie);
-//        $lieu = new Lieu();
-//        $formLieu = $this->createForm(LieuType::class, $lieu);
-//        $lieux = $lieuRepository->findAll();
-//        $allCampus = $campusRepository->findAll();
-//        $user = $userRepository->find($this->getUser());
-//
-//        $lieuxArray = [];
-//        foreach ($lieux as $lieu) {
-//            $lieuxArray[] = [
-//                'id' => $lieu->getId(),
-//                'nom' => $lieu->getNom(),
-//                'campus' => [
-//                    'id' => $lieu->getCampus() ? $lieu->getCampus()->getId() : null,
-//                    'nom' => $lieu->getCampus() ? $lieu->getCampus()->getNom() : null
-//                ]
-//            ];
-//        }
-//
-//        $formSortie->handleRequest($request);
-//
-//        if ($formSortie->isSubmitted()) {
-//            $photoFile = $formSortie->get('photo')->getData();
-//            $uploadPhoto = [];
-//
-//            if ($photoFile) {
-//                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
-//
-//                if (!$uploadPhoto['success']) {
-//                    $this->addFlash('danger', $uploadPhoto['error']);
-//                    return $this->redirectToRoute('sorties_create');
-//                }
-//            }
-//
-//            if ($formSortie->isValid() && $formSortie->get('create')->isClicked()) {
-//                // on transmet l'url à la sortie
-//                dump($uploadPhoto);
-//                $sortie->setPhoto($uploadPhoto['url']);
-//
-//                $sortie->addParticipant($this->getUser());
-//                $sortie->setOrganisateur($this->getUser());
-//                $roles = $user->getRoles();
-//
-//                if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-//                    $user->setRoles(['ROLE_ORGANISATEUR']);
-//                }
-//
-//
-//                // Enregistrer ou traiter les données
-//                $em->persist($sortie);
-//                $em->persist($user);
-//                $em->flush();
-//
-//                // Message temporaire success
-//                $this->addFlash('success', 'Sortie créée !');
-//
-//                //Rediriger
-//                return $this->redirectToRoute('sorties_home');
-//
-//            }
-//        }
-//
-//        return $this->render('sortie/create.html.twig', [
-//            'formSortie' => $formSortie->createView(),
-//            'formLieu' => $formLieu->createView(),
-//            'lieux' => $lieuxArray,
-//            'allCampus' => $allCampus,
-//        ]);
-//    }
-//
-//    #[Route('/create/Lieu', name: 'createLieu', methods: ['GET', 'POST'])]
-//    public function creationLieu(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository): Response
-//    {
-//        $lieu = new Lieu();
-//        $form = $this->createForm(LieuType::class, $lieu);
-//        $form->handleRequest($request);
-//        if ($form->isSubmitted()) {
-//            dump($lieu);
-//            $em->persist($lieu);
-//            $em->flush();
-//
-//        }
-//        return $this->render('sortie/create.html.twig');
-//
-//
-//    }
-
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService, CampusRepository $campusRepository): Response
     {
@@ -301,6 +256,21 @@ final class SortieController extends AbstractController
                 $photoFile = $formSortie->get('photo')->getData();
                 $uploadPhoto = [];
 
+            if ($photoFile) {
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('sorties_create');
+                }
+            }
+
+            if ($form->isValid() && $form->get('create')->isClicked()) {
+
+                if ($photoFile) {
+                    // on transmet l'url à la sortie
+                    $sortie->setPhoto($uploadPhoto['url']);
+                }
                 if ($photoFile) {
                     $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
                     if (!$uploadPhoto['success']) {
@@ -341,6 +311,7 @@ final class SortieController extends AbstractController
         $allSorties = $sortieRepository->findBy(['campus' => $campus]);
         return $this->render('sortie/sorties.html.twig', [
             'allSorties' => $allSorties,
+            'form' => null,
         ]);
     }
 
