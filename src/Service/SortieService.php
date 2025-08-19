@@ -6,11 +6,13 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Enum\Etat;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SortieService
 {
 
-    public function __construct(private SortieRepository $sortieRepository)
+
+    public function __construct(private SortieRepository $sortieRepository, private EntityManagerInterface $entityManager,)
     {
     }
 
