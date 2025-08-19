@@ -464,6 +464,7 @@ class SortieForm {
 
         if (!lieuId) {
             this.clearAdresseFields();
+            this.notifyMapUpdate(null);
             return;
         }
 
@@ -487,6 +488,29 @@ class SortieForm {
         if (this.elements.codePostalField) {
             this.elements.codePostalField.value = lieu.codePostal || '';
         }
+
+        // Notifier la carte de la mise à jour
+        this.notifyMapUpdate(lieu);
+    }
+
+    /**
+     * Notifier la carte d'un changement de lieu
+     */
+    notifyMapUpdate(lieu) {
+        // Méthode 1: Via l'instance globale
+        if (window.sortieMapInstance) {
+            if (lieu) {
+                window.sortieMapInstance.updateFromExternalData(lieu);
+            } else {
+                window.sortieMapInstance.clearMap();
+            }
+        }
+
+        // Méthode 2: Via un événement personnalisé
+        const event = new CustomEvent('sortie:lieuChanged', {
+            detail: { lieu: lieu }
+        });
+        document.dispatchEvent(event);
     }
 
     /**
