@@ -35,7 +35,7 @@
             </div>
             <div class="uk-navbar-center uk-visible@m">
                 <ul class="uk-navbar-nav">
-                    <li class="uk-active"><a href="#">Qui sommes nous ?</a></li>
+                    <li class="uk-active"><a href="{{ path('main_apropos') }}">Qui sommes-nous ?</a></li>
                     <li class="uk-active"><a href="{{ path('sorties_home')}}">Les événements </a></li>
                     {% if app.user %}
                         <li class="uk-active"><a href="{{ path('sorties_create')}}">Créer une sortie </a></li>
