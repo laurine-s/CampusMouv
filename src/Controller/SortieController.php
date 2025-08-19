@@ -100,15 +100,24 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService): Response
     {
+
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
             return $this->redirectToRoute('app_login');
         }
 
-        $sortie = $sortieRepository->find($id);
+
+        $sortie = $sortieService->getSortieListeParticipants($id);
+
+        if (!$sortie) {
+            $this->addFlash('danger', 'Sortie introuvable.');
+            return $this->redirectToRoute('sorties_home');
+        }
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
@@ -143,6 +152,8 @@ final class SortieController extends AbstractController
         }
 
         $sortie = $sortieRepository->find($id);
+
+
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
@@ -170,12 +181,13 @@ final class SortieController extends AbstractController
     private function mapReasonToMessage(string $conditions): string
     {
         return match ($conditions) {
-            'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
-            'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
+            'deja_inscrit'   => 'Vous êtes déjà inscrit à cette sortie.',
+            'pas_ouverte'    => 'Cette sortie n’est pas ouverte aux inscriptions.',
             'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.', // ← aligné avec le service
-            'complet' => 'Cette sortie est complète.',
-            default => 'Action non autorisée.',
+            'non_inscrit'    => 'Vous n’êtes pas inscrit à cette sortie.',
+            'complet'        => 'Cette sortie est complète.',
+            'deja_debute'    => 'Cette sortie a déjà débuté',
+            default          => 'Action non autorisée.',
         };
     }
 

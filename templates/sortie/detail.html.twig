@@ -16,13 +16,14 @@
     {#Règles d'inscription #}
     {% set now = 'now'|date('U') %}
     {% set delais_depasse = sortie.dateLimiteInscription|date('U') < now %}
-
+    {% set deja_debute = sortie.dateHeureDebut|date('U') <= now %}
+    {% set inscrits = sortie.participants|length %}
+    {% set complet = sortie.nbInscriptionMax is not null and inscrits >= sortie.nbInscriptionMax %}
 
     {#{% set pas_ouverte = sortie.etat != constant('App\\\\Enum\\\\Etat::OUVERTE') %}#}
 
 
-    {% set inscrits = sortie.participants|length %}
-    {% set complet = sortie.nbInscriptionMax is not null and inscrits >= sortie.nbInscriptionMax %}
+
 
     {# Header #}
     <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
@@ -44,7 +45,12 @@
                     <div class="uk-card uk-card-default uk-border-rounded uk-overflow-hidden uk-height-1-1">
                         <div class="uk-card-media-top uk-inline uk-transition-toggle">
                             <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1"
-                                 data-src="https://picsum.photos/800/500/?random={{ sortie.id }}"
+
+                                    {% if sortie.photo %}
+                                        src="{{ sortie.photo }}"
+                                    {% else %}
+                                        data-src="https://picsum.photos/400/300/?random={{ sortie.id }}"
+                                    {% endif %}
                                  alt="{{ sortie.nom }}"
                                  uk-img>
 
@@ -159,6 +165,44 @@
                             </div>
                         </div>
 
+                        {# Compteur #}
+                        <p class="uk-text-small uk-text-bold">
+                            {{ sortie.participants|length }} participant(s)
+                            {# / {{ sortie.nbInscriptionMax }} si tu veux l’afficher #}
+                        </p>
+
+                        {# Liste #}
+                        {% if sortie.participants|length == 0 %}
+                            <p class="uk-text-meta">Aucun participant pour le moment.</p>
+                        {% else %}
+                            <ul class="uk-list uk-list-divider">
+                                {% for u in sortie.participants %}
+                                    <li class="uk-flex uk-flex-middle uk-flex-between">
+                                        <div class="uk-flex uk-flex-middle">
+                                            {% if u.photo is defined and u.photo %}
+                                                <img src="{{ u.photo }}" alt="{{ u.nom ?? u.username }}" class="uk-border-circle uk-margin-small-right" width="32" height="32">
+                                            {% else %}
+                                                <div class="uk-border-circle uk-background-muted uk-flex uk-flex-center uk-flex-middle uk-margin-small-right" style="width:32px;height:32px;">
+                                                    {{ (u.prenom ?? u.nom ?? u.username)|first|upper }}
+                                                </div>
+                                            {% endif %}
+
+                                            <div>
+                                                <div class="uk-text-small uk-text-bold">
+                                                    {{ (u.prenom is defined ? u.prenom ~ ' ' : '') ~ (u.nom is defined ? u.nom : (u.username ?? '')) }}
+                                                    {% if app.user and u.id == app.user.id %}
+                                                        <span class="uk-label uk-label-success uk-margin-small-left">vous</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+
+
                         {# Footer : actions #}
                         <div class="uk-card-footer uk-padding-small uk-text-center" style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
                             {% if app.user and sortie.participants.contains(app.user) %}
@@ -175,7 +219,12 @@
                                 {# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %}#}
                                 {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}
                                 {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}
-
+                                {% if deja_debute %}
+                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1" disabled
+                                            title="La sortie a déjà débuté">
+                                        <span uk-icon="ban"></span> Désinscription indisponible
+                                    </button>
+                                {% endif %}
                                 {% if conditions|length > 0 %}
                                     <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1" disabled
                                             title="{{ conditions|join(' • ') }}">
