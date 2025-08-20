@@ -160,13 +160,12 @@ class AdminService
         return $this->campusRepository->findCampusOrderedByNom();
     }
 
-    public function deleteCampus($campus)
-    {
-        $this->entityManager->remove($campus);
-        $this->entityManager->flush();
-    }
-
-    // Fonctions concernant la gestion des lieux
+    // Suppression par encore opérationnelle, il faut gérer côté vue l'affichage quand un campus est supprimé
+//    public function deleteCampus($campus)
+//    {
+//        $this->entityManager->remove($campus);
+//        $this->entityManager->flush();
+//    }
 
 
 }
