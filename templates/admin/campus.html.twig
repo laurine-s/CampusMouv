@@ -20,7 +20,7 @@
             <tr>
                 <th>Nom</th>
                 <th>Nombre d'élèves</th>
-                <th class="uk-text-center">Supprimer</th>
+{#                <th class="uk-text-center">Supprimer</th>#}
             </tr>
             </thead>
             <tbody>
@@ -29,13 +29,13 @@
                     <td>{{ campus.nom }}</td>
                     <td>{{ campus.users|length }}</td>
 
-                    <td class="uk-text-center">
-                        <a href="{{ path('admin_delete_campus', { id: campus.id }) }}"
-                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
-                           onclick="return confirm('Voulez-vous vraiment supprimer le campus de {{ campus.nom }} ?');">
-                            Supprimer
-                        </a>
-                    </td>
+{#                    <td class="uk-text-center">#}
+{#                        <a href="{{ path('admin_delete_campus', { id: campus.id }) }}"#}
+{#                           class="uk-button uk-button-small uk-button-danger uk-border-pill"#}
+{#                           onclick="return confirm('Voulez-vous vraiment supprimer le campus de {{ campus.nom }} ?');">#}
+{#                            Supprimer#}
+{#                        </a>#}
+{#                    </td>#}
 
                 </tr>
             {% endfor %}
