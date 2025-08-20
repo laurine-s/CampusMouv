@@ -23,34 +23,34 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('nom', null, [
-                'label' => 'Nom de la sortie',
+                'label' => 'Nom de la sortie : ',
                 'data' => 'Poufsouffle Party'
             ])
             ->add('dateHeureDebut', null, [
                 'widget' => 'single_text',
-                'label' => 'Date et heure de début',
+                'label' => 'Date et heure de début : ',
                 'data' => new \DateTimeImmutable('now')
             ])
             ->add('duree', null, [
-                'label' => 'Durée (en minutes)',
+                'label' => 'Durée (en minutes) : ',
                 'data' => 120
             ])
             ->add('dateLimiteInscription', null, [
                 'widget' => 'single_text',
-                'label' => 'Date limite d\'inscription',
+                'label' => 'Date limite d\'inscription : ',
                 'data' => (new \DateTimeImmutable('now'))->modify('+3 days')
 
             ])
             ->add('nbInscriptionMax', null, [
-                'label' => 'Nombre maximum de participants',
+                'label' => 'Nombre maximum de participants : ',
                 'data' => 10
             ])
             ->add('nbInscriptionMin', null, [
-                'label' => 'Nombre minimum de participants',
+                'label' => 'Nombre minimum de participants : ',
                 'data' => 2
             ])
             ->add('infos', null, [
-                'label' => 'Description de l\'activité',
+                'label' => 'Description de l\'activité : ',
                 'data' => "À l’approche de la fin du trimestre, la Salle Commune de Poufsouffle se transforme en un véritable repaire festif.
 Les tentures jaunes et noires brillent d’un éclat chaleureux, et de délicieuses odeurs de tarte à la citrouille et de pain d’épices flottent déjà dans l’air.
 Les élèves préparent une soirée conviviale autour d’un grand banquet improvisé, avec des jeux magiques, des devinettes sorcières et un concours amical de sorts lumineux.
@@ -58,7 +58,7 @@ Les rires résonneront sous les arches en pierre, et même le vieux tonneau d’
 Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à tous, où chacun repartira le cœur aussi chaud qu’une tasse de Bièraubeurre."
             ])
             ->add('photo', FileType::class, [
-                'label' => 'Photo de l\'activité',
+                'label' => 'Photo de l\'activité : ',
                 //car on ne stocke pas directement le fichier dans l’entité, on l’envoie à Cloudinary
                 'mapped' => false,
                 'required' => false,
@@ -80,7 +80,7 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom', // Adapte selon ton entité Campus
-                'label' => 'Campus',
+                'label' => 'Campus : ',
                 'placeholder' => 'Choisissez un campus',
                 'required' => true,
 
@@ -88,7 +88,7 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
             ->add('interets', EntityType::class, [
                 'class' => Interets::class,
                 'choice_label' => 'nom',
-                'label' => 'Catégorie d\'intérêt',
+                'label' => 'Centre d\'intérêt : ',
                 'placeholder' => 'Choisissez une catégorie',
                 'required' => false,
 
@@ -96,18 +96,18 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
-                'label' => 'Catégorie de lieux',
+                'label' => 'Lieu : ',
                 'placeholder' => 'Choisissez un lieu existant',
 
             ])
             ->add('createSortie', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal',
+                'attr' => ['class' => "uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green",
                     'id'=>'submit-create'],
             ])
             ->add('cancel', ResetType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right'],
+                'attr' => ['class' => "uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-red"],
             ]);
     }
 

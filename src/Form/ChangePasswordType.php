@@ -20,7 +20,7 @@ class ChangePasswordType extends AbstractType
         $builder
             // Mot de passe actuel
             ->add('currentPassword', PasswordType::class, [
-                'label' => 'Mot de passe actuel',
+                'label' => 'Mot de passe actuel : ',
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'current-password'],
                 'constraints' => [
@@ -34,11 +34,11 @@ class ChangePasswordType extends AbstractType
                 'type' => PasswordType::class,
                 'mapped' => false,
                 'first_options'  => [
-                    'label' => 'Nouveau mot de passe',
+                    'label' => 'Nouveau mot de passe : ',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
+                    'label' => 'Confirmer le mot de passe :',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'invalid_message' => 'Les deux mots de passe doivent être identiques.',

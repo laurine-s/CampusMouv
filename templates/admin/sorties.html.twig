@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des sorties{% endblock %}
+{% block title %}Liste des sorties | Admin.{% endblock %}
 
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des sorties</h1>
@@ -10,8 +10,8 @@
             au tableau de bord</a>
     </div>
 
-    <div class="uk-container uk-margin-top">
-        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-responsive">
+    <div class="uk-container-expand uk-margin-top uk-margin-xlarge-left uk-margin-xlarge-right">
+        <table class="uk-table uk-table-hover uk-table-divider uk-table-large uk-table-responsive">
             <thead>
             <tr>
                 <th>Nom</th>
@@ -26,13 +26,14 @@
             {% for sortie in sorties %}
                 <tr>
                     <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.lieu.nom }} – {{ sortie.lieu.rue }}, {{ sortie.lieu.ville.nom }}</td>
                     <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
                     <td>{{ sortie.nbInscrits }}</td>
                     <td>{{ sortie.etat.name }}</td>
                     <td class="uk-text-center">
                         {% if sortie.etat.name != 'ANNULEE' %}
                             <a href="{{ path('admin_cancel_event', { id: sortie.id}) }}"
-                               class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                               class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-red"
                                onclick="return confirm('Voulez-vous vraiment annuler {{ sortie.nom }} ?');">
                                 Annuler
                             </a>
@@ -42,7 +43,7 @@
                     </td>
                     <td class="uk-text-center">
                         <a href="{{ path('admin_delete_event', { id: sortie.id }) }}"
-                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-red"
                            onclick="return confirm('Voulez-vous vraiment supprimer {{ sortie.nom }} ?');">
                             Supprimer
                         </a>

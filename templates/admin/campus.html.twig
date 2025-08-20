@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des campus{% endblock %}
+{% block title %}Liste des campus |Admin.{% endblock %}
 
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des campus</h1>
 
     <div class="uk-align-center uk-text-center">
-        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill " href="{{ path('admin_dashboard') }}">Revenir
             au tableau de bord</a>
     </div>
 
     <div class="uk-align-center uk-text-center">
-        <a href="{{ path('admin_register_campus') }}" class="uk-button uk-button-small uk-button-primary uk-border-pill">Ajouter un campus</a>
+        <a href="{{ path('admin_register_campus') }}" class="uk-button uk-border-pill uk-button-primary uk-button-green">Ajouter un campus</a>
     </div>
 
     <div class="uk-container uk-margin-top">

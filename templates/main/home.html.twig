@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+Bienvenue | {{ parent() }}
+{% endblock %}
+
 {% block main %}
     <section class="container">
         <div class="uk-cover-container uk-light uk-flex uk-flex-middle top-wrap-height uk-position-relative"
@@ -37,8 +41,4 @@
         </div>
     </section>
 
-{% endblock %}
-
-{% block title %}
-    {{ parent() }} | Accueil
 {% endblock %}
