@@ -16,6 +16,7 @@ use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
+use App\Service\SortieEtatService;
 use App\Service\SortieInscriptionService;
 use App\Service\SortieService;
 use Cloudinary\Api\Exception\ApiError;
@@ -39,7 +40,8 @@ final class SortieController extends AbstractController
         $form = $this->createForm(SortieFilterType::class);
         $form->handleRequest($request);
 
-        $allSorties = $sortieRepository->findAll();
+
+        $allSorties = $sortieService->getSortiesAAfficher();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -111,7 +113,7 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService): Response
+        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService): Response
     {
 
         $user = $this->getUser();
@@ -120,20 +122,21 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        //On obtient la liste des participants à la sortie
+        //$listeParticipants = $sortieService->getSortieListeParticipants($id);
+        $listeParticipants = $sortie->getParticipants();
 
-        $sortie = $sortieService->getSortieListeParticipants($id);
-
-        if (!$sortie) {
+        if (!$listeParticipants) {
             $this->addFlash('danger', 'Sortie introuvable.');
             return $this->redirectToRoute('sorties_home');
         }
 
 
         // [$ok, $conditions] = (si deja_inscrit, pas_ouverte, delais_depasse, complet, ok)
-        [$ok, $conditions] = $policy->inscription($sortie, $user);
+        [$ok, $conditions] = $inscriptionService->inscription($sortie, $user);
         if (!$ok) {
             $this->addFlash('warning', $this->mapReasonToMessage($conditions));
-            return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+            return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
         }
 
         // OK : inscrire
@@ -142,16 +145,16 @@ final class SortieController extends AbstractController
         //nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
 
-        $policy->checkEtatInscriptionDesinscription($sortie);
-
         $em->flush();
 
+        $etatService->miseAJourEtatSortie($sortie);
+
         $this->addFlash('success', 'Vous êtes bien inscrit !');
-        return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+        return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(Sortie $sortie, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+    public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, SortieEtatService $etatService): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -178,9 +181,9 @@ final class SortieController extends AbstractController
         // garder nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
 
-        $policy->checkEtatInscriptionDesinscription($sortie);
-
         $em->flush();
+
+        $etatService->miseAJourEtatSortie($sortie);
 
         $this->addFlash('success', 'Vous êtes désinscrit.');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
@@ -318,6 +321,7 @@ final class SortieController extends AbstractController
     public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
     {
         $sortieService->cancelEvent($sortie);
+        $this->addFlash('success', 'La sortie '.$sortie->getNom().' a bien été annulée !');
         return $this->redirectToRoute('sorties_home');
     }
 

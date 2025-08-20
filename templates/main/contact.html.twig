@@ -96,6 +96,38 @@
                 font-size: 0.875rem;
             }
         }
+
+        /* Correction des z-index pour éviter les chevauchements */
+        .uk-box-shadow-medium {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-hero {
+            position: relative;
+            z-index: 2;
+        }
+
+        .tea-invitation {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-form-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Assurer que les cartes ne se chevauchent pas */
+        .uk-card {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Fix pour les grids UIKit */
+        .uk-grid > * {
+            position: relative;
+        }
     </style>
 {% endblock %}
 
@@ -114,7 +146,7 @@
 
     <!-- Section principale avec formulaire et invitation -->
     <div class="uk-container uk-box-shadow-medium uk-margin-medium-bottom">
-        <div class="uk-grid-large uk-child-width-1-1 uk-child-width-1-2@xl uk-margin-small-bottom" uk-grid>
+        <div class="uk-grid-small uk-child-width-1-1 uk-child-width-1-2@xl uk-margin-small-bottom" uk-grid>
 
             <!-- Section invitation thé - apparaît en second sur mobile -->
             <div class="uk-box-shadow-medium uk-flex-last@s uk-flex-first@xl">
@@ -269,5 +301,9 @@
             </div>
         </div>
     </div>
-<script src="{{ asset('/js/owl-game.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('/js/owl-game.js') }}"></script>
 {% endblock %}
