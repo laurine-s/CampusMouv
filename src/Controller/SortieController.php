@@ -11,6 +11,7 @@ use App\Enum\Role;
 use App\Form\LieuType;
 use App\Form\SortieFilterType;
 use App\Form\SortieType;
+use App\Message\ReminderEmailMessage;
 use App\Repository\CampusRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
@@ -26,8 +27,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 
 #[Route('/sorties', name: 'sorties_')]
@@ -132,7 +135,7 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService): Response
+        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService, MailService $mailService, MessageBusInterface $bus): Response
     {
 
         $user = $this->getUser();
@@ -169,16 +172,28 @@ final class SortieController extends AbstractController
         $etatService->miseAJourEtatSortie($sortie);
 
         // Envoi du mail
+        // Envoi du mail confirmation inscription
 
         $mailService->sendInscriptionMail($user->getEmail(), $sortie->getNom());
 
+//        // calcule le délai jusqu’à (dateDébut - 48h)
+//        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+//        $target = $sortie->getDateHeureDebut()->sub(new \DateInterval('PT5M'));
+//        $delayMs = max(0, $target->getTimestamp() - $now->getTimestamp()) * 1000;
+//
+//        $bus->dispatch(
+//            new ReminderEmailMessage($sortie->getId(), $user->getId()),
+//            [ new DelayStamp($delayMs) ]
+//        );
+
+
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        // Envoi du rappel mail 48h avant la sortie
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, SortieEtatService $etatService): Response
-    public function desinscription(Sortie $sortie, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, MailService $mailService): Response
+    public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, MailService $mailService, SortieEtatService $etatService): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -208,7 +223,8 @@ final class SortieController extends AbstractController
 
         $etatService->miseAJourEtatSortie($sortie);
 
-        // Envoi du mail
+
+        // Envoi du mail confirmation desinscription
         $mailService->sendDesinscriptionMail($user->getEmail(), $sortie->getNom());
 
         $this->addFlash('success', 'Vous êtes désinscrit.');
