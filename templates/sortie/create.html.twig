@@ -2,6 +2,14 @@
 
 {% block title %}Sorties disponibles{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+{% endblock %}
+
 {% block main %}
     <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
         <div class="uk-container uk-container-large">
@@ -110,40 +118,45 @@
             </h3>
             <div>
                 <!-- Campus et Lieu -->
-                <div class="uk-grid-small uk-child-width-1-3@m uk-margin" uk-grid>
+                <div class="uk-grid-small uk-child-width-1-2@m uk-margin" uk-grid>
                     <div>
                         <div class="uk-margin-small-bottom">
                             {{ form_widget(formSortie.campus, {'attr': {'id': 'campus-select'}}) }}
                         </div>
 
-                        <div>
+                        <div class="uk-margin-small-bottom">
                             {{ form_widget(formSortie.lieu, {'attr': {'id': 'lieu-select'}}) }}
                         </div>
                         <div>
-                            <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #mon-modal"
+                            <button class="uk-button uk-button-primary uk-margin-small-bottom" type="button" uk-toggle="target: #mon-modal"
                                     id="ajoutLieu">
                                 Ajouter un lieu
                             </button>
                         </div>
-                    </div>
+                        {#                    </div> #}
 
-                    <!-- Adresse complète -->
-                    <div class="uk-grid-small uk-child-width-1-3@m" uk-grid>
-                        <div>
+                        <!-- Adresse complète -->
+                        {#                    <div class="uk-grid-small uk-child-width-1-3@m" uk-grid> #}
+                        <div class="uk-margin-small-bottom">
                             <label class="uk-form-label">Adresse</label>
                             <input type="text" class="uk-input" readonly
                                    placeholder="Adresse du lieu" id="adresse-field">
                         </div>
-                        <div>
+                        <div class="uk-margin-small-bottom">
                             <label class="uk-form-label">Ville</label>
                             <input type="text" class="uk-input" readonly
                                    placeholder="Ville" id="ville-field">
                         </div>
-                        <div>
+                        <div class="uk-margin-small-bottom">
                             <label class="uk-form-label">Code Postal</label>
                             <input type="text" class="uk-input" readonly
                                    placeholder="Code postal" id="codepostal-field">
                         </div>
+                    </div>
+                    <div>
+                        <label class="uk-form-label">Localisation</label>
+                        <div id="sortie-map"
+                             style="height: 350px; width: 100%; border-radius: 5px; border: 1px solid #e5e5e5;"></div>
                     </div>
                 </div>
             </div>
@@ -215,5 +228,14 @@
     </div>
 
     <!-- Script JavaScript -->
-    <script src="{{ asset('js/sortie-form.js') }}"></script>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <!-- Scripts JavaScript de l'application -->
+    <script src="{{ asset('js/sortie-form.js') }}" defer></script>
+    <script src="{{ asset('js/sortie-map.js') }}" defer></script>
+
 {% endblock %}
