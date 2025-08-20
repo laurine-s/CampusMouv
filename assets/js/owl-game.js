@@ -1,17 +1,16 @@
-// Code à ajouter dans votre page de contact
-// Remplacez le bouton "Appeler un hibou" par celui-ci :
-
-/*
-<button class="uk-button uk-button-primary uk-width-1-1 uk-button-small@s" onclick="callOwl()">
-    🦉 Appeler un hibou
-</button>
-*/
 
 function callOwl() {
+    // Supprimer l'ancien jeu s'il existe
+    const existingOverlay = document.getElementById('gameOverlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
     // Créer l'overlay du jeu
     const gameOverlay = document.createElement('div');
+    gameOverlay.id = 'gameOverlay';
     gameOverlay.innerHTML = `
-        <div class="game-overlay" id="gameOverlay" style="
+        <div class="game-overlay" style="
             position: fixed;
             top: 0;
             left: 0;
@@ -48,6 +47,7 @@ function callOwl() {
                     cursor: pointer;
                     font-size: 1.5rem;
                     z-index: 101;
+                    transition: background 0.3s;
                 ">&times;</button>
                 
                 <div class="game-header" style="
@@ -67,7 +67,14 @@ function callOwl() {
                     <div class="timer" style="font-size: 1rem; color: #ff6b6b; margin-top: 5px;">Temps: <span id="owlTimer">60</span>s</div>
                 </div>
 
-                <div class="clouds" id="owlClouds"></div>
+                <div class="clouds" id="owlClouds" style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                "></div>
 
                 <div class="owl" id="gameOwl" style="
                     position: absolute;
@@ -75,9 +82,13 @@ function callOwl() {
                     height: 60px;
                     font-size: 60px;
                     z-index: 50;
-                    transition: all 0.1s ease;
+                    transition: none;
                     cursor: pointer;
                     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    user-select: none;
                 ">🦉</div>
 
                 <div class="castle" style="
@@ -134,6 +145,7 @@ function callOwl() {
                         cursor: pointer;
                         font-size: 1rem;
                         margin: 10px;
+                        transition: background 0.3s;
                     ">Rejouer</button>
                     <button onclick="shareOwlScore()" style="
                         background: #4ade80;
@@ -144,6 +156,7 @@ function callOwl() {
                         cursor: pointer;
                         font-size: 1rem;
                         margin: 10px;
+                        transition: background 0.3s;
                     ">Partager</button>
                 </div>
             </div>
@@ -152,39 +165,92 @@ function callOwl() {
 
     document.body.appendChild(gameOverlay);
 
-    // Initialiser le jeu
+    // Initialiser le jeu avec un délai pour s'assurer que le DOM est prêt
     setTimeout(() => {
         initOwlGame();
-    }, 100);
+    }, 200);
 }
 
 function closeOwlGame() {
     const overlay = document.getElementById('gameOverlay');
     if (overlay) {
+        // Nettoyer les timers avant de fermer
+        if (owlGame.timer) {
+            clearInterval(owlGame.timer);
+        }
+        if (owlGame.cloudInterval) {
+            clearInterval(owlGame.cloudInterval);
+        }
         overlay.remove();
+
+        // Réinitialiser l'objet jeu
+        owlGame = {
+            score: 0,
+            timeLeft: 60,
+            gameActive: false,
+            deliveryPoints: [],
+            timer: null,
+            cloudInterval: null
+        };
     }
 }
 
 let owlGame = {
     score: 0,
     timeLeft: 60,
-    gameActive: true,
+    gameActive: false,
     deliveryPoints: [],
-    timer: null
+    timer: null,
+    cloudInterval: null
 };
 
 function initOwlGame() {
+    // Vérifier que tous les éléments existent
     const owl = document.getElementById('gameOwl');
     const container = document.getElementById('gameContainer');
+    const scoreEl = document.getElementById('owlScore');
+    const timerEl = document.getElementById('owlTimer');
+
+    if (!owl || !container || !scoreEl || !timerEl) {
+        console.error('Éléments du jeu non trouvés, réessai dans 100ms...');
+        setTimeout(initOwlGame, 100);
+        return;
+    }
+
+    // Réinitialiser l'état du jeu
+    owlGame = {
+        score: 0,
+        timeLeft: 60,
+        gameActive: true,
+        deliveryPoints: [],
+        timer: null,
+        cloudInterval: null
+    };
 
     // Position initiale du hibou
     const rect = container.getBoundingClientRect();
     owl.style.left = (rect.width / 2 - 30) + 'px';
     owl.style.top = (rect.height / 2) + 'px';
+    owl.style.transform = 'rotate(0deg)';
+    owl.style.animation = 'owlHover 2s ease-in-out infinite';
 
-    // Contrôle souris
-    container.addEventListener('mousemove', moveOwl);
-    container.addEventListener('touchmove', moveOwlTouch);
+    // Contrôle souris et tactile avec haute fréquence
+    container.addEventListener('mousemove', moveOwl, { passive: false });
+    container.addEventListener('touchmove', moveOwlTouch, { passive: false });
+
+    // Ajouter des événements pour détecter quand la souris entre/sort du jeu
+    container.addEventListener('mouseenter', () => {
+        if (owlGame.gameActive) {
+            owl.style.animation = 'owlFlap 0.3s ease-in-out infinite';
+        }
+    });
+
+    container.addEventListener('mouseleave', () => {
+        if (owlGame.gameActive) {
+            owl.style.animation = 'owlHover 2s ease-in-out infinite';
+            owl.style.transform = 'rotate(0deg)';
+        }
+    });
 
     // Démarrer le minuteur
     startOwlTimer();
@@ -201,16 +267,46 @@ function moveOwl(e) {
 
     const owl = document.getElementById('gameOwl');
     const container = document.getElementById('gameContainer');
-    const rect = container.getBoundingClientRect();
 
+    if (!owl || !container) return;
+
+    const rect = container.getBoundingClientRect();
     const x = e.clientX - rect.left - 30;
     const y = e.clientY - rect.top - 30;
 
     const maxX = rect.width - 60;
     const maxY = rect.height - 60;
 
-    owl.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-    owl.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+    const newX = Math.max(0, Math.min(x, maxX));
+    const newY = Math.max(0, Math.min(y, maxY));
+
+    // Calcul de la vitesse pour l'animation de battement d'ailes
+    const currentX = parseFloat(owl.style.left) || newX;
+    const currentY = parseFloat(owl.style.top) || newY;
+    const speed = Math.sqrt(Math.pow(newX - currentX, 2) + Math.pow(newY - currentY, 2));
+
+    // Animation de battement plus ou moins rapide selon la vitesse
+    if (speed > 5) {
+        owl.style.animation = 'owlFlap 0.2s ease-in-out infinite';
+    } else if (speed > 2) {
+        owl.style.animation = 'owlFlap 0.4s ease-in-out infinite';
+    } else {
+        owl.style.animation = 'owlHover 2s ease-in-out infinite';
+    }
+
+    // Inclinaison du hibou selon la direction
+    const deltaX = newX - currentX;
+    let rotation = 0;
+    if (Math.abs(deltaX) > 2) {
+        rotation = Math.max(-15, Math.min(15, deltaX * 0.3));
+    }
+
+    owl.style.left = newX + 'px';
+    owl.style.top = newY + 'px';
+    owl.style.transform = `rotate(${rotation}deg)`;
+
+    // Effet de traînée magique
+    createOwlTrail(newX + 30, newY + 30);
 
     checkOwlCollisions();
 }
@@ -222,18 +318,72 @@ function moveOwlTouch(e) {
     const touch = e.touches[0];
     const owl = document.getElementById('gameOwl');
     const container = document.getElementById('gameContainer');
-    const rect = container.getBoundingClientRect();
 
+    if (!owl || !container || !touch) return;
+
+    const rect = container.getBoundingClientRect();
     const x = touch.clientX - rect.left - 30;
     const y = touch.clientY - rect.top - 30;
 
     const maxX = rect.width - 60;
     const maxY = rect.height - 60;
 
-    owl.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-    owl.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+    const newX = Math.max(0, Math.min(x, maxX));
+    const newY = Math.max(0, Math.min(y, maxY));
+
+    // Même logique d'animation que pour la souris
+    const currentX = parseFloat(owl.style.left) || newX;
+    const currentY = parseFloat(owl.style.top) || newY;
+    const speed = Math.sqrt(Math.pow(newX - currentX, 2) + Math.pow(newY - currentY, 2));
+
+    if (speed > 5) {
+        owl.style.animation = 'owlFlap 0.2s ease-in-out infinite';
+    } else if (speed > 2) {
+        owl.style.animation = 'owlFlap 0.4s ease-in-out infinite';
+    } else {
+        owl.style.animation = 'owlHover 2s ease-in-out infinite';
+    }
+
+    const deltaX = newX - currentX;
+    let rotation = 0;
+    if (Math.abs(deltaX) > 2) {
+        rotation = Math.max(-15, Math.min(15, deltaX * 0.3));
+    }
+
+    owl.style.left = newX + 'px';
+    owl.style.top = newY + 'px';
+    owl.style.transform = `rotate(${rotation}deg)`;
+
+    createOwlTrail(newX + 30, newY + 30);
 
     checkOwlCollisions();
+}
+
+// Nouvelle fonction pour créer une traînée magique derrière le hibou
+function createOwlTrail(x, y) {
+    const container = document.getElementById('gameContainer');
+    if (!container || Math.random() > 0.3) return; // Créer une traînée 30% du temps
+
+    const trail = document.createElement('div');
+    trail.innerHTML = '✨';
+    trail.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        font-size: 12px;
+        pointer-events: none;
+        z-index: 40;
+        animation: owlTrailFade 0.8s ease-out forwards;
+        transform: translate(-50%, -50%);
+    `;
+
+    container.appendChild(trail);
+
+    setTimeout(() => {
+        if (trail.parentNode) {
+            trail.remove();
+        }
+    }, 800);
 }
 
 function createOwlDeliveryPoints() {
@@ -250,8 +400,9 @@ function createOwlDeliveryPoints() {
 
 function createSingleDeliveryPoint(emoji) {
     const container = document.getElementById('gameContainer');
-    const point = document.createElement('div');
+    if (!container) return;
 
+    const point = document.createElement('div');
     point.className = 'delivery-point';
     point.innerHTML = emoji;
     point.style.cssText = `
@@ -284,7 +435,7 @@ function createSingleDeliveryPoint(emoji) {
 
     // Auto-suppression après 15 secondes
     setTimeout(() => {
-        if (point.parentNode) {
+        if (point.parentNode && owlGame.deliveryPoints.includes(point)) {
             point.remove();
             owlGame.deliveryPoints = owlGame.deliveryPoints.filter(p => p !== point);
         }
@@ -293,6 +444,8 @@ function createSingleDeliveryPoint(emoji) {
 
 function checkOwlCollisions() {
     const owl = document.getElementById('gameOwl');
+    if (!owl) return;
+
     const owlRect = owl.getBoundingClientRect();
 
     owlGame.deliveryPoints.forEach((point, index) => {
@@ -315,7 +468,10 @@ function isOwlColliding(rect1, rect2) {
 
 function collectOwlPoint(point, index) {
     owlGame.score += 10;
-    document.getElementById('owlScore').textContent = owlGame.score;
+    const scoreEl = document.getElementById('owlScore');
+    if (scoreEl) {
+        scoreEl.textContent = owlGame.score;
+    }
 
     // Animation de collecte
     point.style.animation = 'owlCollectEffect 0.5s ease-out forwards';
@@ -334,6 +490,8 @@ function collectOwlPoint(point, index) {
 
 function createOwlParticles(element) {
     const container = document.getElementById('gameContainer');
+    if (!container) return;
+
     const rect = element.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
@@ -381,16 +539,17 @@ function playOwlCollectSound() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.1);
     } catch (e) {
-        // Son non disponible
+        // Son non disponible, pas grave
     }
 }
 
 function createOwlClouds() {
     const container = document.getElementById('owlClouds');
+    if (!container) return;
 
-    const cloudInterval = setInterval(() => {
+    owlGame.cloudInterval = setInterval(() => {
         if (!owlGame.gameActive) {
-            clearInterval(cloudInterval);
+            clearInterval(owlGame.cloudInterval);
             return;
         }
 
@@ -419,9 +578,15 @@ function createOwlClouds() {
 }
 
 function startOwlTimer() {
+    const timerEl = document.getElementById('owlTimer');
+    if (!timerEl) return;
+
     owlGame.timer = setInterval(() => {
         owlGame.timeLeft--;
-        document.getElementById('owlTimer').textContent = owlGame.timeLeft;
+        const currentTimerEl = document.getElementById('owlTimer');
+        if (currentTimerEl) {
+            currentTimerEl.textContent = owlGame.timeLeft;
+        }
 
         if (owlGame.timeLeft <= 0) {
             clearInterval(owlGame.timer);
@@ -432,42 +597,56 @@ function startOwlTimer() {
 
 function endOwlGame() {
     owlGame.gameActive = false;
-    document.getElementById('owlFinalScore').textContent = owlGame.score;
-    document.getElementById('owlGameComplete').style.display = 'block';
+    const finalScoreEl = document.getElementById('owlFinalScore');
+    const gameCompleteEl = document.getElementById('owlGameComplete');
+
+    if (finalScoreEl) {
+        finalScoreEl.textContent = owlGame.score;
+    }
+    if (gameCompleteEl) {
+        gameCompleteEl.style.display = 'block';
+    }
 }
 
 function restartOwlGame() {
     // Nettoyer l'ancien jeu
     const container = document.getElementById('gameContainer');
-    const points = container.querySelectorAll('.delivery-point');
-    const particles = container.querySelectorAll('[style*="owlSparkle"]');
-    const clouds = container.querySelectorAll('#owlClouds > div');
+    if (container) {
+        const points = container.querySelectorAll('.delivery-point');
+        const particles = container.querySelectorAll('[style*="owlSparkle"]');
+        const clouds = container.querySelectorAll('#owlClouds > div');
 
-    points.forEach(point => point.remove());
-    particles.forEach(particle => particle.remove());
-    clouds.forEach(cloud => cloud.remove());
+        points.forEach(point => point.remove());
+        particles.forEach(particle => particle.remove());
+        clouds.forEach(cloud => cloud.remove());
+    }
 
-    // Réinitialiser les variables
-    owlGame = {
-        score: 0,
-        timeLeft: 60,
-        gameActive: true,
-        deliveryPoints: [],
-        timer: null
-    };
+    // Nettoyer les timers
+    if (owlGame.timer) {
+        clearInterval(owlGame.timer);
+    }
+    if (owlGame.cloudInterval) {
+        clearInterval(owlGame.cloudInterval);
+    }
 
-    document.getElementById('owlGameComplete').style.display = 'none';
-    document.getElementById('owlScore').textContent = '0';
-    document.getElementById('owlTimer').textContent = '60';
+    // Réinitialiser l'affichage
+    const gameCompleteEl = document.getElementById('owlGameComplete');
+    const scoreEl = document.getElementById('owlScore');
+    const timerEl = document.getElementById('owlTimer');
+
+    if (gameCompleteEl) gameCompleteEl.style.display = 'none';
+    if (scoreEl) scoreEl.textContent = '0';
+    if (timerEl) timerEl.textContent = '60';
 
     // Redémarrer
     setTimeout(() => {
         initOwlGame();
-    }, 100);
+    }, 200);
 }
 
 function shareOwlScore() {
-    const score = document.getElementById('owlFinalScore').textContent;
+    const finalScoreEl = document.getElementById('owlFinalScore');
+    const score = finalScoreEl ? finalScoreEl.textContent : owlGame.score;
     const text = `Je viens de livrer ${score} messages par hibou à Poudlard ! 🦉✨ #HibouExpress #Poudlard`;
 
     if (navigator.share) {
@@ -475,22 +654,45 @@ function shareOwlScore() {
             title: 'Livraison par Hibou',
             text: text,
             url: window.location.href
+        }).catch(() => {
+            // Si le partage échoue, copier dans le presse-papiers
+            copyToClipboard(text);
         });
     } else {
-        // Copier dans le presse-papiers
+        copyToClipboard(text);
+    }
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
             alert('Score copié dans le presse-papiers !');
         }).catch(() => {
-            // Fallback si clipboard API n'est pas disponible
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Score copié dans le presse-papiers !');
+            fallbackCopyTextToClipboard(text);
         });
+    } else {
+        fallbackCopyTextToClipboard(text);
     }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        document.execCommand('copy');
+        alert('Score copié dans le presse-papiers !');
+    } catch (err) {
+        alert('Impossible de copier le score automatiquement.');
+    }
+
+    document.body.removeChild(textArea);
 }
 
 // Ajouter les animations CSS nécessaires
@@ -518,6 +720,44 @@ owlGameStyles.textContent = `
         to { transform: translateX(calc(100vw + 100px)); }
     }
     
+    @keyframes owlFlap {
+        0% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.1) rotate(-2deg); }
+        50% { transform: scale(1) rotate(0deg); }
+        75% { transform: scale(1.1) rotate(2deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+    
+    @keyframes owlHover {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-3px) rotate(1deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+    
+    @keyframes owlTrailFade {
+        0% { 
+            opacity: 0.8; 
+            transform: translate(-50%, -50%) scale(1); 
+        }
+        100% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(2) rotate(180deg); 
+        }
+    }
+    
+    .close-btn:hover {
+        background: #ff5252 !important;
+    }
+    
+    button:hover {
+        opacity: 0.9;
+    }
+    
+    /* Curseur personnalisé pour le jeu */
+    #gameContainer {
+        cursor: none;
+    }
+    
     @media (max-width: 768px) {
         .delivery-point {
             width: 60px !important;
@@ -535,7 +775,20 @@ owlGameStyles.textContent = `
             font-size: 0.8rem !important;
             padding: 10px !important;
         }
+        
+        .castle {
+            font-size: 3rem !important;
+        }
+        
+        /* Réactiver le curseur sur mobile */
+        #gameContainer {
+            cursor: auto;
+        }
     }
 `;
 
-document.head.appendChild(owlGameStyles);
+// N'ajouter les styles qu'une seule fois
+if (!document.getElementById('owl-game-styles')) {
+    owlGameStyles.id = 'owl-game-styles';
+    document.head.appendChild(owlGameStyles);
+}
