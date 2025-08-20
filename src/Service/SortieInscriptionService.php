@@ -61,4 +61,20 @@ final class SortieInscriptionService
         }
         return [true, 'ok'];
     }
+
+    public function checkEtatInscriptionDesinscription (Sortie $sortie) : void
+    {
+        $nbInscrits = $sortie->getNbInscrits();
+        $nbMax = $sortie->getNbInscriptionMax();
+
+        if ($nbInscrits === $nbMax){
+            $sortie->setEtat(Etat::CLOTUREE);
+        }
+
+        if($nbInscrits<$nbMax){
+            $sortie->setEtat(Etat::OUVERTE);
+        }
+
+    }
+
 }

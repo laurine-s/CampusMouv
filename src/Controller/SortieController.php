@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Enum\Etat;
 use App\Enum\Role;
 use App\Form\LieuType;
 use App\Form\SortieFilterType;
@@ -128,11 +129,6 @@ final class SortieController extends AbstractController
         }
 
 
-        if (!$sortie) {
-            $this->addFlash('danger', 'Sortie introuvable.');
-            return $this->redirectToRoute('sorties_home');
-        }
-
         // [$ok, $conditions] = (si deja_inscrit, pas_ouverte, delais_depasse, complet, ok)
         [$ok, $conditions] = $policy->inscription($sortie, $user);
         if (!$ok) {
@@ -146,8 +142,9 @@ final class SortieController extends AbstractController
         //nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
 
-        $em->flush();
+        $policy->checkEtatInscriptionDesinscription($sortie);
 
+        $em->flush();
 
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $id]);
@@ -180,6 +177,8 @@ final class SortieController extends AbstractController
 
         // garder nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
+
+        $policy->checkEtatInscriptionDesinscription($sortie);
 
         $em->flush();
 
