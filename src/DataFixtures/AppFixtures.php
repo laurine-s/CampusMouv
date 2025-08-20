@@ -116,7 +116,7 @@
 //
 //        // --- Users ---
 //        $usersAll = [];
-//        $domain = 'campus-eni.fr';
+//
 //        $pseudoUsed = [];
 //
 //        for ($i = 0; $i < 20; $i++) {
@@ -593,7 +593,83 @@ final class AppFixtures extends Fixture
             $s->setNbInscrits($count);
 
             $em->persist($s);
+
+            $faker = \Faker\Factory::create('fr_FR');
+            $domain = 'campus-eni.fr';
+            $annee2025 = 2025;
+            //----User en dur----
+            $user = new User();
+            $nom = 'Boulier';
+            $prenom = 'romane';
+            $user->setNom($nom);                 // () obligatoires
+            $user->setPrenom($prenom);
+            $user->setPseudo('MamanRomane');
+            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "16-Avril2007");
+            $user->setPassword($hashedPassword);
+            // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+            $user->setCampus($faker->randomElement($campusByName));
+            $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+            $user->addInteret($faker->randomElement($interets));
+            $user->setPromo($faker->randomElement($promos));
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
+
+            //----User en dur----
+            $user = new User();
+            $nom = 'Guillevic';
+            $prenom = 'laurence';
+            $user->setNom($nom);                 // () obligatoires
+            $user->setPrenom($prenom);
+            $user->setPseudo("LuxAndLyraLover's");
+            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "@Lux56700");
+            $user->setPassword($hashedPassword);
+            // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+            $user->setCampus($faker->randomElement($campusByName));
+            $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+            $user->addInteret($faker->randomElement($interets));
+            $user->setPromo($faker->randomElement($promos));
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
+
+            //----User en dur----
+            $user = new User();
+            $nom = 'Süss';
+            $prenom = 'laurine';
+            $user->setNom($nom);                 // () obligatoires
+            $user->setPrenom($prenom);
+            $user->setPseudo('McGonagall');
+            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+            $user->setPassword($hashedPassword);
+            // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+            $user->setCampus($faker->randomElement($campusByName));
+            $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+            $user->addInteret($faker->randomElement($interets));
+            $user->setPromo($faker->randomElement($promos));
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
+
+            //----User en dur----
+            $user = new User();
+            $nom = 'Minel';
+            $prenom = 'jonathan';
+            $user->setNom($nom);                 // () obligatoires
+            $user->setPrenom($prenom);
+            $user->setPseudo('Jojo');
+            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+            $user->setPassword($hashedPassword);
+            // Si User::campus est une relation ManyToOne vers Campus, on doit setter un objet, pas un entier
+            $user->setCampus($faker->randomElement($campusByName));
+            $user->setBio($faker->realText(180));              // borné pour éviter un pavé
+            $user->addInteret($faker->randomElement($interets));
+            $user->setPromo($faker->randomElement($promos));
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
         }
+
 
         $em->flush();
     }
@@ -605,6 +681,7 @@ final class AppFixtures extends Fixture
             ->setTime((int)$h, (int)$m)
             ->modify("+{$plusDays} days");
     }
+
 
     // Téléphones FR valides (+33 ou 0)
     private function fakeFrPhone(int $i): string
