@@ -249,31 +249,31 @@
                              style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
                             {% if app.user and sortie.participants.contains(app.user) %}
                                 {# Déjà inscrit → se désinscrire #}
-                                <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"
-                                      class="uk-width-1-1">
-                                    <button type="submit"
-                                            class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1">
-                                        <span uk-icon="close"></span> Se désinscrire
-                                    </button>
-                                </form>
+                                {# Possible que si l'état de la sortie est "ouverte" ou si date du jour > date de cloture #}
+                                {% if sortie.etat.name == 'OUVERTE' or sortie.dateLimiteInscription|date('U') > "now"|date('U') %}
+                                    <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"
+                                          class="uk-width-1-1">
+                                        <button type="submit"
+                                                class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1">
+                                            <span uk-icon="close"></span> Se désinscrire
+                                        </button>
+                                    </form>
+                                {% else %}
 
-                            {% elseif app.user %}
-                                {# Non inscrit : calcul des raisons d'indisponibilité #}
-                                {% set conditions = [] %}
-                                {# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %} #}
-                                {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}
-                                {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}
-                                {% if deja_debute %}
                                     <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1"
-                                            disabled
-                                            title="La sortie a déjà débuté">
+                                                   disabled
+                                                   title="La sortie a déjà débuté">
                                         <span uk-icon="ban"></span> Désinscription indisponible
                                     </button>
+
                                 {% endif %}
-                                {% if conditions|length > 0 %}
+
+                            {% elseif app.user %}
+
+                                {% if sortie.etat.name != 'OUVERTE' %}
                                     <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1"
                                             disabled
-                                            title="{{ conditions|join(' • ') }}">
+                                            title="{{ sortie.etat.name }}">
                                         <span uk-icon="ban"></span> Inscription indisponible
                                     </button>
 
@@ -286,6 +286,35 @@
                                         </button>
                                     </form>
                                 {% endif %}
+
+{#                                #}{# Non inscrit : calcul des raisons d'indisponibilité #}
+{#                                {% set conditions = [] %}#}
+{#                                #}{# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %} #}
+{#                                {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}#}
+{#                                {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}#}
+{#                                {% if deja_debute %}#}
+{#                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1"#}
+{#                                            disabled#}
+{#                                            title="La sortie a déjà débuté">#}
+{#                                        <span uk-icon="ban"></span> Désinscription indisponible#}
+{#                                    </button>#}
+{#                                {% endif %}#}
+{#                                {% if conditions|length > 0 %}#}
+{#                                    <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1"#}
+{#                                            disabled#}
+{#                                            title="{{ conditions|join(' • ') }}">#}
+{#                                        <span uk-icon="ban"></span> Inscription indisponible#}
+{#                                    </button>#}
+
+{#                                {% else %}#}
+{#                                    <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post"#}
+{#                                          class="uk-width-1-1">#}
+{#                                        <button type="submit"#}
+{#                                                class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">#}
+{#                                            <span uk-icon="check"></span> Je m'inscris à cette sortie#}
+{#                                        </button>#}
+{#                                    </form>#}
+{#                                {% endif %}#}
 
                             {% else %}
                                 {# Pas connecté #}
@@ -303,7 +332,7 @@
     </section>
     {# App\Enum\Etat::ANNULEE #}
     {% if sortie.etat.name is not same as 'ANNULEE' %}
-        {% if app.user is same as sortie.organisateur %}
+        {% if app.user is same as sortie.organisateur and (sortie.etat.name == 'OUVERTE' or sortie.etat.name == 'CLOTUREE' ) %}
             <button class="uk-button uk-button-danger uk-dark uk-button-large uk-width-1-1"
                     uk-toggle="target: #modal-delete-{{ sortie.id }}">
                 <span uk-icon="trash"></span> Annuler la sortie
@@ -344,6 +373,6 @@
             crossorigin=""></script>
 
     <!-- Scripts JavaScript de l'application -->
-{#    <script src="{{ asset('js/sortie-form.js') }}" defer></script>#}
+    {#    <script src="{{ asset('js/sortie-form.js') }}" defer></script> #}
     <script src="{{ asset('js/sortie-map-detail.js') }}" defer></script>
 {% endblock %}
