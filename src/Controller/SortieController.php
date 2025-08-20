@@ -16,6 +16,7 @@ use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
+use App\Service\MailService;
 use App\Service\SortieInscriptionService;
 use App\Service\SortieService;
 use Cloudinary\Api\Exception\ApiError;
@@ -111,7 +112,7 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService): Response
+        int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, SortieService $sortieService, MailService $mailService): Response
     {
 
         $user = $this->getUser();
@@ -119,7 +120,6 @@ final class SortieController extends AbstractController
             $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
             return $this->redirectToRoute('app_login');
         }
-
 
         $sortie = $sortieService->getSortieListeParticipants($id);
 
@@ -146,19 +146,25 @@ final class SortieController extends AbstractController
 
         $em->flush();
 
+        // Envoi du mail
+
+        $mailService->sendInscriptionMail($user->getEmail(), $sortie->getNom());
+
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $id]);
+
+
+
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(Sortie $sortie, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy): Response
+    public function desinscription(Sortie $sortie, SortieRepository $sortieRepository, EntityManagerInterface $em, SortieInscriptionService $policy, MailService $mailService): Response
     {
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous désinscrire.');
             return $this->redirectToRoute('app_login');
         }
-
 
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
@@ -181,6 +187,9 @@ final class SortieController extends AbstractController
         $policy->checkEtatInscriptionDesinscription($sortie);
 
         $em->flush();
+
+        // Envoi du mail
+        $mailService->sendDesinscriptionMail($user->getEmail(), $sortie->getNom());
 
         $this->addFlash('success', 'Vous êtes désinscrit.');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
