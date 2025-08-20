@@ -1,16 +1,96 @@
-<div class="uk-container">
+{#<div class="uk-container">#}
+{#    <nav class="uk-navbar-transparent" data-uk-navbar>#}
+{#        <div class="uk-navbar-left">#}
+{#            <ul class="uk-navbar-nav">#}
+{#                <li class="uk-active">#}
+{#                    <a href="#" data-uk-icon="icon:menu"></a>#}
+{#                    <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left uk-box-shadow-large uk-text-white uk-width-auto ">#}
+{#                        <ul class="uk-nav uk-navbar-dropdown-nav">#}
+{#                            <li class="uk-nav-header uk-text-small uk-text-primary uk-text-bold">Nos campus</li>#}
+
+{#                            #}{# Boutons pour chaque campus présent en BDD #}
+{#                            {% for campus in campusList %}#}
+{#                                <li class="uk-margin-small-top ">#}
+{#                                    <a href="{{ path('sorties_parCampus', {'id': campus.id}) }}"#}
+{#                                       class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">#}
+{#                                        <span uk-icon="location"#}
+{#                                              class="uk-margin-small-left uk-margin-small-right"></span>#}
+{#                                        {{ campus.nom }}#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
+
+{#                            <li class="uk-nav-divider uk-margin-small"></li>#}
+
+{#                            <li class="uk-margin-small-top">#}
+{#                                <a href="{{ path('sorties_home') }}"#}
+{#                                   class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">#}
+{#                                    <span data-uk-icon="calendar"#}
+{#                                          class="uk-margin-small-left uk-margin-small-right"></span>#}
+{#                                    <span class="uk-margin-small-right uk-text-bold">Tous les événements</span>#}
+{#                                </a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#            </ul>#}
+{#            <a class="uk-navbar-item uk-logo" href="{{ path('main_home') }}">Campus Mouv'</a>#}
+{#        </div>#}
+{#        <div class="uk-navbar-center uk-visible@m">#}
+{#            <ul class="uk-navbar-nav">#}
+{#                <li class="uk-active"><a href="{{ path('main_apropos') }}">Qui sommes-nous ?</a></li>#}
+{#                <li class="uk-active"><a href="{{ path('sorties_home') }}">Les événements </a></li>#}
+{#                {% if app.user %}#}
+{#                    <li class="uk-active"><a href="{{ path('sorties_create') }}">Créer une sortie </a></li>#}
+{#                {% endif %}#}
+{#                <li class="uk-active"><a href="{{ path('main_contact') }}">Contact</a></li>#}
+{#            </ul>#}
+{#        </div>#}
+{#        <div class="uk-navbar-right">#}
+{#            <ul class="uk-navbar-nav">#}
+{#                <li class="uk-active">#}
+
+{#                    {% if not app.user %}#}
+{#                        <a href="{{ path('app_login') }}" data-uk-icon="icon:user">Connexion</a>#}
+{#                    {% endif %}#}
+
+{#                    {% if app.user %}#}
+{#                        <a href="#" data-uk-icon="icon:user">{{ app.user.prenom }}</a>#}
+{#                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">#}
+{#                            <ul class="uk-nav uk-navbar-dropdown-nav">#}
+{#                                <li class="uk-nav-header uk-text-small uk-text-primary">Mes infos</li>#}
+{#                                <li><a href="{{ path('profil') }}"><span data-uk-icon="icon: user"></span>Mon profil</a>#}
+{#                                </li>#}
+{#                                <li><a href="{{ path('sorties_home', {chemin: 'mes_sorties'}) }}"><span#}
+{#                                                data-uk-icon="icon: star"></span>Mes sorties</a></li>#}
+{#                                {% if is_granted('ROLE_ADMIN') %}#}
+{#                                    <li><a href="{{ path('admin_dashboard') }}"><span#}
+{#                                                    data-uk-icon="icon: settings"></span>Administration</a></li>#}
+{#                                {% endif %}#}
+{#                                <li class="uk-nav-divider"></li>#}
+{#                                <li><a href="{{ path('app_logout') }}"><span data-uk-icon="icon: sign-out"></span>Se#}
+{#                                        déconnecter</a></li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                </li>#}
+{#            </ul>#}
+{#        </div>#}
+{#    </nav>#}
+{#</div>#}
+<div class="uk-container uk-margin-medium-bottom">
     <nav class="uk-navbar-transparent" data-uk-navbar>
         <div class="uk-navbar-left">
             <ul class="uk-navbar-nav">
                 <li class="uk-active">
                     <a href="#" data-uk-icon="icon:menu"></a>
-                    <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left uk-box-shadow-large uk-text-white uk-width-auto ">
+                    <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left uk-box-shadow-large uk-text-white uk-width-auto">
                         <ul class="uk-nav uk-navbar-dropdown-nav">
                             <li class="uk-nav-header uk-text-small uk-text-primary uk-text-bold">Nos campus</li>
 
                             {# Boutons pour chaque campus présent en BDD #}
                             {% for campus in campusList %}
-                                <li class="uk-margin-small-top ">
+                                <li class="uk-margin-small-top">
                                     <a href="{{ path('sorties_parCampus', {'id': campus.id}) }}"
                                        class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-border-rounded city-button">
                                         <span uk-icon="location"
@@ -34,29 +114,65 @@
                     </div>
                 </li>
             </ul>
-            <a class="uk-navbar-item uk-logo" href="{{ path('main_home') }}">Campus Mouv'</a>
+            <a class="uk-navbar-item uk-logo uk-text-truncate" href="{{ path('main_home') }}">Campus Mouv'</a>
         </div>
-        <div class="uk-navbar-center uk-visible@m">
+
+        <!-- Navigation centrale visible sur large screens -->
+        <div class="uk-navbar-center uk-visible@l">
             <ul class="uk-navbar-nav">
                 <li class="uk-active"><a href="{{ path('main_apropos') }}">Qui sommes-nous ?</a></li>
-                <li class="uk-active"><a href="{{ path('sorties_home') }}">Les événements </a></li>
+                <li class="uk-active"><a href="{{ path('sorties_home') }}">Les événements</a></li>
                 {% if app.user %}
-                    <li class="uk-active"><a href="{{ path('sorties_create') }}">Créer une sortie </a></li>
+                    <li class="uk-active"><a href="{{ path('sorties_create') }}">Créer une sortie</a></li>
                 {% endif %}
                 <li class="uk-active"><a href="{{ path('main_contact') }}">Contact</a></li>
             </ul>
         </div>
+
+        <!-- Navigation sur deux lignes pour écrans moyens -->
+        <div class="uk-navbar-center uk-visible@m uk-hidden@l uk-text-center">
+            <div class="uk-flex uk-flex-column uk-flex-middle">
+                <ul class="uk-navbar-nav uk-text-small">
+                    <li class="uk-active"><a href="{{ path('main_apropos') }}" class="uk-padding-small">Qui sommes-nous ?</a></li>
+                    <li class="uk-active"><a href="{{ path('sorties_home') }}" class="uk-padding-small">Les événements</a></li>
+                </ul>
+                <ul class="uk-navbar-nav uk-text-small uk-margin-small-top">
+                    {% if app.user %}
+                        <li class="uk-active"><a href="{{ path('sorties_create') }}" class="uk-padding-small">Créer une sortie</a></li>
+                    {% endif %}
+                    <li class="uk-active"><a href="{{ path('main_contact') }}" class="uk-padding-small">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation compacte pour petits écrans -->
+        <div class="uk-navbar-center uk-hidden@m">
+            <ul class="uk-navbar-nav uk-text-small">
+                <li class="uk-active"><a href="{{ path('main_apropos') }}" class="uk-padding-remove">À propos</a></li>
+                <li class="uk-active"><a href="{{ path('sorties_home') }}" class="uk-padding-remove">Événements</a></li>
+                {% if app.user %}
+                    <li class="uk-active"><a href="{{ path('sorties_create') }}" class="uk-padding-remove">Créer une sortie</a></li>
+                {% endif %}
+                <li class="uk-active"><a href="{{ path('main_contact') }}" class="uk-padding-remove">Contact</a></li>
+            </ul>
+        </div>
+
         <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
                 <li class="uk-active">
 
                     {% if not app.user %}
-                        <a href="{{ path('app_login') }}" data-uk-icon="icon:user">Connexion</a>
+                        <a href="{{ path('app_login') }}" data-uk-icon="icon:user">
+                            <span class="uk-visible@s">Connexion</span>
+                            <span class="uk-hidden@s" data-uk-icon="icon:user"></span>
+                        </a>
                     {% endif %}
 
                     {% if app.user %}
-                        <a href="#" data-uk-icon="icon:user">{{ app.user.prenom }}</a>
-                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
+                        <a href="#" data-uk-icon="icon:user">
+                            <span class="uk-visible@s">{{ app.user.prenom }}</span>
+                        </a>
+                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-right uk-box-shadow-large">
                             <ul class="uk-nav uk-navbar-dropdown-nav">
                                 <li class="uk-nav-header uk-text-small uk-text-primary">Mes infos</li>
                                 <li><a href="{{ path('profil') }}"><span data-uk-icon="icon: user"></span>Mon profil</a>
