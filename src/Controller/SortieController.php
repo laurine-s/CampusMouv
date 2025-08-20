@@ -37,9 +37,21 @@ final class SortieController extends AbstractController
     public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
         $user = $this->getUser();
-        $form = $this->createForm(SortieFilterType::class);
-        $form->handleRequest($request);
 
+        // Valeurs par défaut pour le formulaire
+        $formOptions = [];
+        if ($chemin === 'mes_sorties') {
+            $formOptions = [
+                'isCreee' => true,
+                'isAnnulee' => true,
+                'isParticipant' => true,
+                'isOrganisateur' => true,
+            ];
+        }
+
+        $form = $this->createForm(SortieFilterType::class, null, $formOptions);
+
+        $form->handleRequest($request);
 
         $allSorties = $sortieService->getSortiesAAfficher();
 
@@ -47,11 +59,15 @@ final class SortieController extends AbstractController
 
             // Récupération des filtres
             $campus = $form->get('campus')->getData();
+            $isCreee = $form->get('isCreee')->getData();
+            $isAnnulee = $form->get('isAnnulee')->getData();
             $isParticipant = $form->get('isParticipant')->getData();
             $isOrganisateur = $form->get('isOrganisateur')->getData();
 
             $filters = [
                 'campus' => $campus,
+                'isCreee' => $isCreee,
+                'isAnnulee' => $isAnnulee,
                 'isParticipant' => $isParticipant,
                 'isOrganisateur' => $isOrganisateur,
             ];
@@ -61,6 +77,8 @@ final class SortieController extends AbstractController
 
             $filters = [
                 'campus' => null,
+                'isCreee' => true,
+                'isAnnulee' => true,
                 'isParticipant' => true,
                 'isOrganisateur' => true,
             ];
