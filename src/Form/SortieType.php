@@ -9,6 +9,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -105,9 +106,9 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'attr' => ['class' => "uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green",
                     'id'=>'submit-create'],
             ])
-            ->add('cancel', ResetType::class, [
+            ->add('cancel', ButtonType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => "uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-red"],
+                'attr' => ['class' => "uk-button uk-border-pill uk-button-default uk-width-1-1 uk-button-red"],
             ]);
     }
 
