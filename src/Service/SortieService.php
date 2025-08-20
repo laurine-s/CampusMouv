@@ -12,7 +12,7 @@ class SortieService
 {
 
 
-    public function __construct(private SortieRepository $sortieRepository, private EntityManagerInterface $entityManager,)
+    public function __construct(private SortieRepository $sortieRepository, private EntityManagerInterface $entityManager, private SortieEtatService $etatService)
     {
     }
 
@@ -28,8 +28,25 @@ class SortieService
 
     public function cancelEvent(Sortie $sortie): void
     {
-        $sortie->setEtat(Etat::from('annulee'));
+        $sortie->setEtat(Etat::ANNULEE);
         $this->entityManager->flush();
+    }
+
+    public function getSortiesAAfficher(): array
+    {
+        $allSorties = $this->sortieRepository->findAll();
+        foreach ($allSorties as $sortie){
+            $this->etatService->setEtatTemporel($sortie);
+            $this->entityManager->persist($sortie);
+        }
+
+        $this->entityManager->flush();
+
+        $sortiesAAfficher = $this->sortieRepository->findBy([
+            'etat' => [Etat::OUVERTE, Etat::CLOTUREE, Etat::ACTIVITE_EN_COURS]
+        ]);
+
+        return $sortiesAAfficher;
     }
 
 
