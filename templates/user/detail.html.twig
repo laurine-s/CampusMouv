@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}
+    {% if user %}
+        Profil | {{ user.prenom | capitalize ~ ' ' ~ user.nom | first ~ '.' }} | {{ parent() }}
+    {% else %}
+        Profil | Utilisateur supprimé | {{ parent() }}
+    {% endif %}
+{% endblock %}
 
 {% block main %}
     <div class="uk-width-1-2@m uk-margin-auto uk-margin-top">

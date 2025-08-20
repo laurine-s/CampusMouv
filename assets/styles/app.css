@@ -78,6 +78,39 @@ color: rgba(38, 70, 83, 1);
     flex: 0 0 auto;
 }
 
+.uk-button-green,
+.uk-button-green:hover,
+.uk-button-green a,
+.uk-button-green a:hover {
+    background-color: rgba(25, 135, 84);
+    color: white;
+    text-decoration: none;
+}
+
+.uk-button-green:hover {
+    background-color: rgba(25, 135, 84, 0.67);
+}
+
+/* Pour bouton rouge */
+.uk-button-red,
+.uk-button-red:hover,
+.uk-button-red a,
+.uk-button-red a:hover {
+    background-color: rgba(220, 53, 69);
+    color: white;
+    text-decoration: none;
+}
+
+.uk-button-red:hover {
+    background-color: rgba(220, 53, 69, 0.72);
+}
+
+
+.cm-image-courrier{
+    /*width: 75px;*/
+    height: 25px;
+}
+
 
 
 

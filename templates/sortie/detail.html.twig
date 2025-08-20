@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de la sortie{% endblock %}
+{% block title %}Détails de la sortie | {{ parent() }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -254,7 +254,7 @@
                                     <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"
                                           class="uk-width-1-1">
                                         <button type="submit"
-                                                class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1">
+                                                class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-red">
                                             <span uk-icon="close"></span> Se désinscrire
                                         </button>
                                     </form>
@@ -281,7 +281,7 @@
                                     <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post"
                                           class="uk-width-1-1">
                                         <button type="submit"
-                                                class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">
+                                                class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green">
                                             <span uk-icon="check"></span> Je m'inscris à cette sortie
                                         </button>
                                     </form>
@@ -348,7 +348,7 @@
                         </div>
                         <div>
                             <form method="post" action="{{ path('sorties_cancel', {'id': sortie.id}) }}">
-                                <button type="submit" class="uk-button uk-button-danger">Annuler la sortie</button>
+                                <button type="submit" class="uk-button-default uk-margin-small-right uk-button-red">Annuler la sortie</button>
                             </form>
                         </div>
                     </div>

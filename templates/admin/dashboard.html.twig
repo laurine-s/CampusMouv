@@ -1,59 +1,140 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tableau de bord | Admin{% endblock %}
+{% block title %}Tableau de bord | Admin.{% endblock %}
 
 {% block main %}
 
-    <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-capitalize uk-text-center">
-        Hello {{ app.user.prenom }}</h1>
+    <h1 class="uk-heading-bullet uk-text-center uk-margin-small-bottom">
+        Bonjour {{ app.user.prenom }}
+    </h1>
+    <p class="uk-text-center uk-text-meta uk-margin-remove-top">
+        Bienvenue sur l’espace d’administration de <strong>Campus Mouv</strong>.
+        Choisissez une action ci-dessous. Tout est réversible sauf la suppression définitive.
+    </p>
 
-    <div class="uk-grid uk-flex uk-position-center">
+    {# Ligne 1 #}
+    <div class="uk-container uk-margin-large-top">
+        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-3@m" uk-grid>
 
+            <!-- Import CSV -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">Importer des utilisateurs
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Chargez un <strong>fichier CSV</strong> pour créer plusieurs comptes en une fois.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>Vérifiez l’orthographe des emails</li>
+                        <li>Le campus doit exister avant l’import</li>
+                    </ul>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       href="{{ path('admin_import') }}" aria-label="Importer des utilisateurs par fichier CSV">
+                        Importer des utilisateurs
+                    </a>
+                </div>
+            </div>
 
-        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
-            <div class="uk-margin uk-text-center">
-                <p>Envoyer un fichier CSV et ajouter plusieurs utilisateurs.</p>
-                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer" href="{{ path('admin_import') }}">Importer
-                    des
-                    utilisateurs</a>
+            <!-- Ajouter un utilisateur -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: user-plus"></span> Ajouter un utilisateur
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Créez un compte <strong>manuellement</strong> via un formulaire simple.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>Prénom, nom, email obligatoires</li>
+                        <li>Rattachez le campus</li>
+                    </ul>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       href="{{ path('admin_register') }}" aria-label="Ajouter un utilisateur">
+                        Ajouter un utilisateur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Gérer les utilisateurs -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: users"></span> Gérer les utilisateurs
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Activez, désactivez ou supprimez des comptes en toute simplicité.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li><strong>Désactiver</strong> = réversible</li>
+                        <li><strong>Supprimer</strong> = définitif</li>
+                    </ul>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       href="{{ path('admin_list_users') }}" aria-label="Gérer les utilisateurs">
+                        Gérer les utilisateurs
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
-            <div class="uk-margin uk-text-center">
-                <p>Ajouter des utilisateurs, via un formulaire.</p>
-                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer"
-                   href="{{ path('admin_register') }}">Ajouter des
-                    utilisateurs</a>
-            </div>
-        </div>
+        {# Ligne 2 #}
+        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-3@m uk-margin-large-top" uk-grid>
 
-        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
-            <div class="uk-margin uk-text-center">
-                <p>Activer, désactiver ou supprimer des utilisateurs.</p>
-                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer"
-                   href="{{ path('admin_list_users') }}">Gérer les utilisateurs</a>
+            <!-- Annuler des sorties -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: ban"></span> Annuler des sorties
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Annulez une activité.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>À utiliser en cas d’imprévu</li>
+                        <li>Préférez <em>désactiver</em> un organisateur</li>
+                    </ul>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       href="{{ path('admin_list_sorties') }}" aria-label="Annuler des sorties">
+                        Annuler des sorties
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
-            <div class="uk-margin uk-text-center">
-                <p>Annuler une ou plusieurs sorties.</p>
-                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer"
-                   href="{{ path('admin_list_sorties') }}">Annuler les sorties</a>
+            <!-- Gérer les campus -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: location"></span> Gérer les campus
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Ajoutez les nouveaux campus de l'ENI.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>Nom du campus unique</li>
+                        <li>Affecte l’affichage des sorties</li>
+                    </ul>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       href="{{ path('admin_list_campus') }}" aria-label="Gérer les campus">
+                        Gérer les campus
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <div class="uk-card uk-card-default uk-card-body uk-width-medium">
-            <div class="uk-margin uk-text-center">
-                <p>Gérer les différents <br>campus.</p>
-                <a class="uk-button uk-button-primary uk-width-medium uk-card-footer"
-                   href="{{ path('admin_list_campus') }}">Gérer les <br> campus</a>
+            <!-- Aide / bonnes pratiques -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: info"></span> Aide rapide
+                    </h3>
+                    <ul class="uk-list uk-text-small uk-margin-small-top">
+                        <li>Privilégiez la <strong>désactivation</strong> d’un compte plutôt que sa suppression.</li>
+                        <li>Vérifiez les <strong>emails</strong> avant import CSV.</li>
+                        <li>Une sortie annulée <strong>préserve l’historique</strong>.</li>
+                    </ul>
+                    <p class="uk-text-meta uk-margin-small">Besoin d’un tutoriel ? Contactez un admin principal.</p>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
-
-
 
 {% endblock %}

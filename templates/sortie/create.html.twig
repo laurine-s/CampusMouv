@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sorties disponibles{% endblock %}
+{% block title %}Sorties disponibles  | {{ parent() }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -128,7 +128,7 @@
                             {{ form_widget(formSortie.lieu, {'attr': {'id': 'lieu-select'}}) }}
                         </div>
                         <div>
-                            <button class="uk-button uk-button-primary uk-margin-small-bottom" type="button" uk-toggle="target: #mon-modal"
+                            <button class="uk-button uk-border-pill uk-button-primary uk-button-green" type="button" uk-toggle="target: #mon-modal"
                                     id="ajoutLieu">
                                 Ajouter un lieu
                             </button>

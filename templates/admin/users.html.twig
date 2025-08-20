@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des utilisateurs{% endblock %}
+{% block title %}Liste des utilisateurs | Admin.{% endblock %}
 
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des utilisateurs</h1>
@@ -24,7 +24,7 @@
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.nom }}</td>
+                    <td>{{ user.nom | upper}}</td>
                     <td>{{ user.prenom }}</td>
                     <td>{{ user.email }}</td>
                     <td>
@@ -36,14 +36,14 @@
                     </td>
                     <td class="uk-text-center">
                         <a href="{{ path('admin_desactivate_user', { id: user.id }) }}"
-                           class="uk-button uk-button-small {{ user.isActive ? 'uk-button-danger' : 'uk-button-primary' }} uk-border-pill"
+                           class="uk-button uk-button-small {{ user.isActive ? 'uk-button-red' : 'uk-button-green' }} uk-border-pill"
                            onclick="return confirm('Voulez-vous vraiment désactiver {{ user.email }} ?');">
                             {{ user.isActive ? 'Désactiver' : 'Activer' }}
                         </a>
                     </td>
                     <td class="uk-text-center">
                         <a href="{{ path('admin_delete_user', { id: user.id }) }}"
-                           class="uk-button uk-button-small uk-button-danger uk-border-pill"
+                           class="uk-button uk-button-small uk-button-red uk-border-pill"
                            onclick="return confirm('Voulez-vous vraiment supprimer {{ user.email }} ?');">
                             Supprimer
                         </a>

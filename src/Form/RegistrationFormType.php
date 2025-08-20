@@ -22,9 +22,14 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('prenom')
-            ->add('nom')
+            ->add('prenom', null, [
+                'label' => 'Prénom : '
+            ])
+            ->add('nom', null, [
+                'label' => 'Nom : '
+            ])
             ->add('campus', EntityType::class, [
+                'label' => 'Campus : ',
                 'class' => Campus::class,
                 'choice_label' => 'nom',
             ])
@@ -40,7 +45,7 @@ class RegistrationFormType extends AbstractType
                 'type' => PasswordType::class,
                 'mapped' => false,
                 'first_options'  => [
-                    'label' => 'Mot de passe',
+                    'label' => 'Mot de passe : ',
                     'attr' => ['autocomplete' => 'new-password'],
                     'constraints' => [
                     new NotBlank([
@@ -59,7 +64,7 @@ class RegistrationFormType extends AbstractType
                 ],
                     ],
                 'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
+                    'label' => 'Confirmer le mot de passe : ',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'invalid_message' => 'Les deux mots de passe doivent être identiques.',
