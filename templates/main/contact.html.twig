@@ -1,3 +1,190 @@
+
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Contact{% endblock %}#}
+
+{#{% block stylesheets %}#}
+{#    {{ parent() }}#}
+{#    <link rel="stylesheet" href="{{ asset('styles/cafe.css') }}">#}
+
+{#{% endblock %}#}
+
+{#{% block main %}#}
+{#    <!-- Hero Section avec invitation -->#}
+{#    <div class="uk-container uk-margin-large-top uk-box-shadow-medium uk-margin-medium-bottom">#}
+{#        <div class="contact-hero uk-padding-large uk-text-center">#}
+{#            <h1 class="uk-heading-medium uk-margin-remove-bottom" style="color: #4a5568;">Contactez-nous</h1>#}
+{#            <p class="uk-text-large uk-margin-small-top" style="color: #666;">Nous serions ravis de partager un moment#}
+{#                autour d'une tasse de thé avec vous</p>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <div class="uk-container uk-box-shadow-medium uk-margin-medium-bottom">#}
+{#        <div class="uk-grid-large uk-child-width-1-2@l uk-margin-small-bottom" uk-grid>#}
+{#            <!-- Section invitation thé -->#}
+{#            <div class="uk-box-shadow-medium">#}
+{#                <div class="tea-invitation uk-padding-large">#}
+{#                    <h2>Prenez un thé avec nous</h2>#}
+{#                    <p class="uk-margin-medium-bottom">Rien de mieux qu'une conversation chaleureuse autour d'une bonne#}
+{#                        tasse de thé. Que ce soit pour discuter de vos projets, échanger des idées ou simplement faire#}
+{#                        connaissance, nous vous invitons à venir partager ce moment convivial avec notre équipe.</p>#}
+{#                    <p><em>Le thé est prêt, il ne manque plus que vous !</em></p>#}
+
+{#                    <!-- Animation de la tasse -->#}
+{#                    <div class="container">#}
+{#                        <div class="plate"></div>#}
+{#                        <div class="cup">#}
+{#                            <div class="top">#}
+{#                                <div class="vapour">#}
+{#                                    <span style="--i:1;"></span>#}
+{#                                    <span style="--i:3;"></span>#}
+{#                                    <span style="--i:16;"></span>#}
+{#                                    <span style="--i:5;"></span>#}
+{#                                    <span style="--i:20;"></span>#}
+{#                                    <span style="--i:6;"></span>#}
+{#                                    <span style="--i:7;"></span>#}
+{#                                    <span style="--i:9;"></span>#}
+{#                                    <span style="--i:10;"></span>#}
+{#                                    <span style="--i:17;"></span>#}
+{#                                    <span style="--i:11;"></span>#}
+{#                                    <span style="--i:12;"></span>#}
+{#                                    <span style="--i:13;"></span>#}
+{#                                    <span style="--i:14;"></span>#}
+{#                                    <span style="--i:2;"></span>#}
+{#                                    <span style="--i:8;"></span>#}
+{#                                    <span style="--i:15;"></span>#}
+{#                                    <span style="--i:4;"></span>#}
+{#                                    <span style="--i:19;"></span>#}
+{#                                </div>#}
+{#                                <div class="circle">#}
+{#                                    <div class="tea"></div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="handle"></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <!-- Formulaire de contact -->#}
+{#            <div class="uk-box-shadow-medium">#}
+{#                <div class="contact-form-container uk-padding-large">#}
+{#                    <h3 class="uk-heading-small uk-text-center uk-margin-medium-bottom" style="color: #4a5568;">#}
+{#                        Planifions notre rencontre</h3>#}
+
+{#                    <form method="post" class="uk-form-stacked" action="{{ path('main_contact') }}">#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="name">Votre nom *</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <input class="uk-input" type="text" name="name" id="name" value="{{ name ?? '' }}"#}
+{#                                       placeholder="Votre nom complet" required autofocus>#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="email">Votre email *</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <input class="uk-input" type="email" name="email" id="email" value="{{ email ?? '' }}"#}
+{#                                       placeholder="votre@email.com" autocomplete="email" required>#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="phone">Téléphone (optionnel)</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <input class="uk-input" type="tel" name="phone" id="phone" value="{{ phone ?? '' }}"#}
+{#                                       placeholder="0123456789" autocomplete="tel">#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="subject">Sujet de votre visite *</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <select class="uk-select" name="subject" id="subject" required>#}
+{#                                    <option value="">Choisissez un sujet</option>#}
+{#                                    <option value="projet">Nouveau projet</option>#}
+{#                                    <option value="collaboration">Collaboration</option>#}
+{#                                    <option value="conseil">Demande de conseil</option>#}
+{#                                    <option value="echange">Simple échange</option>#}
+{#                                    <option value="autre">Autre</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="message">Parlez-nous de ce qui vous amène *</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <textarea class="uk-textarea" name="message" id="message" rows="4"#}
+{#                                          placeholder="Décrivez brièvement le sujet que vous aimeriez aborder autour de notre thé..."#}
+{#                                          required></textarea>#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        <div class="uk-margin">#}
+{#                            <label class="uk-form-label" for="tea-preference">Votre thé préféré (optionnel)</label>#}
+{#                            <div class="uk-form-controls">#}
+{#                                <input class="uk-input" type="text" name="tea_preference" id="tea-preference" value=""#}
+{#                                       placeholder="Earl Grey, thé vert, tisane...">#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                        {% if csrf_token is defined %}#}
+{#                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}">#}
+{#                        {% endif %}#}
+
+{#                        <div class="uk-margin uk-text-center">#}
+{#                            <button class="uk-button uk-button-primary uk-width-1-1 submit-button" type="submit">#}
+{#                                <span uk-icon="mail"></span> Réserver notre moment thé#}
+{#                            </button>#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <!-- Informations de contact -->#}
+{#    <div class="uk-container uk-margin-large-top uk-margin-large-bottom">#}
+{#        <div class="contact-info-cards uk-padding-large">#}
+{#            <h3 class="uk-heading-small uk-text-center uk-margin-large-bottom" style="color: #4a5568;">Nos#}
+{#                coordonnées</h3>#}
+{#            <div class="uk-child-width-1-3@m uk-grid-match uk-text-center" uk-grid>#}
+{#                <div>#}
+{#                    <div class="uk-card uk-card-default uk-card-body">#}
+{#                        <span uk-icon="icon: location; ratio: 2" class="uk-text-primary"></span>#}
+{#                        <h4 class="uk-card-title">Adresse</h4>#}
+{#                        <p><br>Quai 9 3/4, King's Cross Station</br>Londres, Angleterre</p>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div>#}
+{#                    <div class="uk-card uk-card-default uk-card-body">#}
+{#                        <img src="{{ asset('/images/hibou.png') }}" style="height: 50px">#}
+{#                        <h4 class="uk-card-title">Hibou</h4>#}
+{#                        <button class="uk-button uk-button-primary uk-width-1-1">Appeler un hibou</button>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div>#}
+{#                    <div class="uk-card uk-card-default uk-card-body">#}
+{#                        <img src="{{ asset('/images/courrier.jpg') }}" style="height: 50px">#}
+{#                        <h4 class="uk-card-title">Email</h4>#}
+{#                        <p><a href="mailto:contact@campusmouv.com">contact@campusmouv.com</a></p>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <div class="uk-container uk-text-center uk-margin-large-bottom">#}
+{#        <div class="contact-hero uk-padding-medium">#}
+{#            <p class="uk-margin-remove-bottom" style="color: #4a5568;">Vous avez déjà un compte ?</p>#}
+{#            <a class="uk-button uk-button-text" href="{{ path('app_login') }}"#}
+{#               style="color: #667eea;">Connectez-vous</a>#}
+{#        </div>#}
+{#    </div>#}
+
+{#{% endblock %}#}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Contact{% endblock %}
@@ -5,159 +192,248 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/cafe.css') }}">
+    <style>
+        /* Responsive styles pour la tasse de thé */
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            transform: scale(0.8);
+        }
 
+        @media (max-width: 640px) {
+            .container {
+                transform: scale(0.6);
+                min-height: 150px;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 960px) {
+            .container {
+                transform: scale(0.7);
+                min-height: 180px;
+            }
+        }
+
+        @media (min-width: 961px) {
+            .container {
+                transform: scale(0.9);
+                min-height: 220px;
+            }
+        }
+
+        /* Amélioration de la lisibilité sur mobile */
+        @media (max-width: 640px) {
+            .tea-invitation h2 {
+                font-size: 1.5rem !important;
+            }
+            .tea-invitation p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            .contact-form-container h3 {
+                font-size: 1.3rem !important;
+            }
+        }
+
+        /* Espacement responsive */
+        .responsive-padding {
+            padding: 2rem 1rem;
+        }
+
+        @media (min-width: 641px) {
+            .responsive-padding {
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (min-width: 961px) {
+            .responsive-padding {
+                padding: 4rem 3rem;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
-    <form method="post" class="uk-form-stacked uk-width-1-2@m uk-margin-auto" action="{{ path('main_contact') }}">
-{#        {% if success %}#}
-{#            <div class="uk-alert-success" uk-alert>#}
-{#                <p>Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.</p>#}
-{#            </div>#}
-{#        {% endif %}#}
-
-{#        {% if errors %}#}
-{#            <div class="uk-alert-danger" uk-alert>#}
-{#                {% for error in errors %}#}
-{#                    <p>{{ error }}</p>#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        {% endif %}#}
-
-        <h1 class="uk-heading-bullet uk-text-center">Contactez-nous</h1>
-
-        <div class="uk-margin">
-            <label class="uk-form-label" for="name">Nom complet *</label>
-            <div class="uk-form-controls">
-                <input class="uk-input" type="text" name="name" id="name" value="{{ name ?? '' }}"
-                       placeholder="Votre nom complet" required autofocus>
-            </div>
-        </div>
-
-        <div class="uk-margin">
-            <label class="uk-form-label" for="email">Email *</label>
-            <div class="uk-form-controls">
-                <input class="uk-input" type="email" name="email" id="email" value="{{ email ?? '' }}"
-                       placeholder="votre@email.com" autocomplete="email" required>
-            </div>
-        </div>
-
-        <div class="uk-margin">
-            <label class="uk-form-label" for="phone">Téléphone</label>
-            <div class="uk-form-controls">
-                <input class="uk-input" type="tel" name="phone" id="phone" value="{{ phone ?? '' }}"
-                       placeholder="0123456789" autocomplete="tel">
-            </div>
-        </div>
-
-        <div class="uk-margin">
-            <label class="uk-form-label" for="subject">Sujet *</label>
-            <div class="uk-form-controls">
-                <select class="uk-select" name="subject" id="subject" required>
-                    <option value="">Choisissez un sujet</option>
-{#                    <option value="information" {{ subject == 'information' ? 'selected' : '' }}>Demande d'information</option>#}
-{#                    <option value="support" {{ subject == 'support' ? 'selected' : '' }}>Support technique</option>#}
-{#                    <option value="commercial" {{ subject == 'commercial' ? 'selected' : '' }}>Question commerciale</option>#}
-{#                    <option value="autre" {{ subject == 'autre' ? 'selected' : '' }}>Autre</option>#}
-                </select>
-            </div>
-        </div>
-
-        <div class="uk-margin">
-            <label class="uk-form-label" for="message">Message *</label>
-            <div class="uk-form-controls">
-                <textarea class="uk-textarea" name="message" id="message" rows="6"
-                          placeholder="Votre message..." required>{{ message ?? '' }}</textarea>
-            </div>
-        </div>
-
-        {% if csrf_token is defined %}
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}">
-        {% endif %}
-
-        <div class="uk-margin">
-            <label>
-{#                <input type="checkbox" name="newsletter" value="1" {{ newsletter ? 'checked' : '' }}>#}
-                Je souhaite recevoir votre newsletter
-            </label>
-        </div>
-
-        <div class="uk-margin">
-            <label>
-                <input type="checkbox" name="privacy" value="1" required>
-{#                J'accepte la <a href="{{ path('app_privacy') }}" target="_blank">politique de confidentialité</a> *#}
-            </label>
-        </div>
-
-        <div class="uk-margin uk-text-center">
-            <button class="uk-button uk-button-primary uk-width-1-1" type="submit">
-                <span uk-icon="mail"></span> Envoyer le message
-            </button>
-        </div>
-    </form>
-
-    <div class="container">
-        <div class="plate"></div>
-        <div class="cup">
-            <div class="top">
-                <div class="vapour">
-                    <span style="--i:1;"></span>
-                    <span style="--i:3;"></span>
-                    <span style="--i:16;"></span>
-                    <span style="--i:5;"></span>
-                    <span style="--i:20;"></span>
-                    <span style="--i:6;"></span>
-                    <span style="--i:7;"></span>
-                    <span style="--i:9;"></span>
-                    <span style="--i:10;"></span>
-                    <span style="--i:17;"></span>
-                    <span style="--i:11;"></span>
-                    <span style="--i:12;"></span>
-                    <span style="--i:13;"></span>
-                    <span style="--i:14;"></span>
-                    <span style="--i:2;"></span>
-                    <span style="--i:8;"></span>
-                    <span style="--i:15;"></span>
-                    <span style="--i:4;"></span>
-                    <span style="--i:19;"></span>
-                </div>
-                <div class="circle">
-                    <div class="tea"></div>
-                </div>
-            </div>
-            <div class="handle"></div>
+    <!-- Hero Section avec invitation -->
+    <div class="uk-container uk-margin-large-top uk-box-shadow-medium uk-margin-medium-bottom">
+        <div class="contact-hero uk-padding-large uk-text-center">
+            <h1 class="uk-heading-medium uk-heading-small@s uk-margin-remove-bottom" style="color: #4a5568;">Contactez-nous</h1>
+            <p class="uk-text-large uk-text-small@s uk-margin-small-top" style="color: #666;">Nous serions ravis de partager un moment
+                autour d'une tasse de thé avec vous</p>
         </div>
     </div>
 
-    <div class="uk-margin-large-top uk-text-center">
-        <div class="uk-child-width-1-3@m uk-grid-match" uk-grid>
-            <div>
-                <div class="uk-card uk-card-default uk-card-body uk-text-center">
-                    <span uk-icon="icon: location; ratio: 2" class="uk-text-primary"></span>
-                    <h3 class="uk-card-title">Adresse</h3>
-                    <p>123 Rue de la Paix<br>75001 Paris, France</p>
+    <div class="uk-container uk-box-shadow-medium uk-margin-medium-bottom">
+        <!-- Grid responsive : 1 colonne sur mobile/tablette, 2 colonnes sur desktop -->
+        <div class="uk-grid-large uk-child-width-1-1 uk-child-width-1-2@xl uk-margin-small-bottom" uk-grid>
+
+            <!-- Section invitation thé - apparaît en second sur mobile -->
+            <div class="uk-box-shadow-medium uk-flex-last@s uk-flex-first@xl">
+                <div class="tea-invitation responsive-padding">
+                    <h2 class="uk-heading-small uk-heading-xsmall@s">Prenez un thé avec nous</h2>
+                    <p class="uk-margin-medium-bottom uk-text-small@s">Rien de mieux qu'une conversation chaleureuse autour d'une bonne
+                        tasse de thé. Que ce soit pour discuter de vos projets, échanger des idées ou simplement faire
+                        connaissance, nous vous invitons à venir partager ce moment convivial avec notre équipe.</p>
+                    <p class="uk-text-small@s"><em>Le thé est prêt, il ne manque plus que vous !</em></p>
+
+                    <!-- Animation de la tasse - responsive -->
+                    <div class="container">
+                        <div class="plate"></div>
+                        <div class="cup">
+                            <div class="top">
+                                <div class="vapour">
+                                    <span style="--i:1;"></span>
+                                    <span style="--i:3;"></span>
+                                    <span style="--i:16;"></span>
+                                    <span style="--i:5;"></span>
+                                    <span style="--i:20;"></span>
+                                    <span style="--i:6;"></span>
+                                    <span style="--i:7;"></span>
+                                    <span style="--i:9;"></span>
+                                    <span style="--i:10;"></span>
+                                    <span style="--i:17;"></span>
+                                    <span style="--i:11;"></span>
+                                    <span style="--i:12;"></span>
+                                    <span style="--i:13;"></span>
+                                    <span style="--i:14;"></span>
+                                    <span style="--i:2;"></span>
+                                    <span style="--i:8;"></span>
+                                    <span style="--i:15;"></span>
+                                    <span style="--i:4;"></span>
+                                    <span style="--i:19;"></span>
+                                </div>
+                                <div class="circle">
+                                    <div class="tea"></div>
+                                </div>
+                            </div>
+                            <div class="handle"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div class="uk-card uk-card-default uk-card-body uk-text-center">
-                    <span uk-icon="icon: phone; ratio: 2" class="uk-text-primary"></span>
-                    <h3 class="uk-card-title">Téléphone</h3>
-                    <p><a href="tel:+33123456789">+33 1 23 45 67 89</a></p>
-                </div>
-            </div>
-            <div>
-                <div class="uk-card uk-card-default uk-card-body uk-text-center">
-                    <span uk-icon="icon: mail; ratio: 2" class="uk-text-primary"></span>
-                    <h3 class="uk-card-title">Email</h3>
-                    <p><a href="mailto:contact@votresite.com">contact@votresite.com</a></p>
+
+            <!-- Formulaire de contact - apparaît en premier sur mobile -->
+            <div class="uk-box-shadow-medium uk-flex-first@s uk-flex-last@xl">
+                <div class="contact-form-container responsive-padding">
+                    <h3 class="uk-heading-small uk-heading-xsmall@s uk-text-center uk-margin-medium-bottom" style="color: #4a5568;">
+                        Planifions notre rencontre</h3>
+
+                    <form method="post" class="uk-form-stacked" >
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="name">Votre nom *</label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" type="text" name="name" id="name" value=""
+                                       placeholder="Votre nom complet" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="email">Votre email *</label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" type="email" name="email" id="email" value=""
+                                       placeholder="votre@email.com" autocomplete="email" required>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="phone">Téléphone (optionnel)</label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" type="tel" name="phone" id="phone" value=""
+                                       placeholder="0123456789" autocomplete="tel">
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="subject">Sujet de votre visite *</label>
+                            <div class="uk-form-controls">
+                                <select class="uk-select" name="subject" id="subject" required>
+                                    <option value="">Choisissez un sujet</option>
+                                    <option value="projet" >Nouveau projet</option>
+                                    <option value="collaboration" >Collaboration</option>
+                                    <option value="conseil" >Demande de conseil</option>
+                                    <option value="echange" >Simple échange</option>
+                                    <option value="autre" >Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="message">Parlez-nous de ce qui vous amène *</label>
+                            <div class="uk-form-controls">
+                                <textarea class="uk-textarea" name="message" id="message" rows="4"
+                                          placeholder="Décrivez brièvement le sujet que vous aimeriez aborder autour de notre thé..."
+                                          required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-small@s" for="tea-preference">Votre thé préféré (optionnel)</label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" type="text" name="tea_preference" id="tea-preference"
+                                       value="" placeholder="Earl Grey, thé vert, tisane...">
+                            </div>
+                        </div>
+
+
+                        {% if csrf_token is defined %}
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}">
+                        {% endif %}
+
+                        <div class="uk-margin uk-text-center">
+                            <button class="uk-button uk-button-primary uk-width-1-1 submit-button" type="submit">
+                                <span uk-icon="mail"></span> Réserver notre moment thé
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="uk-margin-large-top uk-text-center cm-text-persian-green">
-        <p class="uk-margin-remove-bottom">Vous avez déjà un compte ?</p>
-        <a class="cm-text-persian-green" href="{{ path('app_login') }}">Connectez-vous</a>
+    <!-- Informations de contact -->
+    <div class="uk-container uk-margin-large-top uk-margin-large-bottom">
+        <div class="contact-info-cards responsive-padding">
+            <h3 class="uk-heading-small uk-heading-xsmall@s uk-text-center uk-margin-large-bottom" style="color: #4a5568;">Nos
+                coordonnées</h3>
+            <!-- Grid responsive pour les cartes : 1 col sur mobile, 3 cols sur desktop -->
+            <div class="uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-match uk-text-center" uk-grid>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small@s">
+                        <span uk-icon="icon: location; ratio: 2" class="uk-text-primary"></span>
+                        <h4 class="uk-card-title uk-text-small@s">Adresse</h4>
+                        <p class="uk-text-small@s"><br>Quai 9 3/4, King's Cross Station</br>Londres, Angleterre</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small@s">
+                        <img src="{{ asset('/images/hibou.png') }}" style="height: 50px" alt="Hibou">
+                        <h4 class="uk-card-title uk-text-small@s">Hibou</h4>
+                        <button class="uk-button uk-button-primary uk-width-1-1 uk-button-small@s">Appeler un hibou</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small@s">
+                        <img src="{{ asset('/images/courrier.jpg') }}" style="height: 50px" alt="Email">
+                        <h4 class="uk-card-title uk-text-small@s">Email</h4>
+                        <p class="uk-text-small@s"><a href="mailto:contact@campusmouv.com">contact@campusmouv.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section login -->
+    <div class="uk-container uk-text-center uk-margin-large-bottom">
+        <div class="contact-hero uk-padding-medium uk-padding-small@s">
+            <p class="uk-margin-remove-bottom uk-text-small@s" style="color: #4a5568;">Vous avez déjà un compte ?</p>
+            <a class="uk-button uk-button-text uk-button-small@s" href="{{ path('app_login') }}"
+               style="color: #667eea;">Connectez-vous</a>
+        </div>
     </div>
 
 {% endblock %}

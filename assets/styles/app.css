@@ -78,6 +78,11 @@ color: rgba(38, 70, 83, 1);
     flex: 0 0 auto;
 }
 
+.cm-image-courrier{
+    /*width: 75px;*/
+    height: 25px;
+}
+
 
 
 
