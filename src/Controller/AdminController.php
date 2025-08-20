@@ -159,7 +159,7 @@ final class AdminController extends AbstractController
         return $this->render('admin/campus.html.twig', ['campus' => $campus]);
     }
 
-    // Suppression par encore opérationnelle, il faut gérer côté vue l'affichage quand un campus est supprimé
+    // Suppression pas encore opérationnelle, il faut gérer côté vue l'affichage quand un campus est supprimé
 
 //    #[Route('/campus/{id}/delete', name: 'delete_campus', methods: ['GET'])]
 //    public function deleteCampus(Campus $campus, AdminService $adminService): Response
