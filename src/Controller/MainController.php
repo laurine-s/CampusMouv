@@ -34,7 +34,7 @@ final class MainController extends AbstractController
     public function contact(Request $request, EntityManagerInterface $em): Response
     {
         $contact = new Contact();
-        $formContact = $this->createForm(ContactType::class);
+        $formContact = $this->createForm(ContactType::class, $contact);
         $formContact->handleRequest($request);
         if ($formContact->isSubmitted() && $formContact->isValid()) {
             if ($formContact->get('envoyer')->isClicked()) {
