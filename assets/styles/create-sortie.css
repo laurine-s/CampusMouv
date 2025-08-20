@@ -1,0 +1,68 @@
+/* CSS pour les suggestions d'autocomplétion */
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1050; /* Plus élevé que les modales UIkit (1000) */
+    display: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-suggestion {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.autocomplete-suggestion:hover,
+.autocomplete-suggestion.selected {
+    background-color: #f8f9fa;
+}
+
+.autocomplete-suggestion:last-child {
+    border-bottom: none;
+}
+
+.suggestion-main {
+    font-weight: 500;
+    color: #333;
+}
+
+.suggestion-details {
+    font-size: 14px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.loading {
+    padding: 12px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+/* Pour que les suggestions s'affichent au-dessus des autres éléments UIkit */
+.uk-form-controls {
+    position: relative;
+}
+
+/* Assurer que les suggestions sont visibles dans les modales UIkit */
+.uk-modal-dialog .autocomplete-suggestions {
+    z-index: 1051; /* Au-dessus de la modale */
+}
+
+/* Style pour les champs Symfony cachés (optionnel pour le debug) */
+.uk-form-controls input[name*="[rue]"],
+.uk-form-controls select[name*="[ville]"] {
+    display: none; /* Les champs Symfony sont cachés */
+}
+
+/* Si vous voulez voir les champs Symfony pour debug, commentez la ligne au-dessus */

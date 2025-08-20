@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
+    <link rel="stylesheet" href="{{ asset('/styles/create-sortie.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -128,7 +129,8 @@
                             {{ form_widget(formSortie.lieu, {'attr': {'id': 'lieu-select'}}) }}
                         </div>
                         <div>
-                            <button class="uk-button uk-border-pill uk-button-primary uk-button-green" type="button" uk-toggle="target: #mon-modal"
+                            <button class="uk-button uk-border-pill uk-button-primary uk-button-green" type="button"
+                                    uk-toggle="target: #mon-modal"
                                     id="ajoutLieu">
                                 Ajouter un lieu
                             </button>
@@ -175,48 +177,7 @@
 
     <!-- Modal pour ajouter un lieu -->
     <div id="mon-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <h2 class="uk-modal-title">Ajouter un lieu</h2>
-
-            <!-- Zone pour afficher les messages d'erreur/succès -->
-            <div id="messages"></div>
-
-            <!-- Formulaire lieu -->
-            <div>
-                {{ form_start(formLieu, {
-                    method: 'post',
-                    attr: {enctype: 'multipart/form-data',
-                        id: 'lieu-form',
-                    }
-                }) }}
-                <div class="uk-margin">
-                    <div class="uk-form-controls">
-                        {{ form_row(formLieu.campus) }}
-                    </div>
-                </div>
-                <div class="uk-margin">
-                    <div class="uk-form-controls">
-                        {{ form_row(formLieu.nom) }}
-                    </div>
-                </div>
-                <div class="uk-margin">
-                    <div class="uk-form-controls">
-                        {{ form_row(formLieu.rue) }}
-                    </div>
-                </div>
-                <div class="uk-margin">
-                    <div class="uk-form-controls">
-                        {{ form_row(formLieu.ville) }}
-                    </div>
-                </div>
-
-                <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
-                    <div>{{ form_row(formLieu.cancel) }}</div>
-                    <div>{{ form_row(formLieu.createLieu) }}</div>
-                </div>
-                {{ form_end(formLieu) }}
-            </div>
-        </div>
+{% include '_ajoutLieu.html.twig' %}
     </div>
 
 
@@ -237,5 +198,6 @@
     <!-- Scripts JavaScript de l'application -->
     <script src="{{ asset('js/sortie-form.js') }}" defer></script>
     <script src="{{ asset('js/sortie-map.js') }}" defer></script>
+    <script src="{{ asset('js/apiGeo.js') }}" defer></script>
 
 {% endblock %}

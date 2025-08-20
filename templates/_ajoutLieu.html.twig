@@ -1,0 +1,120 @@
+<div class="uk-modal-dialog uk-modal-body">
+    <h2 class="uk-modal-title">Ajouter un lieu</h2>
+
+    <!-- Zone pour afficher les messages d'erreur/succès -->
+    <div id="messages"></div>
+
+    <!-- Formulaire lieu -->
+    {{ form_start(formLieu, {
+        method: 'post',
+        attr: {
+            enctype: 'multipart/form-data',
+            id: 'lieu-form',
+        }
+    }) }}
+
+    <!-- Campus -->
+    <div class="uk-margin">
+        <div class="uk-form-controls">
+            {{ form_row(formLieu.campus) }}
+        </div>
+    </div>
+
+    <!-- Nom du lieu -->
+    <div class="uk-margin">
+        <div class="uk-form-controls">
+            {{ form_row(formLieu.nom) }}
+        </div>
+    </div>
+
+    <!-- Autocomplétion Adresse -->
+    <div class="uk-margin">
+        <div class="uk-form-controls autocomplete-container">
+            <label for="adresse-search" class="uk-form-label">Adresse complète</label>
+            <input type="text"
+                   id="adresse-search"
+                   class="uk-input uk-border-rounded"
+                   placeholder="Tapez votre adresse complète (ex: 123 rue de la République Paris)"
+                   autocomplete="off">
+            <div id="adresse-suggestions" class="autocomplete-suggestions"></div>
+        </div>
+    </div>
+
+    <!-- Champ Symfony rue (masqué avec clip-path) -->
+    <div class="uk-margin" style="position: absolute; clip: rect(0 0 0 0); width: 1px; height: 1px; overflow: hidden;">
+        {{ form_row(formLieu.rue) }}
+    </div>
+
+    <!-- Autocomplétion Ville -->
+    <div class="uk-margin">
+        <div class="uk-form-controls autocomplete-container">
+            <label for="ville-search" class="uk-form-label">Ville</label>
+            <input type="text"
+                   id="ville-search"
+                   class="uk-input uk-border-rounded"
+                   placeholder="Tapez le nom de votre ville ou code postal"
+                   autocomplete="off">
+            <div id="ville-suggestions" class="autocomplete-suggestions"></div>
+        </div>
+    </div>
+
+    <!-- Select Symfony ville (masqué avec clip-path pour éviter l'erreur de validation) -->
+    <div class="uk-margin" style="position: absolute; clip: rect(0 0 0 0); width: 1px; height: 1px; overflow: hidden;">
+        {{ form_row(formLieu.ville) }}
+    </div>
+
+    <!-- Informations complémentaires (lecture seule) -->
+    <div class="uk-margin">
+        <div class="uk-grid-small" uk-grid>
+            <div class="uk-width-1-3">
+                <label for="codePostal" class="uk-form-label">Code postal</label>
+                <input type="text"
+                       id="codePostal"
+                       class="uk-input uk-border-rounded"
+                       placeholder="Rempli automatiquement"
+                       readonly>
+            </div>
+            <div class="uk-width-1-3">
+                <label for="departement" class="uk-form-label">Département</label>
+                <input type="text"
+                       id="departement"
+                       class="uk-input uk-border-rounded"
+                       placeholder="Rempli automatiquement"
+                       readonly>
+            </div>
+            <div class="uk-width-1-3">
+                <label class="uk-form-label">Coordonnées GPS</label>
+                <div class="uk-grid-small" uk-grid>
+                    <div class="uk-width-1-2">
+                        <input type="text"
+                               id="latitude-display"
+                               class="uk-input uk-border-rounded"
+                               placeholder="Latitude"
+                               readonly>
+                    </div>
+                    <div class="uk-width-1-2">
+                        <input type="text"
+                               id="longitude-display"
+                               class="uk-input uk-border-rounded"
+                               placeholder="Longitude"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Champs Symfony cachés pour latitude et longitude -->
+    <div style="position: absolute; left: -9999px; opacity: 0;">
+        {{ form_row(formLieu.latitude, {'attr': {'tabindex': '-1'}}) }}
+        {{ form_row(formLieu.longitude, {'attr': {'tabindex': '-1'}}) }}
+    </div>
+
+    <!-- Boutons -->
+    <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small uk-margin-top" uk-grid>
+        <div>{{ form_row(formLieu.cancel) }}</div>
+        <div>{{ form_row(formLieu.createLieu) }}</div>
+    </div>
+
+    {{ form_end(formLieu) }}
+</div>

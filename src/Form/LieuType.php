@@ -7,6 +7,7 @@ use App\Entity\Lieu;
 use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,10 +25,23 @@ class LieuType extends AbstractType
                 'label' => 'N° et rue du lieu',
             ])
             ->add('ville', EntityType::class, [
-                'label' => 'Ville',
+                'label' => 'Code postal - Ville',
                 'class' => Ville::class,
-                'choice_label' => 'nom',
+                'choice_label' => fn(Ville $v) => $v->getCp().' - '.$v->getNom(),
+                'placeholder' => 'Sélectionner une ville',
+                'attr' => [
+                    'name' => 'ville',
+                    'id' => 'ville',
+                ]
             ])
+            ->add('latitude', null, [
+                'label' => 'Latitude',
+            ])
+            ->add('longitude', null, [
+                'label' => 'Longitude',
+            ])
+
+
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom', // Adapte selon ton entité Campus
@@ -38,12 +52,13 @@ class LieuType extends AbstractType
             ])
             ->add('createLieu', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'cm-background-persian-green cm-text-charcoal',
+                'attr' => ['class' => 'uk-button-primary',
                     'id' => 'submit-lieu',]
             ])
-            ->add('cancel', ResetType::class, [
+            ->add('cancel', ButtonType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right'],
+                'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right',
+                    'uk-toggle'=>'target: #mon-modal'],
             ]);
 
     }
