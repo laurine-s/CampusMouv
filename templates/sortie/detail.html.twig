@@ -242,7 +242,22 @@
                         <div class="uk-card-footer uk-padding-small uk-text-center"
                              style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
 
-                            {% if app.user and sortie.participants.contains(app.user) %}
+                            {% if sortie.etat.name == 'CREEE' and app.user == sortie.organisateur %}
+                                <form action="{{ path('sorties_publication', {id: sortie.id}) }}" method="post"
+                                      class="uk-width-1-1">
+                                    <button type="submit"
+                                            class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green uk-margin-small">
+                                        <span uk-icon="play"></span> Publier
+                                    </button>
+                                </form>
+                                <form action="{{ path('sorties_modification', {id: sortie.id}) }}" method="post"
+                                      class="uk-width-1-1">
+                                    <button type="submit"
+                                            class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-orange uk-margin-small">
+                                        <span uk-icon="pencil"></span> Modifier
+                                    </button>
+                                </form>
+                            {% elseif app.user and sortie.participants.contains(app.user) and app.user != sortie.organisateur %}
                                 {# Déjà inscrit → se désinscrire #}
                                 {% if sortie.etat.name == 'OUVERTE' or sortie.dateLimiteInscription|date('U') > "now"|date('U') %}
                                     <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon événement{% endblock %}
+
+{% block main %}
+    <div class="uk-width-1-2@m uk-margin-auto uk-margin-top">
+        <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-capitalize uk-text-center">Modifier mon événement</h1>
+
+        {{ form_start(form, {
+            method: 'post',
+            attr: {
+                class: 'uk-form-stacked',
+                enctype: 'multipart/form-data'
+            }
+        }) }}
+
+        <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1 center"
+                {% if sortie.photo %}
+                    src="{{ sortie.photo }}"
+                {% else %}
+                    data-src="https://picsum.photos/400/300/?random={{ sortie.id }}"
+                {% endif %}
+             alt="{{ sortie.nom }}"
+             uk-img>
+
+        {{ form_widget(form) }}
+
+        <div class="uk-margin uk-text-center">
+            <button class="uk-button uk-border-pill uk-button-primary uk-width-1-1" type="submit">Mettre à jour</button>
+        </div>
+
+        <div class="uk-margin uk-text-center">
+            <a class="uk-button uk-border-pill uk-button-primary uk-width-1-1" href="{{ path('sorties_home') }}">Annuler</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

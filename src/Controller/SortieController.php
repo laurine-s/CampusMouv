@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Enum\Etat;
 use App\Enum\Role;
 use App\Form\LieuType;
+use App\Form\SortieEditType;
 use App\Form\SortieFilterType;
 use App\Form\SortieType;
 use App\Message\ReminderEmailMessage;
@@ -363,8 +364,60 @@ final class SortieController extends AbstractController
     public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
     {
         $sortieService->cancelEvent($sortie);
-        $this->addFlash('success', 'La sortie '.$sortie->getNom().' a bien été annulée !');
+        $this->addFlash('success', 'La sortie ' . $sortie->getNom() . ' a bien été annulée !');
         return $this->redirectToRoute('sorties_home');
+    }
+
+    #[Route('/{id}/publication', name: 'publication', methods: ['POST'])]
+    public function publication(Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $sortie->setEtat(Etat::OUVERTE);
+        $em->persist($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'La sortie ' . $sortie->getNom() . ' a bien été publiée !');
+        return $this->redirectToRoute('sorties_home');
+    }
+
+    /**
+     * @throws ApiError
+     */
+    #[Route('/{id}/modification', name: 'modification', methods: ['GET', 'POST'])]
+    public function modification(Request $request, Sortie $sortie, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
+    {
+
+        $form = $this->createForm(SortieEditType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
+
+            if ($photoFile) {
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('profil');
+                }
+            }
+
+            if ($form->isValid()) {
+
+                if ($photoFile) {
+                    // on transmet l'url au user
+                    $sortie->setPhoto($uploadPhoto['url']);
+                }
+
+                $em->persist($sortie);
+                $em->flush();
+
+                $this->addFlash('success', "L'événement a été mis à jour.");
+                return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+            }
+        }
+
+        return $this->render('sortie/edit.html.twig', ['form' => $form->createView(), 'sortie' => $sortie]);
     }
 
 }
