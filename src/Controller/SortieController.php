@@ -140,61 +140,37 @@ final class SortieController extends AbstractController
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsGranted(Role::PARTICIPANT->value)]
     public function inscription(
-        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService, MailService $mailService, MessageBusInterface $bus): Response
+        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService
+        $etatService, MailService $mailService): Response
     {
-
         $user = $this->getUser();
         if (!$user) {
-            $this->addFlash('warning', 'Connectez-vous pour vous inscrire.');
+            $this->addFlash('warning', 'Connectez-vous pour vous inscrire');
             return $this->redirectToRoute('app_login');
         }
 
-        //On obtient la liste des participants à la sortie
-        //$listeParticipants = $sortieService->getSortieListeParticipants($id);
         $listeParticipants = $sortie->getParticipants();
 
         if (!$listeParticipants) {
-            $this->addFlash('danger', 'Sortie introuvable.');
+            $this->addFlash('danger', 'Sortie impossible');
             return $this->redirectToRoute('sorties_home');
         }
 
-
-        // [$ok, $conditions] = (si deja_inscrit, pas_ouverte, delais_depasse, complet, ok)
         [$ok, $conditions] = $inscriptionService->inscription($sortie, $user);
         if (!$ok) {
             $this->addFlash('warning', $this->mapReasonToMessage($conditions));
             return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
         }
 
-        // OK : inscrire
         $sortie->addParticipant($user);
-
-        //nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
-
         $em->flush();
-
         $etatService->miseAJourEtatSortie($sortie);
-
-        // Envoi du mail
-        // Envoi du mail confirmation inscription
-
         $mailService->sendInscriptionMail($user->getEmail(), $sortie->getNom());
-
-//        // calcule le délai jusqu’à (dateDébut - 48h)
-//        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
-//        $target = $sortie->getDateHeureDebut()->sub(new \DateInterval('PT5M'));
-//        $delayMs = max(0, $target->getTimestamp() - $now->getTimestamp()) * 1000;
-//
-//        $bus->dispatch(
-//            new ReminderEmailMessage($sortie->getId(), $user->getId()),
-//            [ new DelayStamp($delayMs) ]
-//        );
-
 
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
-        // Envoi du rappel mail 48h avant la sortie
+
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
@@ -212,23 +188,16 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sorties_home');
         }
 
-        // [$ok, $conditions] = (non_inscrit, ok)
         [$ok, $conditions] = $policy->desinscription($sortie, $user);
         if (!$ok) {
             $this->addFlash('warning', $this->mapReasonToMessage($conditions));
             return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
         }
 
-        // OK désinscrire
         $sortie->removeParticipant($user);
-
-        // garder nbInscrits synchro
         $sortie->setNbInscrits($sortie->getParticipants()->count());
-
         $em->flush();
-
         $etatService->miseAJourEtatSortie($sortie);
-
 
         // Envoi du mail confirmation desinscription
         $mailService->sendDesinscriptionMail($user->getEmail(), $sortie->getNom());
@@ -242,10 +211,6 @@ final class SortieController extends AbstractController
         return match ($conditions) {
             'deja_inscrit' => 'Vous êtes déjà inscrit à cette sortie.',
             'pas_ouverte' => 'Cette sortie n’est pas ouverte aux inscriptions.',
-            'delais_depasse' => 'La date limite d’inscription est dépassée.',
-            'non_inscrit' => 'Vous n’êtes pas inscrit à cette sortie.',
-            'complet' => 'Cette sortie est complète.',
-            'deja_debute' => 'Cette sortie a déjà débuté',
             default => 'Action non autorisée.',
         };
     }
