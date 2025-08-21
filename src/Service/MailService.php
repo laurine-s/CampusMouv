@@ -21,7 +21,8 @@ class MailService
             ->to($to)
             ->subject('Votre inscription est confirmée')
             ->text("Votre inscription à la sortie : $sortieNom")
-            ->html("<p>Bonjour,</p><p>Votre inscription à la sortie <strong>$sortieNom</strong> est bien confirmée le <strong>{$formattedDate}</strong> </p> <br>
+            ->html("<p>Bonjour,</p><p>Votre inscription à la sortie <strong>$sortieNom</strong> est bien confirmée
+            le <strong>{$formattedDate}</strong> </p> <br>
             <p>L'équipe du BDE </p>");
 
         $this->mailer->send($email);
@@ -38,7 +39,8 @@ class MailService
             ->to($to)
             ->subject('votre désinscription est confirmée')
             ->text("Vous êtes bien désinscrit(e) à la sortie : $sortieNom")
-            ->html("<p>Bonjour,</p><p>Votre désinscription de la sortie <strong>$sortieNom</strong> a bien été prise en compte le <strong>{$formattedDate}</strong> </p> <br>
+            ->html("<p>Bonjour,</p><p>Votre désinscription de la sortie <strong>$sortieNom</strong> a bien été 
+            prise en compte le <strong>{$formattedDate}</strong> </p> <br>
             <p>L'équipe du BDE </p>");
 
         $this->mailer->send($email);

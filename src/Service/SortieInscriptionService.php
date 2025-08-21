@@ -21,6 +21,7 @@ final class SortieInscriptionService
     // - date limite non dépassée
     // - user pas déjà inscrit
     // - complet
+
     /* @return array{0:bool,1:string} [$ok, $conditions]
      */
     public function inscription(Sortie $sortie, User $user): array
@@ -35,26 +36,6 @@ final class SortieInscriptionService
             return [false, 'pas_ouverte'];
         }
 
-//        $delais = $sortie->getDateLimiteInscription();
-//        $now = new \DateTimeImmutable();
-//        if ($delais instanceof \DateTimeInterface && $delais < $now) {
-//            return [false, 'delais_depasse'];
-//        }
-//
-//        $now = new \DateTimeImmutable();
-//        $debut = $sortie->getDateHeureDebut();
-//        if ($debut instanceof \DateTimeInterface && $debut <= $now) {
-//            return [false, 'deja_debute'];
-//        }
-//
-//
-//        $max = $sortie->getNbInscriptionMax();
-//        if ($max !== null) {
-//            $participants = $sortie->getParticipants()->count();
-//            if ($participants >= $max) {
-//                return [false, 'complet'];
-//            }
-//        }
 
         return [true, 'ok'];
     }
@@ -80,19 +61,6 @@ final class SortieInscriptionService
         return [true, 'ok'];
     }
 
-//    public function checkEtatInscriptionDesinscription(Sortie $sortie): void
-//    {
-//        $nbInscrits = $sortie->getNbInscrits();
-//        $nbMax = $sortie->getNbInscriptionMax();
-//
-//        if ($nbInscrits === $nbMax) {
-//            $sortie->setEtat(Etat::CLOTUREE);
-//        }
-//
-//        if ($nbInscrits < $nbMax) {
-//            $sortie->setEtat(Etat::OUVERTE);
-//        }
-//
-//    }
+
 
 }
