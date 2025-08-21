@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tableau de bord | Admin.{% endblock %}
+{% block title %}Tableau de bord | Admin | {{ parent() }}{% endblock %}
 
 {% block main %}
 
@@ -14,12 +14,28 @@
 
     {# Ligne 1 #}
     <div class="uk-container uk-margin-large-top">
-        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-3@m" uk-grid>
+        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-3@l" uk-grid>
+
+            <!-- Aide / bonnes pratiques -->
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: info"></span> Aide rapide
+                    </h3>
+                    <ul class="uk-list uk-text-small uk-margin-small-top">
+                        <li>Privilégiez la <strong>désactivation</strong> d’un compte plutôt que sa suppression.</li>
+                        <li>Vérifiez les <strong>emails</strong> avant import CSV.</li>
+                        <li>Une sortie annulée <strong>préserve l’historique</strong>.</li>
+                    </ul>
+                    <p class="uk-text-meta uk-margin-small">Besoin d’un tutoriel ? Contactez un admin principal.</p>
+                </div>
+            </div>
 
             <!-- Import CSV -->
             <div>
                 <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
-                    <h3 class="uk-card-title uk-margin-remove-bottom">Importer des utilisateurs
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: upload"></span> Importer des utilisateurs
                     </h3>
                     <p class="uk-text-meta uk-margin-small-top">
                         Chargez un <strong>fichier CSV</strong> pour créer plusieurs comptes en une fois.
@@ -30,7 +46,7 @@
                     </ul>
                     <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
                        href="{{ path('admin_import') }}" aria-label="Importer des utilisateurs par fichier CSV">
-                        Importer des utilisateurs
+                        Importer
                     </a>
                 </div>
             </div>
@@ -39,7 +55,7 @@
             <div>
                 <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
                     <h3 class="uk-card-title uk-margin-remove-bottom">
-                        <span uk-icon="icon: user-plus"></span> Ajouter un utilisateur
+                        <span uk-icon="icon: user"></span> Ajouter un utilisateur
                     </h3>
                     <p class="uk-text-meta uk-margin-small-top">
                         Créez un compte <strong>manuellement</strong> via un formulaire simple.
@@ -50,10 +66,16 @@
                     </ul>
                     <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
                        href="{{ path('admin_register') }}" aria-label="Ajouter un utilisateur">
-                        Ajouter un utilisateur
+                        Ajouter
                     </a>
                 </div>
             </div>
+
+
+        </div>
+
+        {# Ligne 2 #}
+        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-3@l uk-margin-large-top" uk-grid>
 
             <!-- Gérer les utilisateurs -->
             <div>
@@ -74,10 +96,6 @@
                     </a>
                 </div>
             </div>
-        </div>
-
-        {# Ligne 2 #}
-        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-3@m uk-margin-large-top" uk-grid>
 
             <!-- Annuler des sorties -->
             <div>
@@ -103,7 +121,7 @@
             <div>
                 <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
                     <h3 class="uk-card-title uk-margin-remove-bottom">
-                        <span uk-icon="icon: location"></span> Gérer les campus
+                        <span uk-icon="icon: bookmark"></span> Gérer les campus
                     </h3>
                     <p class="uk-text-meta uk-margin-small-top">
                         Ajoutez les nouveaux campus de l'ENI.
@@ -119,20 +137,47 @@
                 </div>
             </div>
 
-            <!-- Aide / bonnes pratiques -->
+            <!-- Gérer les lieux -->
             <div>
                 <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
                     <h3 class="uk-card-title uk-margin-remove-bottom">
-                        <span uk-icon="icon: info"></span> Aide rapide
+                        <span uk-icon="icon: location"></span> Gérer les lieux (en cours)
                     </h3>
-                    <ul class="uk-list uk-text-small uk-margin-small-top">
-                        <li>Privilégiez la <strong>désactivation</strong> d’un compte plutôt que sa suppression.</li>
-                        <li>Vérifiez les <strong>emails</strong> avant import CSV.</li>
-                        <li>Une sortie annulée <strong>préserve l’historique</strong>.</li>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Gérer les lieux de sorties.
+                    </p>
+                    <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>Supprimer des lieux</li>
                     </ul>
-                    <p class="uk-text-meta uk-margin-small">Besoin d’un tutoriel ? Contactez un admin principal.</p>
+                    <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1 uk-margin-top"
+                       aria-label="Gérer les lieux">
+                        Gérer les lieux
+                    </a>
                 </div>
             </div>
+
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-height-1-1">
+                    <h3 class="uk-card-title uk-margin-remove-bottom">
+                        <span uk-icon="icon: settings"></span> À venir
+                    </h3>
+                    <p class="uk-text-meta uk-margin-small-top">
+                        Espace réservé pour une future action d’administration.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        {# Ligne 3 (3 colonnes, 1 carte visible + 2 emplacements vides) #}
+        <div class="uk-grid-large uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-3@l uk-margin-large-top" uk-grid>
+
+            <!-- Exemple : une seule carte pour l’instant -->
+
+
+            <!-- Emplacements vides pour conserver l’alignement 3 colonnes -->
+
+            <div></div>
 
         </div>
     </div>
