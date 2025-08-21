@@ -63,31 +63,35 @@ final class AdminController extends AbstractController
     #[IsGranted(Role::ADMIN->value)]
     public function importUserCsv(Request $request, AdminService $adminUserService): Response
     {
+        // Création et gestion du formulaire d’upload CSV
         $form = $this->createForm(ImportUserType::class);
         $form->handleRequest($request);
         $result = null;
 
         if ($form->isSubmitted()) {
             if (!$form->isValid()) {
-                $this->addFlash('danger', 'Le fichier fourni est invalide (format/MIME/poids).');
+                // Vérifie la validité du formulaire
+                $this->addFlash('danger', 'Le fichier fourni est invalide.');
                 return $this->redirectToRoute('admin_import');
             }
 
+            // Récupère le fichier CSV
             $csv = $form->get('csvFile')->getData();
             if (!$csv) {
                 $this->addFlash('danger', 'Aucun fichier reçu.');
                 return $this->redirectToRoute('admin_import');
             }
 
-            // Extension stricte
+            // Vérifie que l’extension est bien .csv
             if (strtolower($csv->getClientOriginalExtension() ?? '') !== 'csv') {
                 $this->addFlash('danger', 'Le fichier doit avoir l’extension .csv.');
                 return $this->redirectToRoute('admin_import');
             }
 
-            // Import (mode strict)
+            // Appelle le service d’import (mode strict activé)
             $result = $adminUserService->importFromCsv($csv->getPathname(), strict: true);
 
+            // Si erreurs : affichage des messages et retour sur la page d’import
             if (!empty($result['errors'])) {
                 foreach ($result['errors'] as $e) {
                     $this->addFlash('danger', $e);
@@ -95,14 +99,17 @@ final class AdminController extends AbstractController
                 return $this->redirectToRoute('admin_import');
             }
 
+            // Si succès : affiche un message avec le nombre d’utilisateurs créés
             $count = (int)($result['success'] ?? 0);
             if ($count > 0) {
                 $this->addFlash('success', sprintf('Import réussi : %d utilisateur(s) créé(s).', $count));
             }
 
+            // Redirection vers le tableau de bord admin
             return $this->redirectToRoute('admin_dashboard');
         }
 
+        // Si première visite (GET) → affiche la vue avec le formulaire
         return $this->render('admin/user_import_admin.html.twig', [
             'form' => $form->createView(),
         ]);

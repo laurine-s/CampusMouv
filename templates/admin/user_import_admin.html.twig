@@ -17,7 +17,8 @@
     {# Messages flash (même rendu que dashboard) #}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
-            <div class="uk-alert-{{ label == 'danger' ? 'danger' : (label == 'success' ? 'success' : 'primary') }} uk-margin" uk-alert>
+            <div class="uk-alert-{{ label == 'danger' ? 'danger' : (label == 'success' ? 'success' : 'primary') }} uk-margin"
+                 uk-alert>
                 <a class="uk-alert-close" uk-close></a>
                 <p>{{ message|raw }}</p>
             </div>
@@ -27,7 +28,7 @@
     <div class="uk-container uk-margin-large-top">
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
 
-            {# 1) Format attendu + téléchargement (gauche) #}
+            {# Format attendu + téléchargement (colonne gauche) #}
             <h3 class="uk-card-title uk-margin-remove-bottom">📌 Format attendu</h3>
             <p class="uk-text-meta uk-margin-small-top">
                 Les colonnes sont <strong>obligatoires</strong> et doivent être dans cet ordre :
@@ -53,10 +54,11 @@ clara.moreau@campus-eni.fr,Clara,Moreau,Azerty!2025,Niort
                     </div>
                 </div>
 
-                {# 2) Conseils (droite) #}
+                {# Conseils (colonne droite) #}
                 <div>
                     <h4 class="uk-margin-remove">Conseils pour éviter les erreurs</h4>
                     <ul class="uk-list uk-list-bullet uk-text-small uk-margin-small-top">
+                        <li>Supprimer la première ligne du fichier avant de l'enregistrer</li>
                         <li>L’email doit se terminer par <code>@campus-eni.fr</code></li>
                         <li>Aucun doublon d’email dans le fichier</li>
                         <li>Le campus doit exister dans votre base</li>
@@ -74,7 +76,8 @@ clara.moreau@campus-eni.fr,Clara,Moreau,Azerty!2025,Niort
                 'attr': { 'accept': '.csv' }
             }) }}
             <div class="uk-margin">
-                <button class="uk-button uk-button-primary uk-border-pill uk-width-1-1" type="submit" aria-label="Importer le fichier CSV">
+                <button class="uk-button uk-button-primary uk-border-pill uk-width-1-1" type="submit"
+                        aria-label="Importer le fichier CSV">
                     Importer
                 </button>
             </div>
