@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter des utilisateurs | Admin.{% endblock %}
+{% block title %}Ajouter un utilisateur | Admin | {{ parent() }}{% endblock %}
 
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Ajouter un membre</h1>
 
     <div class="uk-align-center uk-text-center">
-        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir au tableau de bord</a>
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir
+            au tableau de bord</a>
     </div>
 
     {{ form_errors(registrationForm) }}
@@ -21,7 +22,8 @@
     }) }}
 
 
-    <button class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green" type="submit">Valider</button>
+    <button class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green" type="submit">Valider
+    </button>
     {{ form_end(registrationForm) }}
 {% endblock %}
 

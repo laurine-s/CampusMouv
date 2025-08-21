@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des utilisateurs | Admin.{% endblock %}
+{% block title %}Liste des utilisateurs | Admin | {{ parent() }}{% endblock %}
 
 {% block main %}
     <h1 class="uk-heading-bullet uk-margin-remove-bottom uk-text-center">Liste des utilisateurs</h1>
 
     <div class="uk-align-center uk-text-center">
-        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir au tableau de bord</a>
+        <a class="uk-button uk-button-small uk-button-primary uk-border-pill" href="{{ path('admin_dashboard') }}">Revenir
+            au tableau de bord</a>
     </div>
 
     <div class="uk-container uk-margin-top">
@@ -24,7 +25,7 @@
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.nom | upper}}</td>
+                    <td>{{ user.nom | upper }}</td>
                     <td>{{ user.prenom }}</td>
                     <td>{{ user.email }}</td>
                     <td>
