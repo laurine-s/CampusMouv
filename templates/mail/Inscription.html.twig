@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Inscription confirmée</title></head>
+<body style="font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;">
+<h2>Inscription confirmée </h2>
+<p>Bonjour {{ user.prenom ?? user.username }},</p>
+<p>Votre inscription à la sortie <strong>{{ sortie.nom }}</strong> est bien confirmée!</p>
+<ul>
+    <li>Date : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</li>
+    <li>Lieu : {{ sortie.campus.nom }}</li>
+</ul>
+<p>À bientôt sur Campus Mouv !</p>
+<p>L'équipe du BDE!</p>
+</body>
+</html>

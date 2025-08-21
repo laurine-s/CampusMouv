@@ -79,7 +79,7 @@ class Sortie
     {
         $this->participants = new ArrayCollection();
         $this->nbInscrits = 1;
-        $this->etat = Etat::OUVERTE;
+        $this->etat = Etat::CREEE;
         $this->interets = null;
     }
 

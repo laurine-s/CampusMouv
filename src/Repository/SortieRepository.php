@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Enum\Etat;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,17 +41,35 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('campus', $filters['campus']);
         }
 
-        if ($filters['isParticipant'] && $filters['isOrganisateur']) {
-            $queryBuilder
-                ->andWhere('( :user MEMBER OF s.participants OR s.organisateur = :organisateur )')
-                ->setParameter('user', $user)
-                ->setParameter('organisateur', $user);
-        } elseif ($filters['isParticipant']) {
-            $queryBuilder->andWhere(':user MEMBER OF s.participants')
-                ->setParameter('user', $user);
-        } elseif ($filters['isOrganisateur']) {
-            $queryBuilder->andWhere('s.organisateur = :organisateur')
-                ->setParameter('organisateur', $user);
+        // Filtres liés à l'utilisateur
+        // États "visibles" pour participants ou organisateur
+        $visibleEtats = [Etat::OUVERTE, Etat::CLOTUREE, Etat::ACTIVITE_EN_COURS, Etat::PASSEE];
+
+        if (!empty($filters['isParticipant'])) {
+            $conditions[] = ':user MEMBER OF s.participants AND s.etat IN (:visibleEtats)';
+            $queryBuilder->setParameter('user', $user)
+                ->setParameter('visibleEtats', $visibleEtats);
+        }
+
+        if (!empty($filters['isOrganisateur'])) {
+            $conditions[] = 's.organisateur = :organisateur AND s.etat IN (:visibleEtats)';
+            $queryBuilder->setParameter('organisateur', $user)
+                ->setParameter('visibleEtats', $visibleEtats);
+        }
+
+        if (!empty($filters['isCreee'])) {
+            $conditions[] = 's.organisateur = :userCreee AND s.etat = :etatCreee';
+            $queryBuilder->setParameter('userCreee', $user)
+                ->setParameter('etatCreee', Etat::CREEE);
+        }
+
+        if (!empty($filters['isAnnulee'])) {
+            $conditions[] = 's.etat = :etatAnnulee';
+            $queryBuilder->setParameter('etatAnnulee', Etat::ANNULEE);
+        }
+
+        if (!empty($conditions)) {
+            $queryBuilder->andWhere(implode(' OR ', $conditions));
         }
 
         return $queryBuilder->getQuery()->getResult();

@@ -30,9 +30,6 @@
 
     {# {% set pas_ouverte = sortie.etat != constant('App\\\\Enum\\\\Etat::OUVERTE') %} #}
 
-
-
-
     {# Header #}
     <section class="uk-section uk-preserve-color cm-background-charcoal uk-light">
         <div class="uk-container uk-container-large">
@@ -53,7 +50,6 @@
                     <div class="uk-card uk-card-default uk-border-rounded uk-overflow-hidden uk-height-1-1">
                         <div class="uk-card-media-top uk-inline uk-transition-toggle uk-margin-medium-bottom">
                             <img class="uk-transition-scale-up uk-transition-opaque uk-width-1-1 center"
-
                                     {% if sortie.photo %}
                                         src="{{ sortie.photo }}"
                                     {% else %}
@@ -242,14 +238,27 @@
                             </ul>
                         {% endif %}
 
-
-
                         {# Footer : actions #}
                         <div class="uk-card-footer uk-padding-small uk-text-center"
                              style="background-color:#f8f9fa;border-top:1px solid #e9ecef;">
-                            {% if app.user and sortie.participants.contains(app.user) %}
+
+                            {% if sortie.etat.name == 'CREEE' and app.user == sortie.organisateur %}
+                                <form action="{{ path('sorties_publication', {id: sortie.id}) }}" method="post"
+                                      class="uk-width-1-1">
+                                    <button type="submit"
+                                            class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green uk-margin-small">
+                                        <span uk-icon="play"></span> Publier
+                                    </button>
+                                </form>
+                                <form action="{{ path('sorties_modification', {id: sortie.id}) }}" method="post"
+                                      class="uk-width-1-1">
+                                    <button type="submit"
+                                            class="uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-orange uk-margin-small">
+                                        <span uk-icon="pencil"></span> Modifier
+                                    </button>
+                                </form>
+                            {% elseif app.user and sortie.participants.contains(app.user) and app.user != sortie.organisateur %}
                                 {# Déjà inscrit → se désinscrire #}
-                                {# Possible que si l'état de la sortie est "ouverte" ou si date du jour > date de cloture #}
                                 {% if sortie.etat.name == 'OUVERTE' or sortie.dateLimiteInscription|date('U') > "now"|date('U') %}
                                     <form action="{{ path('sorties_desinscription', {id: sortie.id}) }}" method="post"
                                           class="uk-width-1-1">
@@ -259,24 +268,20 @@
                                         </button>
                                     </form>
                                 {% else %}
-
                                     <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1"
-                                                   disabled
-                                                   title="La sortie a déjà débuté">
+                                            disabled
+                                            title="La sortie a déjà débuté">
                                         <span uk-icon="ban"></span> Désinscription indisponible
                                     </button>
-
                                 {% endif %}
 
                             {% elseif app.user %}
-
                                 {% if sortie.etat.name != 'OUVERTE' %}
                                     <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1"
                                             disabled
                                             title="{{ sortie.etat.name }}">
                                         <span uk-icon="ban"></span> Inscription indisponible
                                     </button>
-
                                 {% else %}
                                     <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post"
                                           class="uk-width-1-1">
@@ -286,36 +291,6 @@
                                         </button>
                                     </form>
                                 {% endif %}
-
-{#                                #}{# Non inscrit : calcul des raisons d'indisponibilité #}
-{#                                {% set conditions = [] %}#}
-{#                                #}{# {% if pas_ouverte %}{% set conditions = conditions|merge(['Sortie non ouverte']) %}{% endif %} #}
-{#                                {% if delais_depasse %}{% set conditions = conditions|merge(['Date limite dépassée']) %}{% endif %}#}
-{#                                {% if complet %}{% set conditions = conditions|merge(['Sortie complète']) %}{% endif %}#}
-{#                                {% if deja_debute %}#}
-{#                                    <button class="uk-button uk-button-danger uk-light uk-button-large uk-width-1-1"#}
-{#                                            disabled#}
-{#                                            title="La sortie a déjà débuté">#}
-{#                                        <span uk-icon="ban"></span> Désinscription indisponible#}
-{#                                    </button>#}
-{#                                {% endif %}#}
-{#                                {% if conditions|length > 0 %}#}
-{#                                    <button class="uk-button cm-background-burnt-sienna uk-light uk-button-large uk-width-1-1"#}
-{#                                            disabled#}
-{#                                            title="{{ conditions|join(' • ') }}">#}
-{#                                        <span uk-icon="ban"></span> Inscription indisponible#}
-{#                                    </button>#}
-
-{#                                {% else %}#}
-{#                                    <form action="{{ path('sorties_inscription', {id: sortie.id}) }}" method="post"#}
-{#                                          class="uk-width-1-1">#}
-{#                                        <button type="submit"#}
-{#                                                class="uk-button cm-background-persian-green uk-light uk-button-large uk-width-1-1">#}
-{#                                            <span uk-icon="check"></span> Je m'inscris à cette sortie#}
-{#                                        </button>#}
-{#                                    </form>#}
-{#                                {% endif %}#}
-
                             {% else %}
                                 {# Pas connecté #}
                                 <a href="{{ path('app_login') }}"
@@ -323,51 +298,54 @@
                                     <span uk-icon="sign-in"></span> Connectez-vous pour vous inscrire
                                 </a>
                             {% endif %}
-                        </div>
 
+                            {# === Bouton "Annuler la sortie" déplacé ici, sous le bouton d'inscription/désinscription === #}
+                            {% if sortie.etat.name is not same as 'ANNULEE' %}
+                                {% if app.user is same as sortie.organisateur and (sortie.etat.name == 'OUVERTE' or sortie.etat.name == 'CLOTUREE') %}
+                                    <button class="uk-button uk-border-pill uk-button-primary uk-margin-small-top uk-width-1-1 uk-button-red"
+                                            uk-toggle="target: #modal-delete-{{ sortie.id }}">
+                                        <span uk-icon="trash"></span> Annuler la sortie
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                            {# === / fin du déplacement === #}
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    {# App\Enum\Etat::ANNULEE #}
-    {% if sortie.etat.name is not same as 'ANNULEE' %}
-        {% if app.user is same as sortie.organisateur and (sortie.etat.name == 'OUVERTE' or sortie.etat.name == 'CLOTUREE' ) %}
-            <button class="uk-button uk-button-danger uk-dark uk-button-large uk-width-1-1"
-                    uk-toggle="target: #modal-delete-{{ sortie.id }}">
-                <span uk-icon="trash"></span> Annuler la sortie
-            </button>
 
-            <div id="modal-delete-{{ sortie.id }}" uk-modal>
-                <div class="uk-modal-dialog uk-modal-body">
-                    <h2 class="uk-modal-title">Confirmer la suppression</h2>
-                    <p>Êtes-vous sûr de vouloir supprimer cette sortie ?</p>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-grid-small" uk-grid>
-                        <div>
-                            <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
-                        </div>
-                        <div>
-                            <form method="post" action="{{ path('sorties_cancel', {'id': sortie.id}) }}">
-                                <button type="submit" class="uk-button-default uk-margin-small-right uk-button-red">Annuler la sortie</button>
-                            </form>
-                        </div>
-                    </div>
+    {# Modale d'annulation (inchangée) #}
+    <div id="modal-delete-{{ sortie.id }}" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer cette sortie ?</p>
+            <div class="uk-flex uk-flex-right uk-flex-middle uk-grid-small" uk-grid>
+                <div>
+                    <form method="post" action="{{ path('sorties_cancel', {'id': sortie.id}) }}">
+                        <button type="submit"
+                                class="uk-button uk-border-pill uk-button-primary uk-button-red">
+                            Annuler la sortie
+                        </button>
+                    </form>
                 </div>
             </div>
-        {% endif %}
-    {% endif %}
-
+        </div>
+    </div>
 
     <section class="uk-section cm-background-charcoal uk-light uk-section-large">
         <div class="uk-container uk-text-center">
             <h2 class="uk-heading-medium">Découvrez d'autres sorties</h2>
             <p class="uk-text-large uk-margin-medium-bottom cm-text-saffron">Explorez toutes les activités
                 disponibles</p>
-            <a href="{{ path('sorties_home') }}" class="uk-button cm-background-persian-green uk-light uk-button-large">
-                <span uk-icon="grid"></span> Voir toutes les sorties
+            <a href="{{ path('sorties_home') }}" class=class="uk-button uk-border-pill uk-button-primary uk-width-1-1">
+            <span uk-icon="grid"></span> Voir toutes les sorties
             </a>
         </div>
     </section>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>

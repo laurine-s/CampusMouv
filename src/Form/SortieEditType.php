@@ -9,7 +9,6 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,7 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-class SortieType extends AbstractType
+class SortieEditType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -45,38 +44,27 @@ class SortieType extends AbstractType
             ])
             ->add('nom', null, [
                 'label' => 'Nom de la sortie : ',
-                'data' => 'Poufsouffle Party'
             ])
             ->add('dateHeureDebut', null, [
                 'widget' => 'single_text',
                 'label' => 'Date et heure de début : ',
-                'data' => new \DateTimeImmutable('now')
             ])
             ->add('duree', null, [
                 'label' => 'Durée (en minutes) : ',
-                'data' => 120
             ])
             ->add('dateLimiteInscription', null, [
                 'widget' => 'single_text',
                 'label' => 'Date limite d\'inscription : ',
-                'data' => (new \DateTimeImmutable('now'))->modify('+3 days')
 
             ])
             ->add('nbInscriptionMax', null, [
                 'label' => 'Nombre maximum de participants : ',
-                'data' => 10
             ])
             ->add('nbInscriptionMin', null, [
                 'label' => 'Nombre minimum de participants : ',
-                'data' => 2
             ])
             ->add('infos', null, [
                 'label' => 'Description de l\'activité : ',
-                'data' => "À l’approche de la fin du trimestre, la Salle Commune de Poufsouffle se transforme en un véritable repaire festif.
-Les tentures jaunes et noires brillent d’un éclat chaleureux, et de délicieuses odeurs de tarte à la citrouille et de pain d’épices flottent déjà dans l’air.
-Les élèves préparent une soirée conviviale autour d’un grand banquet improvisé, avec des jeux magiques, des devinettes sorcières et un concours amical de sorts lumineux.
-Les rires résonneront sous les arches en pierre, et même le vieux tonneau d’entrée, d’ordinaire silencieux, semblera sourire aux invités.
-Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à tous, où chacun repartira le cœur aussi chaud qu’une tasse de Bièraubeurre."
             ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
@@ -100,15 +88,6 @@ Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à
                 'label' => 'Lieu : ',
                 'placeholder' => 'Choisissez un lieu existant',
 
-            ])
-            ->add('createSortie', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => "uk-button uk-border-pill uk-button-primary uk-width-1-1 uk-button-green",
-                    'id'=>'submit-create'],
-            ])
-            ->add('cancel', ButtonType::class, [
-                'label' => 'Annuler',
-                'attr' => ['class' => "uk-button uk-border-pill uk-button-default uk-width-1-1 uk-button-red"],
             ]);
     }
 

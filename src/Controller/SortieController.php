@@ -10,14 +10,17 @@ use App\Entity\Ville;
 use App\Enum\Etat;
 use App\Enum\Role;
 use App\Form\LieuType;
+use App\Form\SortieEditType;
 use App\Form\SortieFilterType;
 use App\Form\SortieType;
+use App\Message\ReminderEmailMessage;
 use App\Repository\CampusRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Service\CloudinaryService;
 use App\Service\SortieEtatService;
+use App\Service\MailService;
 use App\Service\SortieInscriptionService;
 use App\Service\SortieService;
 use Cloudinary\Api\Exception\ApiError;
@@ -26,8 +29,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 
 #[Route('/sorties', name: 'sorties_')]
@@ -38,9 +43,21 @@ final class SortieController extends AbstractController
     public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
         $user = $this->getUser();
-        $form = $this->createForm(SortieFilterType::class);
-        $form->handleRequest($request);
 
+        // Valeurs par défaut pour le formulaire
+        $formOptions = [];
+        if ($chemin === 'mes_sorties') {
+            $formOptions = [
+                'isCreee' => true,
+                'isAnnulee' => true,
+                'isParticipant' => true,
+                'isOrganisateur' => true,
+            ];
+        }
+
+        $form = $this->createForm(SortieFilterType::class, null, $formOptions);
+
+        $form->handleRequest($request);
 
         $allSorties = $sortieService->getSortiesAAfficher();
 
@@ -48,11 +65,15 @@ final class SortieController extends AbstractController
 
             // Récupération des filtres
             $campus = $form->get('campus')->getData();
+            $isCreee = $form->get('isCreee')->getData();
+            $isAnnulee = $form->get('isAnnulee')->getData();
             $isParticipant = $form->get('isParticipant')->getData();
             $isOrganisateur = $form->get('isOrganisateur')->getData();
 
             $filters = [
                 'campus' => $campus,
+                'isCreee' => $isCreee,
+                'isAnnulee' => $isAnnulee,
                 'isParticipant' => $isParticipant,
                 'isOrganisateur' => $isOrganisateur,
             ];
@@ -62,6 +83,8 @@ final class SortieController extends AbstractController
 
             $filters = [
                 'campus' => null,
+                'isCreee' => true,
+                'isAnnulee' => true,
                 'isParticipant' => true,
                 'isOrganisateur' => true,
             ];
@@ -114,7 +137,7 @@ final class SortieController extends AbstractController
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function inscription(
-        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService): Response
+        Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService, MailService $mailService, MessageBusInterface $bus): Response
     {
 
         $user = $this->getUser();
@@ -150,19 +173,35 @@ final class SortieController extends AbstractController
 
         $etatService->miseAJourEtatSortie($sortie);
 
+        // Envoi du mail
+        // Envoi du mail confirmation inscription
+
+        $mailService->sendInscriptionMail($user->getEmail(), $sortie->getNom());
+
+//        // calcule le délai jusqu’à (dateDébut - 48h)
+//        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+//        $target = $sortie->getDateHeureDebut()->sub(new \DateInterval('PT5M'));
+//        $delayMs = max(0, $target->getTimestamp() - $now->getTimestamp()) * 1000;
+//
+//        $bus->dispatch(
+//            new ReminderEmailMessage($sortie->getId(), $user->getId()),
+//            [ new DelayStamp($delayMs) ]
+//        );
+
+
         $this->addFlash('success', 'Vous êtes bien inscrit !');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+        // Envoi du rappel mail 48h avant la sortie
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, SortieEtatService $etatService): Response
+    public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, MailService $mailService, SortieEtatService $etatService): Response
     {
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour vous désinscrire.');
             return $this->redirectToRoute('app_login');
         }
-
 
         if (!$sortie) {
             $this->addFlash('danger', 'Sortie introuvable.');
@@ -185,6 +224,10 @@ final class SortieController extends AbstractController
         $em->flush();
 
         $etatService->miseAJourEtatSortie($sortie);
+
+
+        // Envoi du mail confirmation desinscription
+        $mailService->sendDesinscriptionMail($user->getEmail(), $sortie->getNom());
 
         $this->addFlash('success', 'Vous êtes désinscrit.');
         return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
@@ -387,8 +430,60 @@ final class SortieController extends AbstractController
     public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
     {
         $sortieService->cancelEvent($sortie);
-        $this->addFlash('success', 'La sortie '.$sortie->getNom().' a bien été annulée !');
+        $this->addFlash('success', 'La sortie ' . $sortie->getNom() . ' a bien été annulée !');
         return $this->redirectToRoute('sorties_home');
+    }
+
+    #[Route('/{id}/publication', name: 'publication', methods: ['POST'])]
+    public function publication(Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $sortie->setEtat(Etat::OUVERTE);
+        $em->persist($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'La sortie ' . $sortie->getNom() . ' a bien été publiée !');
+        return $this->redirectToRoute('sorties_home');
+    }
+
+    /**
+     * @throws ApiError
+     */
+    #[Route('/{id}/modification', name: 'modification', methods: ['GET', 'POST'])]
+    public function modification(Request $request, Sortie $sortie, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
+    {
+
+        $form = $this->createForm(SortieEditType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $photoFile = $form->get('photo')->getData();
+            $uploadPhoto = [];
+
+            if ($photoFile) {
+                $uploadPhoto = $cloudinaryService->uploadPhoto($photoFile);
+
+                if (!$uploadPhoto['success']) {
+                    $this->addFlash('danger', $uploadPhoto['error']);
+                    return $this->redirectToRoute('profil');
+                }
+            }
+
+            if ($form->isValid()) {
+
+                if ($photoFile) {
+                    // on transmet l'url au user
+                    $sortie->setPhoto($uploadPhoto['url']);
+                }
+
+                $em->persist($sortie);
+                $em->flush();
+
+                $this->addFlash('success', "L'événement a été mis à jour.");
+                return $this->redirectToRoute('sorties_detail', ['id' => $sortie->getId()]);
+            }
+        }
+
+        return $this->render('sortie/edit.html.twig', ['form' => $form->createView(), 'sortie' => $sortie]);
     }
 
 }
