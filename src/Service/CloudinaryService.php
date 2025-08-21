@@ -40,14 +40,13 @@ class CloudinaryService
      */
     public function uploadPhoto(UploadedFile $photoFile)
     {
-
-        // Vérification des erreurs PHP avant validation Symfony pour la taille des fichiers
+        // Vérification des erreurs PHP lié à la taille des fichiers
         $chekPhpError = $this->checkPHPErrors($photoFile);
         if (!$chekPhpError['success']) {
             return $chekPhpError;
         }
 
-        // Vérification manuelle du format
+        // Vérification du format du fichier
         $checkFormat = $this->checkFormat($photoFile, self::DEFAULT_ALLOWED_FORMATS);
         if (!$checkFormat['success']) {
             return $checkFormat;
@@ -61,15 +60,12 @@ class CloudinaryService
             'success' => true,
             'url' => $result['secure_url'],
         ];
-
     }
 
 
     public function checkPHPErrors(UploadedFile $photoFile): array
     {
-
         if (!$photoFile->isValid()) {
-
             if ($photoFile->getError() === UPLOAD_ERR_INI_SIZE) {
                 return [
                     'success' => false,
@@ -92,7 +88,6 @@ class CloudinaryService
 
     public function checkFormat(UploadedFile $photoFile, array $formats): array
     {
-
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $photoFormat = $finfo->file($photoFile->getPathname());
         if (!in_array($photoFormat, $formats, true)) {
@@ -101,13 +96,10 @@ class CloudinaryService
                 'error' => 'Seuls les fichiers JPEG ou PNG sont autorisés.',
             ];
         }
-
         return [
             'success' => true,
             'error' => null,
         ];
-
     }
-
 
 }
