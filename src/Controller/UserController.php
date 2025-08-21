@@ -24,7 +24,7 @@ final class UserController extends AbstractController
      * @throws ApiError
      */
     #[Route('/profil', name: 'profil', methods: ['GET', 'POST'])]
-    //#[IsGranted(Role::PARTICIPANT->value)]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function profil(Request $request, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
 
@@ -72,6 +72,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/profil/password', name: 'password')]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
         // On récupère l'utilisateur connecté
@@ -106,7 +107,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/profil/{slug}/detail', name: 'profil_detail', methods: ['GET'])]
-    //#[IsGranted(Role::PARTICIPANT->value)]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function detail(Request $request, User $user): Response
     {
         $form = $this->createForm(UserProfilDetailType::class, $user);

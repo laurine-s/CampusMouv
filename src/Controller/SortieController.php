@@ -36,10 +36,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 
 #[Route('/sorties', name: 'sorties_')]
-//#[IsGranted(Role::PARTICIPANT->value)]
 final class SortieController extends AbstractController
 {
     #[Route('/filtre/{chemin}', name: 'home', defaults: ['chemin' => ''], methods: ['GET', 'POST'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function home(Request $request, SortieService $sortieService, SortieRepository $sortieRepository, string $chemin): Response
     {
         $user = $this->getUser();
@@ -100,6 +100,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/detail', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function detail(int $id, SortieRepository $sortieRepository): Response
     {
         $sortieParId = $sortieRepository->sortieParId($id);
@@ -109,6 +110,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted(Role::ORGANISATEUR->value)]
     public function delete(int $id, SortieRepository $sortieRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
         $sortieParId = $sortieRepository->sortieParId($id);
@@ -136,6 +138,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/inscription', name: 'inscription', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function inscription(
         Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $inscriptionService, SortieEtatService $etatService, MailService $mailService, MessageBusInterface $bus): Response
     {
@@ -195,6 +198,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/desinscription', name: 'desinscription', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function desinscription(Sortie $sortie, EntityManagerInterface $em, SortieInscriptionService $policy, MailService $mailService, SortieEtatService $etatService): Response
     {
         $user = $this->getUser();
@@ -251,6 +255,7 @@ final class SortieController extends AbstractController
      * @throws ApiError
      */
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function create(Request $request, EntityManagerInterface $em, LieuRepository $lieuRepository, UserRepository $userRepository, CloudinaryService $cloudinaryService, CampusRepository $campusRepository): Response
     {
         $sortie = new Sortie();
@@ -280,7 +285,6 @@ final class SortieController extends AbstractController
             ];
         }
 
-        // Gérer le formulaire lieu
 
         // Gérer le formulaire lieu
         $formLieu->handleRequest($request);
@@ -417,6 +421,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/campus/{id}', name: 'parCampus', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(Role::PARTICIPANT->value)]
     public function parCampus(SortieRepository $sortieRepository, Campus $campus): Response
     {
         $allSorties = $sortieRepository->findBy(['campus' => $campus]);
@@ -427,6 +432,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
+    #[IsGranted(Role::ORGANISATEUR->value)]
     public function cancelEvent(Sortie $sortie, SortieService $sortieService): Response
     {
         $sortieService->cancelEvent($sortie);
@@ -435,6 +441,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/publication', name: 'publication', methods: ['POST'])]
+    #[IsGranted(Role::ORGANISATEUR->value)]
     public function publication(Sortie $sortie, EntityManagerInterface $em): Response
     {
         $sortie->setEtat(Etat::OUVERTE);
@@ -449,6 +456,7 @@ final class SortieController extends AbstractController
      * @throws ApiError
      */
     #[Route('/{id}/modification', name: 'modification', methods: ['GET', 'POST'])]
+    #[IsGranted(Role::ORGANISATEUR->value)]
     public function modification(Request $request, Sortie $sortie, EntityManagerInterface $em, CloudinaryService $cloudinaryService): Response
     {
 

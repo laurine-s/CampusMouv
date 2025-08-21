@@ -109,6 +109,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users', name: 'list_users')]
+    #[IsGranted(Role::ADMIN->value)]
     public function listUsers(AdminService $adminService): Response
     {
         $users = $adminService->getAllUsers();
@@ -116,6 +117,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/desactivate', name: 'desactivate_user', methods: ['GET'])]
+    #[IsGranted(Role::ADMIN->value)]
     public function desactivateUser(User $user, AdminService $adminService): Response
     {
         $adminService->desactivateUser($user);
@@ -123,6 +125,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/delete', name: 'delete_user', methods: ['GET'])]
+    #[IsGranted(Role::ADMIN->value)]
     public function deleteUser(User $user, AdminService $adminService): Response
     {
         $adminService->deleteUser($user);
@@ -131,6 +134,7 @@ final class AdminController extends AbstractController
 
     // Fonctions concernant la gestion des sorties
     #[Route('/sorties', name: 'list_sorties')]
+    #[IsGranted(Role::ADMIN->value)]
     public function listSorties(AdminService $adminService): Response
     {
         $sorties = $adminService->findEventsOrderedByNom();
@@ -138,6 +142,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/sorties/{id}/cancel', name: 'cancel_event', methods: ['GET'])]
+    #[IsGranted(Role::ADMIN->value)]
     public function cancelEvent(Sortie $sortie, AdminService $adminService): Response
     {
         $adminService->cancelEvent($sortie);
@@ -145,6 +150,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/sorties/{id}/delete', name: 'delete_event', methods: ['GET'])]
+    #[IsGranted(Role::ADMIN->value)]
     public function deleteEvent(Sortie $sortie, AdminService $adminService): Response
     {
         $adminService->deleteEvent($sortie);
@@ -153,6 +159,7 @@ final class AdminController extends AbstractController
 
     // Fonctions concernant la gestion des campus
     #[Route('/campus', name: 'list_campus')]
+    #[IsGranted(Role::ADMIN->value)]
     public function listCampus(AdminService $adminService): Response
     {
         $campus = $adminService->findCampusOrderedByNom();
