@@ -33,12 +33,12 @@ class UserProfilType extends AbstractType
                 'class' => Campus::class,
                 'choice_label' => 'nom',
             ])
-            ->add('interets', EntityType::class, [
-                'class' => Interets::class,
-                'choice_label' => 'nom',
-                'multiple' => true,
-                'expanded' => true, // transforme en checkbox
-            ])
+//            ->add('interets', EntityType::class, [
+//                'class' => Interets::class,
+//                'choice_label' => 'nom',
+//                'multiple' => true,
+//                'expanded' => true, // transforme en checkbox
+//            ])
             ->add('promo', EntityType::class, [
                 'class' => Promo::class,
                 'choice_label' => 'nom',
