@@ -146,16 +146,7 @@
         </div>
 
         <!-- Navigation compacte pour petits écrans -->
-        <div class="uk-navbar-center uk-hidden@m">
-            <ul class="uk-navbar-nav uk-text-small">
-                <li class="uk-active"><a href="{{ path('main_apropos') }}" class="uk-padding-remove">À propos</a></li>
-                <li class="uk-active"><a href="{{ path('sorties_home') }}" class="uk-padding-remove">Événements</a></li>
-                {% if app.user %}
-                    <li class="uk-active"><a href="{{ path('sorties_create') }}" class="uk-padding-remove">Créer une sortie</a></li>
-                {% endif %}
-                <li class="uk-active"><a href="{{ path('main_contact') }}" class="uk-padding-remove">Contact</a></li>
-            </ul>
-        </div>
+
 
         <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
