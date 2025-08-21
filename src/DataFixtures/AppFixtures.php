@@ -241,36 +241,26 @@ final class AppFixtures extends Fixture
             $annee2025 = 2025;
             //----User en dur----
             $user = new User();
-            $nom = 'Granger';
-            $prenom = 'Hermione';
+            $nom = 'DUDU';
+            $prenom = 'Florent';
             $user->setNom($nom);
             $user->setPrenom($prenom);
-            $user->setPseudo("L'intélo");
-            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
-            $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+            $user->setEmail($prenom . '.' . $nom . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "F.dudu2025");
             $user->setPassword($hashedPassword);
-
-            $user->setCampus($faker->randomElement($campusByName));
-            $user->setBio($faker->realText(180));
-            $user->addInteret($faker->randomElement($interets));
-            $user->setPromo($faker->randomElement($promos));
+            $user->setCampus('Rennes');
             $user->setRoles(['ROLE_ADMIN']);
             $em->persist($user);
 
-
             $user = new User();
-            $nom = 'Potter';
-            $prenom = 'Harry';
+            $nom = 'PAPA';
+            $prenom = 'Alex';
             $user->setNom($nom);
             $user->setPrenom($prenom);
-            $user->setPseudo("L'éclair");
-            $user->setEmail($prenom . '.' . $nom . $annee2025 . '@' . $domain);
-            $hashedPassword = $this->passwordHasher->hashPassword($user, "@Azerty123");
+            $user->setEmail($prenom . '.' . $nom . '@' . $domain);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, "A.papa2025");
             $user->setPassword($hashedPassword);
-            $user->setCampus($faker->randomElement($campusByName));
-            $user->setBio($faker->realText(180));
-            $user->addInteret($faker->randomElement($interets));
-            $user->setPromo($faker->randomElement($promos));
+            $user->setCampus('Rennes');
             $user->setRoles(['ROLE_USER']);
             $em->persist($user);
 
