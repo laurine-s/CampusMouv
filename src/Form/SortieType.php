@@ -45,38 +45,34 @@ class SortieType extends AbstractType
             ])
             ->add('nom', null, [
                 'label' => 'Nom de la sortie : ',
-                'data' => 'Poufsouffle Party'
+
             ])
             ->add('dateHeureDebut', null, [
                 'widget' => 'single_text',
                 'label' => 'Date et heure de début : ',
-                'data' => new \DateTimeImmutable('now')
+
             ])
             ->add('duree', null, [
                 'label' => 'Durée (en minutes) : ',
-                'data' => 120
+
             ])
             ->add('dateLimiteInscription', null, [
                 'widget' => 'single_text',
                 'label' => 'Date limite d\'inscription : ',
-                'data' => (new \DateTimeImmutable('now'))->modify('+3 days')
+
 
             ])
             ->add('nbInscriptionMax', null, [
                 'label' => 'Nombre maximum de participants : ',
-                'data' => 10
+
             ])
             ->add('nbInscriptionMin', null, [
                 'label' => 'Nombre minimum de participants : ',
-                'data' => 2
+
             ])
             ->add('infos', null, [
                 'label' => 'Description de l\'activité : ',
-                'data' => "À l’approche de la fin du trimestre, la Salle Commune de Poufsouffle se transforme en un véritable repaire festif.
-Les tentures jaunes et noires brillent d’un éclat chaleureux, et de délicieuses odeurs de tarte à la citrouille et de pain d’épices flottent déjà dans l’air.
-Les élèves préparent une soirée conviviale autour d’un grand banquet improvisé, avec des jeux magiques, des devinettes sorcières et un concours amical de sorts lumineux.
-Les rires résonneront sous les arches en pierre, et même le vieux tonneau d’entrée, d’ordinaire silencieux, semblera sourire aux invités.
-Une fête fidèle à l’esprit Poufsouffle : généreuse, joyeuse et ouverte à tous, où chacun repartira le cœur aussi chaud qu’une tasse de Bièraubeurre."
+
             ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,

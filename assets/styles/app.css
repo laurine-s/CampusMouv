@@ -111,6 +111,12 @@ color: rgba(38, 70, 83, 1);
     height: 25px;
 }
 
+.cm-img-sortie {
+    max-width: 250px;
+    max-height: 250px;
+    object-fit: contain;
+}
+
 
 
 
