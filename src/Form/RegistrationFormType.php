@@ -35,10 +35,10 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'constraints' => [
-                    new Regex([
-                        'pattern' => '/^[^@]+@campus-eni\.fr$/',
-                        'message' => 'L\'adresse e-mail doit se terminée par @campus-eni.fr.',
-                    ])
+//                    new Regex([
+//                       // 'pattern' => '/^[^@]+@campus-eni\.fr$/',
+//                        //'message' => 'cette adresse email n\'est pas valide',
+//                    ])
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
