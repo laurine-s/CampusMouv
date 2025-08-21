@@ -255,9 +255,11 @@
 
                                 <!-- Badge statut avec votre palette -->
                                 <div class="uk-position-top-right uk-position-small">
-                                    {% if sortie.nbInscrits >= sortie.nbInscriptionMax %}
+                                    {% if sortie.etat.name == 'CREEE' %}
+                                        <span class="uk-label cm-background-charcoal uk-light">Brouillon</span>
+                                    {% elseif sortie.nbInscrits >= sortie.nbInscriptionMax %}
                                         <span class="uk-label cm-background-burnt-sienna uk-light">Complet</span>
-                                    {% elseif sortie.dateLimiteInscription|date('U') < 'now'|date('U') %}
+                                    {% elseif sortie.dateLimiteInscription|date('U') < 'now'|date('U') or sortie.etat.name == 'PASSEE' or sortie.etat.name == 'ANNULEE' %}
                                         <span class="uk-label cm-background-sandy-brown uk-light">Inscriptions fermées</span>
                                     {% else %}
                                         <span class="uk-label cm-background-persian-green uk-light">Disponible</span>
