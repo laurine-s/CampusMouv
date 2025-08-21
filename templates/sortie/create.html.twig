@@ -177,7 +177,7 @@
 
     <!-- Modal pour ajouter un lieu -->
     <div id="mon-modal" uk-modal>
-{% include '_ajoutLieu.html.twig' %}
+        {% include '_ajoutLieu.html.twig' %}
     </div>
 
 
@@ -196,8 +196,17 @@
             crossorigin=""></script>
 
     <!-- Scripts JavaScript de l'application -->
-    <script src="{{ asset('js/sortie-form.js') }}" defer></script>
-    <script src="{{ asset('js/sortie-map.js') }}" defer></script>
-    <script src="{{ asset('js/apiGeo.js') }}" defer></script>
+
+    <script src="{{ asset('js/common/utils.js') }}"></script>
+    <script src="{{ asset('js/common/coordinates.js') }}"></script>
+    <script src="{{ asset('js/common/leaflet-common.js') }}"></script>
+    <script src="{{ asset('js/common/forms.js') }}"></script>
+    <script src="{{ asset('js/sortie-form.js') }}"></script>
+    <script src="{{ asset('js/maps.js') }}"></script>
+    <script src="{{ asset('js/autocompletion.js') }}"></script>
+
+
+
+
 
 {% endblock %}
