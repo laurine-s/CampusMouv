@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Importer des utilisateurs | Admin{% endblock %}
+{% block title %}Importer des utilisateurs | Admin | {{ parent() }}{% endblock %}
 
 {% block main %}
 
@@ -29,7 +29,8 @@
         <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
 
             {# Format attendu + téléchargement (colonne gauche) #}
-            <h3 class="uk-card-title uk-margin-remove-bottom">📌 Format attendu</h3>
+            <h3 class="uk-card-title uk-margin-remove-bottom">
+                <span uk-icon="icon: warning"></span>Format attendu</h3>
             <p class="uk-text-meta uk-margin-small-top">
                 Les colonnes sont <strong>obligatoires</strong> et doivent être dans cet ordre :
                 <code>email, prenom, nom, password, campus</code>
