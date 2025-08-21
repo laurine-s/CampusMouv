@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Entity\Ville;
 use App\Enum\Etat;
 use App\Enum\Role;
 use App\Form\LieuType;
@@ -237,14 +238,79 @@ final class SortieController extends AbstractController
         }
 
         // Gérer le formulaire lieu
+
+        // Gérer le formulaire lieu
         $formLieu->handleRequest($request);
         if ($formLieu->isSubmitted() && $formLieu->isValid()) {
             if ($formLieu->get('createLieu')->isClicked()) {
+
+                // Récupérer les données de ville depuis les champs cachés JavaScript
+                $villeNom = $request->request->get('ville_nom');
+                $villeCodePostal = $request->request->get('ville_code_postal');
+
+                // Vérifier qu'une ville a été sélectionnée
+                if (!$villeNom || !$villeCodePostal) {
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Veuillez sélectionner une ville via l\'autocomplétion.'
+                        ], 400);
+                    }
+                    $this->addFlash('error', 'Veuillez sélectionner une ville via l\'autocomplétion.');
+                    return $this->render('sortie/create.html.twig', [
+                        'formSortie' => $formSortie->createView(),
+                        'formLieu' => $formLieu->createView(),
+                        'lieux' => $lieuxArray,
+                        'allCampus' => $allCampus,
+                        'lieuIdToSelect' => $lieuIdToSelect
+                    ]);
+                }
+
+                // Chercher ou créer la ville
+                $ville = $em->getRepository(Ville::class)->findOneBy([
+                    'nom' => $villeNom,
+                    'cp' => $villeCodePostal
+                ]);
+
+                if (!$ville) {
+                    $ville = new Ville();
+                    $ville->setNom($villeNom);
+                    $ville->setCp($villeCodePostal);
+                    $em->persist($ville);
+                    $em->flush();
+                }
+
+                // Associer la ville au lieu
+                $lieu->setVille($ville);
+
+                // Récupérer et définir les coordonnées depuis les champs cachés JavaScript
+                $latitude = $request->request->get('coordinates_latitude');
+                $longitude = $request->request->get('coordinates_longitude');
+
+                if ($latitude && $longitude) {
+                    // S'assurer que ce sont des strings numériques valides
+                    $latFloat = (float) str_replace(',', '.', $latitude);
+                    $lngFloat = (float) str_replace(',', '.', $longitude);
+
+                    $lieu->setLatitude($latFloat);
+                    $lieu->setLongitude($lngFloat);
+
+                    error_log("Coordonnées définies: lat=$latFloat, lng=$lngFloat");
+                }
+
+                // Sauvegarder le lieu
                 $em->persist($lieu);
                 $em->flush();
 
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse([
+                        'success' => true,
+                        'message' => 'Lieu créé avec succès !',
+                        'lieu_id' => $lieu->getId()
+                    ]);
+                }
+
                 $this->addFlash('success', 'Lieu créé avec succès !');
-                // Rediriger avec l'ID du lieu créé
                 return $this->redirectToRoute('sorties_create', ['lieu_id' => $lieu->getId()]);
             }
         }

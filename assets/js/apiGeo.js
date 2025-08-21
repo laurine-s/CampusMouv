@@ -1,5 +1,5 @@
-// Script d'autocomplétion pour les adresses et villes
-(function() {
+// Script d'autocomplétion pour les adresses et villes - VERSION CORRIGÉE
+(function () {
     'use strict';
 
     let currentSuggestions = [];
@@ -8,8 +8,12 @@
     let debounceVille = null;
     let debounceAdresse = null;
 
+    // Variables pour éviter les conflits
+    let isSelectingFromAdresse = false;
+    let lastSelectedVille = null;
+
     // Initialisation au chargement de la page
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Initialisation autocomplétion');
         setupEventListeners();
         setupFormValidation();
@@ -31,7 +35,7 @@
         }
 
         // Fermer suggestions au clic extérieur
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.autocomplete-container')) {
                 hideAllSuggestions();
             }
@@ -45,36 +49,30 @@
         if (!form || !villeSelect) return;
 
         // Solution moderne : écouter l'événement 'invalid' des champs cachés
-        villeSelect.addEventListener('invalid', function(e) {
-            e.preventDefault(); // Empêcher le message par défaut
-
+        villeSelect.addEventListener('invalid', function (e) {
+            e.preventDefault();
             console.log('⚠️ Validation échouée pour le champ ville');
-            console.log('📋 Valeur actuelle du select:', this.value);
-
-            // Afficher un message personnalisé
             showValidationError('Veuillez sélectionner une ville dans la liste des suggestions.');
 
-            // Focaliser sur le champ de recherche visible
             const villeSearchInput = document.getElementById('ville-search');
             if (villeSearchInput) {
                 villeSearchInput.focus();
                 villeSearchInput.style.borderColor = '#dc3545';
                 villeSearchInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
 
-                // Retirer le style d'erreur après 3 secondes
-                setTimeout(function() {
+                setTimeout(function () {
                     villeSearchInput.style.borderColor = '';
                     villeSearchInput.style.boxShadow = '';
                 }, 3000);
             }
         });
 
-        // Ajouter un bouton de debug pour voir l'état du formulaire
+        // Ajouter un bouton de debug
         const debugButton = document.createElement('button');
         debugButton.textContent = 'Debug Formulaire';
         debugButton.type = 'button';
         debugButton.style.cssText = 'position: fixed; bottom: 10px; right: 10px; z-index: 9999; background: #007bff; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 12px;';
-        debugButton.addEventListener('click', function() {
+        debugButton.addEventListener('click', function () {
             console.log('=== DEBUG FORMULAIRE ===');
             console.log('🏙️ Input ville:', document.getElementById('ville-search')?.value);
             console.log('📋 Select ville value:', villeSelect?.value);
@@ -82,12 +80,13 @@
             console.log('🏠 Input rue:', document.querySelector('input[id*="rue"]')?.value);
             console.log('📍 Latitude:', document.querySelector('input[id*="latitude"]')?.value);
             console.log('📍 Longitude:', document.querySelector('input[id*="longitude"]')?.value);
+            console.log('🔄 Dernière ville sélectionnée:', lastSelectedVille);
             console.log('✅ Validation passerait:', validateRequiredFields());
         });
         document.body.appendChild(debugButton);
 
         // Validation avant soumission
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             if (!validateRequiredFields()) {
                 e.preventDefault();
                 return false;
@@ -96,19 +95,13 @@
     }
 
     function validateRequiredFields() {
-        const villeSelect = document.querySelector('select[id*="ville"]');
         const villeSearchInput = document.getElementById('ville-search');
 
         console.log('🔍 Validation des champs requis...');
 
-        if (villeSelect) {
-            console.log('📋 Valeur du select ville:', villeSelect.value);
-            console.log('📋 Option sélectionnée:', villeSelect.selectedOptions[0]?.textContent);
-        }
-
-        // Vérifier que la ville est sélectionnée
-        if (villeSelect && (!villeSelect.value || villeSelect.value === '' || villeSelect.value === '0')) {
-            console.log('❌ Validation échouée: aucune ville sélectionnée');
+        // Vérifier qu'une ville a été sélectionnée
+        if (!villeSearchInput || !villeSearchInput.value.trim()) {
+            console.log('❌ Validation échouée: aucune ville saisie');
             showValidationError('Veuillez sélectionner une ville dans la liste des suggestions.');
 
             if (villeSearchInput) {
@@ -116,7 +109,23 @@
                 villeSearchInput.style.borderColor = '#dc3545';
                 villeSearchInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
             }
+            return false;
+        }
 
+        // Vérifier qu'on a bien les données de ville
+        const form = document.getElementById('lieu-form');
+        const villeNomField = form.querySelector('input[name="ville_nom"]');
+        const villeCodePostalField = form.querySelector('input[name="ville_code_postal"]');
+
+        if (!villeNomField || !villeNomField.value || !villeCodePostalField || !villeCodePostalField.value) {
+            console.log('❌ Validation échouée: données de ville manquantes');
+            showValidationError('Veuillez sélectionner une ville dans la liste des suggestions (pas de saisie libre).');
+
+            if (villeSearchInput) {
+                villeSearchInput.focus();
+                villeSearchInput.style.borderColor = '#dc3545';
+                villeSearchInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+            }
             return false;
         }
 
@@ -125,7 +134,6 @@
     }
 
     function showValidationError(message) {
-        // Créer ou mettre à jour le message d'erreur
         let errorDiv = document.getElementById('validation-error');
 
         if (!errorDiv) {
@@ -141,7 +149,6 @@
                 font-size: 14px;
             `;
 
-            // Insérer au début du formulaire
             const form = document.getElementById('lieu-form');
             if (form && form.firstChild) {
                 form.insertBefore(errorDiv, form.firstChild);
@@ -151,8 +158,7 @@
         errorDiv.textContent = message;
         errorDiv.style.display = 'block';
 
-        // Masquer automatiquement après 5 secondes
-        setTimeout(function() {
+        setTimeout(function () {
             if (errorDiv) {
                 errorDiv.style.display = 'none';
             }
@@ -163,15 +169,21 @@
     function handleVilleInput(e) {
         const value = e.target.value;
 
+        // Supprimer les anciens champs cachés si l'utilisateur modifie
+        if (!isSelectingFromAdresse) {
+            const form = document.getElementById('lieu-form');
+            const oldFields = form.querySelectorAll('input[name^="ville_"]');
+            oldFields.forEach(field => field.remove());
+            lastSelectedVille = null;
+        }
+
         clearTimeout(debounceVille);
 
-        // Cacher le message d'erreur quand l'utilisateur tape
         const errorDiv = document.getElementById('validation-error');
         if (errorDiv) {
             errorDiv.style.display = 'none';
         }
 
-        // Réinitialiser le style du champ
         e.target.style.borderColor = '';
         e.target.style.boxShadow = '';
 
@@ -180,43 +192,37 @@
             return;
         }
 
-        debounceVille = setTimeout(function() {
+        debounceVille = setTimeout(function () {
             searchVille(value);
         }, 300);
     }
 
     function searchVille(query) {
         console.log('🔍 Recherche ville:', query);
-
         showLoading('ville');
 
         let url;
 
-        // Si que des chiffres
         if (/^\d+$/.test(query)) {
             if (query.length <= 2) {
-                // Recherche par département
                 const codeDep = query.padStart(2, '0');
                 url = `https://geo.api.gouv.fr/departements/${codeDep}/communes?fields=nom,code,codesPostaux,departement&limit=50`;
             } else {
-                // Recherche par code postal
                 url = `https://geo.api.gouv.fr/communes?fields=nom,code,codesPostaux,departement&limit=100`;
             }
         } else {
-            // Recherche par nom
             url = `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(query)}&fields=nom,code,codesPostaux,departement&boost=population&limit=30`;
         }
 
         fetch(url)
-            .then(function(response) {
+            .then(function (response) {
                 if (!response.ok) throw new Error('Erreur réseau');
                 return response.json();
             })
-            .then(function(data) {
-                // Si recherche par code postal partiel, filtrer
+            .then(function (data) {
                 if (/^\d{3,}$/.test(query)) {
-                    data = data.filter(function(commune) {
-                        return commune.codesPostaux && commune.codesPostaux.some(function(cp) {
+                    data = data.filter(function (commune) {
+                        return commune.codesPostaux && commune.codesPostaux.some(function (cp) {
                             return cp.startsWith(query);
                         });
                     });
@@ -225,7 +231,7 @@
                 console.log('📊 Résultats ville:', data.length);
                 showVilleSuggestions(data);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error('❌ Erreur recherche ville:', error);
                 showError('ville');
             });
@@ -243,7 +249,7 @@
             container.innerHTML = '<div class="loading">Aucun résultat trouvé</div>';
         } else {
             let html = '';
-            currentSuggestions.forEach(function(item, index) {
+            currentSuggestions.forEach(function (item, index) {
                 const codesPostaux = item.codesPostaux ? item.codesPostaux.join(', ') : '';
                 const departement = item.departement ? item.departement.nom : '';
 
@@ -264,7 +270,14 @@
         const item = currentSuggestions[index];
         if (!item) return;
 
-        console.log('🎯 Ville sélectionnée:', item.nom);
+        console.log('🎯 Ville sélectionnée:', item);
+
+        lastSelectedVille = {
+            nom: item.nom,
+            codesPostaux: item.codesPostaux,
+            departement: item.departement,
+            code: item.code
+        };
 
         // Remplir l'input de recherche
         const villeInput = document.getElementById('ville-search');
@@ -272,110 +285,151 @@
             villeInput.value = item.nom;
         }
 
-        // Trouver et sélectionner dans le select Symfony
-        const villeSelect = document.querySelector('select[id*="ville"]');
-        if (villeSelect) {
-            console.log('🔍 Recherche dans le select pour:', item.nom);
-            console.log('📋 Options disponibles:', Array.from(villeSelect.options).map(opt => opt.textContent));
+        // Créer des champs cachés pour envoyer au contrôleur
+        createHiddenVilleFields(item);
 
-            const options = villeSelect.querySelectorAll('option');
-            let optionFound = false;
+        // Remplir les champs d'affichage
+        fillLocationDetails(item);
 
-            // Essayer plusieurs stratégies de correspondance
-            for (let i = 0; i < options.length; i++) {
-                const option = options[i];
-                const optionText = option.textContent.toLowerCase().trim();
-                const itemNom = item.nom.toLowerCase().trim();
+        // MODIFICATION CRITIQUE: Vérifier si on a déjà des coordonnées précises d'adresse
+        const hasAddressCoordinates = checkIfHasAddressCoordinates();
 
-                // 1. Correspondance exacte du nom
-                if (optionText.includes(itemNom)) {
-                    option.selected = true;
-                    optionFound = true;
-                    console.log('✅ Option trouvée par nom:', option.textContent);
-                    break;
-                }
-
-                // 2. Correspondance par code postal si disponible
-                if (item.codesPostaux && item.codesPostaux.length > 0) {
-                    const cp = item.codesPostaux[0];
-                    if (optionText.includes(cp)) {
-                        option.selected = true;
-                        optionFound = true;
-                        console.log('✅ Option trouvée par code postal:', option.textContent);
-                        break;
-                    }
-                }
-            }
-
-            // Si aucune option trouvée, forcer la première option non vide comme fallback
-            if (!optionFound) {
-                console.log('⚠️ Aucune correspondance trouvée, recherche d\'une option similaire...');
-
-                // Chercher une option qui contient une partie du nom
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    if (option.value && option.value !== '') {
-                        const optionWords = option.textContent.toLowerCase().split(/[\s\-,]+/);
-                        const itemWords = item.nom.toLowerCase().split(/[\s\-,]+/);
-
-                        // Vérifier si au moins un mot correspond
-                        for (let itemWord of itemWords) {
-                            if (itemWord.length > 2 && optionWords.some(optWord => optWord.includes(itemWord) || itemWord.includes(optWord))) {
-                                option.selected = true;
-                                optionFound = true;
-                                console.log('✅ Option trouvée par similarité:', option.textContent);
-                                break;
-                            }
-                        }
-                        if (optionFound) break;
-                    }
-                }
-            }
-
-            if (optionFound) {
-                // Déclencher l'événement change
-                const changeEvent = new Event('change', { bubbles: true });
-                villeSelect.dispatchEvent(changeEvent);
-
-                // Marquer le champ comme valide
-                villeSelect.setCustomValidity('');
-
-                // Cacher le message d'erreur
-                const errorDiv = document.getElementById('validation-error');
-                if (errorDiv) {
-                    errorDiv.style.display = 'none';
-                }
-
-                console.log('✅ Ville validée avec succès');
-            } else {
-                console.log('❌ Impossible de trouver une option correspondante');
-
-                // En dernier recours, sélectionner la première option valide
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    if (option.value && option.value !== '' && option.value !== '0') {
-                        option.selected = true;
-                        villeSelect.setCustomValidity('');
-                        console.log('🔧 Option de secours sélectionnée:', option.textContent);
-                        break;
-                    }
-                }
-            }
+        if (hasAddressCoordinates) {
+            console.log('🛡️ PROTECTION: Coordonnées d\'adresse précises détectées - pas de récupération centre-ville');
+            console.log('📍 Coordonnées précises préservées');
+        } else {
+            console.log('🌍 Aucune coordonnée précise - récupération centre-ville autorisée');
+            setTimeout(function() {
+                searchCoordinatesForVille(item);
+            }, 100);
         }
 
-        // Remplir code postal
+        // Cacher le message d'erreur
+        const errorDiv = document.getElementById('validation-error');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+
+        hideSuggestions('ville');
+        console.log('✅ Ville configurée pour envoi au serveur');
+    }
+
+    function checkIfHasAddressCoordinates() {
+        // Vérifier les champs d'affichage pour voir si on a des coordonnées précises
+        const latDisplay = document.getElementById('latitude-display');
+        const lngDisplay = document.getElementById('longitude-display');
+
+        if (!latDisplay?.value || !lngDisplay?.value) {
+            return false;
+        }
+
+        // Convertir les valeurs (remplacer virgules par points)
+        const lat = parseFloat(latDisplay.value.replace(',', '.'));
+        const lng = parseFloat(lngDisplay.value.replace(',', '.'));
+
+        if (isNaN(lat) || isNaN(lng)) {
+            return false;
+        }
+
+        // Vérifier la précision : si on a plus de 4 décimales, c'est probablement une adresse précise
+        const latString = lat.toString();
+        const lngString = lng.toString();
+
+        const latDecimals = latString.split('.')[1]?.length || 0;
+        const lngDecimals = lngString.split('.')[1]?.length || 0;
+
+        const isPrecise = latDecimals > 4 || lngDecimals > 4;
+
+        console.log('🔍 Analyse précision coordonnées:', {
+            lat, lng,
+            latDecimals, lngDecimals,
+            isPrecise,
+            criteria: 'Plus de 4 décimales = adresse précise'
+        });
+
+        return isPrecise;
+    }
+
+    function createHiddenVilleFields(villeData) {
+        const form = document.getElementById('lieu-form');
+        if (!form) return;
+
+        // Supprimer les anciens champs cachés s'ils existent
+        const oldFields = form.querySelectorAll('input[name^="ville_"]');
+        oldFields.forEach(field => field.remove());
+
+        // Créer les nouveaux champs cachés
+        const fields = [
+            {
+                name: 'ville_nom',
+                value: villeData.nom
+            },
+            {
+                name: 'ville_code_postal',
+                value: villeData.codesPostaux && villeData.codesPostaux.length > 0 ? villeData.codesPostaux[0] : ''
+            },
+            {
+                name: 'ville_departement',
+                value: villeData.departement ? villeData.departement.nom : ''
+            },
+            {
+                name: 'ville_code_insee',
+                value: villeData.code || ''
+            }
+        ];
+
+        fields.forEach(fieldData => {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = fieldData.name;
+            hiddenField.value = fieldData.value;
+            form.appendChild(hiddenField);
+
+            console.log('📝 Champ caché créé:', fieldData.name, '=', fieldData.value);
+        });
+    }
+
+
+    function fillLocationDetails(item) {
+        // Code postal
         const codePostalInput = document.getElementById('codePostal');
         if (codePostalInput && item.codesPostaux && item.codesPostaux.length > 0) {
             codePostalInput.value = item.codesPostaux[0];
         }
 
-        // Remplir département
+        // Département
         const departementInput = document.getElementById('departement');
         if (departementInput && item.departement) {
             departementInput.value = item.departement.nom;
         }
+    }
 
-        hideSuggestions('ville');
+    // NOUVELLE FONCTION: Rechercher les coordonnées d'une ville
+    function searchCoordinatesForVille(villeItem) {
+        if (!villeItem || !villeItem.code) return;
+
+        console.log('🌍 Recherche coordonnées pour la ville:', villeItem.nom);
+
+        const url = `https://geo.api.gouv.fr/communes/${villeItem.code}?fields=centre&format=json`;
+
+        fetch(url)
+            .then(function (response) {
+                if (!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.centre && data.centre.coordinates) {
+                    const coords = data.centre.coordinates;
+                    const longitude = coords[0];
+                    const latitude = coords[1];
+
+                    console.log('📍 Coordonnées ville trouvées:', {latitude, longitude});
+                    updateCoordinates(latitude, longitude);
+                }
+            })
+            .catch(function (error) {
+                console.error('❌ Erreur récupération coordonnées ville:', error);
+            });
     }
 
     // ===== GESTION ADRESSE =====
@@ -389,35 +443,34 @@
             return;
         }
 
-        debounceAdresse = setTimeout(function() {
+        debounceAdresse = setTimeout(function () {
             searchAdresse(value);
         }, 300);
     }
 
     function searchAdresse(query) {
         console.log('🔍 Recherche adresse:', query);
-
         showLoading('adresse');
 
         // Améliorer la requête avec la ville si disponible
         let searchQuery = query;
         const villeInput = document.getElementById('ville-search');
-        if (villeInput && villeInput.value.trim()) {
+        if (villeInput && villeInput.value.trim() && !isSelectingFromAdresse) {
             searchQuery += ' ' + villeInput.value.trim();
         }
 
         const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(searchQuery)}&limit=8`;
 
         fetch(url)
-            .then(function(response) {
+            .then(function (response) {
                 if (!response.ok) throw new Error('Erreur réseau');
                 return response.json();
             })
-            .then(function(data) {
+            .then(function (data) {
                 console.log('📊 Résultats adresse:', data.features.length);
                 showAdresseSuggestions(data.features);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error('❌ Erreur recherche adresse:', error);
                 showError('adresse');
             });
@@ -435,12 +488,11 @@
             container.innerHTML = '<div class="loading">Aucune adresse trouvée</div>';
         } else {
             let html = '';
-            features.forEach(function(feature, index) {
+            features.forEach(function (feature, index) {
                 const props = feature.properties;
                 const adresse = props.label || props.name;
                 const score = Math.round(props.score * 100);
 
-                // Ajouter coordonnées dans les détails
                 let coordInfo = '';
                 if (feature.geometry && feature.geometry.coordinates) {
                     const coords = feature.geometry.coordinates;
@@ -465,16 +517,16 @@
         if (!feature) return;
 
         const props = feature.properties;
-        console.log('🎯 Adresse sélectionnée:', props.label);
+        console.log('🎯 Adresse sélectionnée:', props);
 
-        // Extraire l'adresse seule (sans ville/code postal)
+        // Extraire l'adresse seule
         let adresseSeule = props.name || props.label;
         if (props.city && props.postcode) {
             const regex = new RegExp(',?\\s*' + props.postcode + '\\s*' + props.city + '.*$', 'i');
             adresseSeule = adresseSeule.replace(regex, '');
         }
 
-        // Remplir l'input de recherche
+        // Remplir l'input de recherche d'adresse
         const adresseInput = document.getElementById('adresse-search');
         if (adresseInput) {
             adresseInput.value = adresseSeule;
@@ -487,14 +539,34 @@
             console.log('✅ Champ rue rempli:', adresseSeule);
         }
 
-        // Remplir ville
-        const villeInput = document.getElementById('ville-search');
-        if (villeInput && props.city) {
-            villeInput.value = props.city;
-            // Déclencher recherche ville
-            setTimeout(function() {
-                searchVille(props.city);
-            }, 100);
+        // CRITIQUE: Remplir coordonnées GPS EN PREMIER avec les coordonnées PRÉCISES
+        if (feature.geometry && feature.geometry.coordinates) {
+            const coords = feature.geometry.coordinates;
+            const longitude = coords[0];
+            const latitude = coords[1];
+
+            console.log('🎯 COORDONNÉES PRÉCISES DE L\'ADRESSE:', { latitude, longitude });
+            console.log('📍 Ces coordonnées seront protégées contre l\'écrasement');
+
+            // Utiliser la fonction avec source spécifique
+            updateCoordinates(latitude, longitude, 'address_precise');
+
+            // Marquer qu'on a des coordonnées précises (optionnel - la vérification se fait sur la précision)
+            window.lastCoordinatesSource = 'address_precise';
+            window.lastCoordinatesTime = Date.now();
+        }
+
+        // Ensuite gérer la ville
+        if (props.city) {
+            const villeInput = document.getElementById('ville-search');
+            if (villeInput) {
+                villeInput.value = props.city;
+
+                // Déclencher recherche ville
+                setTimeout(function() {
+                    searchVille(props.city);
+                }, 100);
+            }
         }
 
         // Remplir code postal
@@ -512,36 +584,82 @@
             }
         }
 
-        // Remplir coordonnées GPS
-        if (feature.geometry && feature.geometry.coordinates) {
-            const coords = feature.geometry.coordinates;
-            const longitude = coords[0];
-            const latitude = coords[1];
+        hideSuggestions('adresse');
+    }
 
-            console.log('📍 Coordonnées:', { latitude: latitude, longitude: longitude });
+    // NOUVELLE FONCTION: Centraliser la mise à jour des coordonnées
+    function updateCoordinates(latitude, longitude, source = 'autocompletion') {
+        console.log('📍 updateCoordinates appelée:', {latitude, longitude, source});
 
-            // Champs d'affichage
-            const latDisplay = document.getElementById('latitude-display');
-            const lngDisplay = document.getElementById('longitude-display');
+        // Forcer le format avec point décimal pour la base de données
+        const latFormatted = parseFloat(latitude).toString().replace(',', '.');
+        const lngFormatted = parseFloat(longitude).toString().replace(',', '.');
 
-            if (latDisplay) latDisplay.value = latitude.toFixed(6);
-            if (lngDisplay) lngDisplay.value = longitude.toFixed(6);
+        console.log('📍 Coordonnées formatées:', {latitude: latFormatted, longitude: lngFormatted});
 
-            // Champs Symfony
-            const latInput = document.querySelector('input[id*="latitude"]');
-            const lngInput = document.querySelector('input[id*="longitude"]');
+        // Champs d'affichage (avec virgules pour l'utilisateur français)
+        const latDisplay = document.getElementById('latitude-display');
+        const lngDisplay = document.getElementById('longitude-display');
 
-            if (latInput) {
-                latInput.value = latitude;
-                console.log('✅ Latitude Symfony:', latitude);
-            }
-            if (lngInput) {
-                lngInput.value = longitude;
-                console.log('✅ Longitude Symfony:', longitude);
-            }
+        if (latDisplay) latDisplay.value = latitude.toFixed(6).replace('.', ',');
+        if (lngDisplay) lngDisplay.value = longitude.toFixed(6).replace('.', ',');
+
+        // Champs Symfony (CRITIQUES - avec points pour la base de données)
+        const latInput = document.querySelector('input[id*="latitude"]');
+        const lngInput = document.querySelector('input[id*="longitude"]');
+
+        if (latInput) {
+            latInput.value = latFormatted;
+            console.log('✅ Latitude Symfony mise à jour:', latFormatted);
+        } else {
+            console.error('❌ Champ latitude Symfony introuvable!');
         }
 
-        hideSuggestions('adresse');
+        if (lngInput) {
+            lngInput.value = lngFormatted;
+            console.log('✅ Longitude Symfony mise à jour:', lngFormatted);
+        } else {
+            console.error('❌ Champ longitude Symfony introuvable!');
+        }
+
+        // NOUVEAU: Créer des champs cachés pour les coordonnées (comme pour la ville)
+        createHiddenCoordinatesFields(latFormatted, lngFormatted);
+    }
+
+    function createHiddenCoordinatesFields(latitude, longitude) {
+        const form = document.getElementById('lieu-form');
+        if (!form) return;
+
+        // Supprimer les anciens champs
+        const oldCoordFields = form.querySelectorAll('input[name^="coordinates_"]');
+        oldCoordFields.forEach(field => field.remove());
+
+        // S'assurer que ce sont des strings numériques
+        const latString = parseFloat(latitude).toString();
+        const lngString = parseFloat(longitude).toString();
+
+        console.log('📝 Création champs cachés (strings numériques):', { latString, lngString });
+
+        const coordFields = [
+            {
+                name: 'coordinates_latitude',
+                value: latString
+            },
+            {
+                name: 'coordinates_longitude',
+                value: lngString
+            }
+        ];
+
+        coordFields.forEach(fieldData => {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = fieldData.name;
+            hiddenField.value = fieldData.value;
+            form.appendChild(hiddenField);
+
+            console.log('📝 Champ caché créé:', fieldData.name, '=', fieldData.value, 'Type:', typeof fieldData.value);
+        });
     }
 
     // ===== NAVIGATION CLAVIER =====
@@ -628,3 +746,157 @@
     window.selectAdresse = selectAdresse;
 
 })();
+const originalUpdateCoordinates = window.updateCoordinates || updateCoordinates;
+
+function updateCoordinates(latitude, longitude, source = 'autocompletion') {
+    console.log('📍 updateCoordinates appelée:', { latitude, longitude, source });
+
+    // Convertir en nombres puis en strings numériques propres
+    const latNum = parseFloat(latitude);
+    const lngNum = parseFloat(longitude);
+
+    // Vérifier que ce sont des nombres valides
+    if (isNaN(latNum) || isNaN(lngNum)) {
+        console.error('❌ Coordonnées invalides:', { latitude, longitude });
+        return;
+    }
+
+    // Convertir en strings numériques avec précision
+    const latString = latNum.toString();
+    const lngString = lngNum.toString();
+
+    console.log('📍 Coordonnées converties en strings:', { latString, lngString });
+
+    // Champs d'affichage (avec virgules pour l'utilisateur français)
+    const latDisplay = document.getElementById('latitude-display');
+    const lngDisplay = document.getElementById('longitude-display');
+
+    if (latDisplay) latDisplay.value = latNum.toFixed(6).replace('.', ',');
+    if (lngDisplay) lngDisplay.value = lngNum.toFixed(6).replace('.', ',');
+
+    // Champs Symfony (CRITIQUES - strings numériques avec points)
+    const latInput = document.querySelector('input[id*="latitude"]');
+    const lngInput = document.querySelector('input[id*="longitude"]');
+
+    if (latInput) {
+        latInput.value = latString; // String numérique
+        console.log('✅ Latitude Symfony définie:', latString, 'Type:', typeof latString);
+    } else {
+        console.error('❌ Champ latitude Symfony introuvable!');
+    }
+
+    if (lngInput) {
+        lngInput.value = lngString; // String numérique
+        console.log('✅ Longitude Symfony définie:', lngString, 'Type:', typeof lngString);
+    } else {
+        console.error('❌ Champ longitude Symfony introuvable!');
+    }
+
+    // Créer des champs cachés avec strings numériques
+    createHiddenCoordinatesFields(latString, lngString);
+}
+
+// Remplacer la fonction globale
+if (typeof updateCoordinates === 'function') {
+    window.updateCoordinates = updateCoordinatesWithDebug;
+    updateCoordinates = updateCoordinatesWithDebug;
+}
+
+// Debug pour selectAdresse
+const originalSelectAdresse = window.selectAdresse;
+if (originalSelectAdresse) {
+    window.selectAdresse = function (index) {
+        console.log('🏠 selectAdresse appelée avec index:', index);
+        const feature = currentSuggestions[index];
+        if (feature && feature.geometry && feature.geometry.coordinates) {
+            const coords = feature.geometry.coordinates;
+            console.log('🎯 Coordonnées de l\'adresse sélectionnée:', {
+                longitude: coords[0],
+                latitude: coords[1]
+            });
+        }
+
+        return originalSelectAdresse.call(this, index);
+    };
+}
+
+// Debug pour selectVille
+const originalSelectVille = window.selectVille;
+if (originalSelectVille) {
+    window.selectVille = function (index) {
+        console.log('🏙️ selectVille appelée avec index:', index);
+        const item = currentSuggestions[index];
+        if (item) {
+            console.log('🎯 Ville sélectionnée:', item.nom);
+        }
+
+        return originalSelectVille.call(this, index);
+    };
+}
+
+// Debug pour le formulaire - vérifier ce qui est envoyé
+document.addEventListener('DOMContentLoaded', function () {
+    const lieuForm = document.getElementById('lieu-form');
+    if (lieuForm) {
+        lieuForm.addEventListener('submit', function (e) {
+            console.log('📤 SOUMISSION FORMULAIRE - Vérification finale des coordonnées:');
+
+            const formData = new FormData(lieuForm);
+
+            // Vérifier les champs display
+            const latDisplay = document.getElementById('latitude-display');
+            const lngDisplay = document.getElementById('longitude-display');
+
+            console.log('👁️ Champs d\'affichage:');
+            console.log('  latitude-display:', latDisplay?.value);
+            console.log('  longitude-display:', lngDisplay?.value);
+
+            // Vérifier les champs Symfony
+            console.log('📋 Champs Symfony dans FormData:');
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('latitude') || key.includes('longitude')) {
+                    console.log('  ' + key + ':', value);
+                }
+            }
+
+            // Vérifier directement les inputs
+            const latInput = document.querySelector('input[id*="latitude"]');
+            const lngInput = document.querySelector('input[id*="longitude"]');
+
+            console.log('🎯 Champs Symfony directs:');
+            console.log('  latitude input value:', latInput?.value);
+            console.log('  longitude input value:', lngInput?.value);
+            console.log('  latitude input name:', latInput?.name);
+            console.log('  longitude input name:', lngInput?.name);
+        });
+    }
+});
+
+// Bouton de debug pour voir l'état actuel
+const debugCoordsButton = document.createElement('button');
+debugCoordsButton.textContent = 'Debug Coordonnées';
+debugCoordsButton.type = 'button';
+debugCoordsButton.style.cssText = 'position: fixed; bottom: 60px; right: 10px; z-index: 9999; background: #28a745; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 12px;';
+debugCoordsButton.addEventListener('click', function () {
+    console.log('=== DEBUG ÉTAT ACTUEL DES COORDONNÉES ===');
+
+    const latDisplay = document.getElementById('latitude-display');
+    const lngDisplay = document.getElementById('longitude-display');
+    const latInput = document.querySelector('input[id*="latitude"]');
+    const lngInput = document.querySelector('input[id*="longitude"]');
+
+    console.log('📺 Champs d\'affichage (ce que voit l\'utilisateur):');
+    console.log('  latitude-display:', latDisplay?.value);
+    console.log('  longitude-display:', lngDisplay?.value);
+
+    console.log('📋 Champs Symfony (ce qui sera envoyé):');
+    console.log('  latitude:', latInput?.value, '(name:', latInput?.name + ')');
+    console.log('  longitude:', lngInput?.value, '(name:', lngInput?.name + ')');
+
+    console.log('🏠 Dernière adresse sélectionnée:', window.lastSelectedAdresse || 'aucune');
+    console.log('🏙️ Dernière ville sélectionnée:', window.lastSelectedVille || 'aucune');
+});
+
+document.body.appendChild(debugCoordsButton);
+
+console.log('🔧 Debug des coordonnées activé !');

@@ -175,23 +175,127 @@ class SortieForm {
             }
         });
     }
+    ensureCoordinatesInFormData(formData) {
+        console.log('🔍 Vérification des coordonnées avant envoi...');
 
+        // Récupérer les coordonnées depuis les champs d'affichage
+        const latDisplay = document.getElementById('latitude-display');
+        const lngDisplay = document.getElementById('longitude-display');
+
+        // Récupérer les coordonnées depuis les champs Symfony
+        const latInput = document.querySelector('input[id*="latitude"]');
+        const lngInput = document.querySelector('input[id*="longitude"]');
+
+        console.log('📊 État des champs de coordonnées:');
+        console.log('  latitude-display:', latDisplay?.value);
+        console.log('  longitude-display:', lngDisplay?.value);
+        console.log('  latitude Symfony:', latInput?.value);
+        console.log('  longitude Symfony:', lngInput?.value);
+        console.log('  latitude Symfony name:', latInput?.name);
+        console.log('  longitude Symfony name:', lngInput?.name);
+
+        // Coordonnées à utiliser
+        let finalLat = null;
+        let finalLng = null;
+
+        // 1. Priorité aux champs Symfony s'ils sont remplis
+        if (latInput?.value && lngInput?.value && latInput.value.trim() !== '' && lngInput.value.trim() !== '') {
+            finalLat = latInput.value.replace(',', '.');
+            finalLng = lngInput.value.replace(',', '.');
+            console.log('✅ Coordonnées trouvées dans les champs Symfony');
+        }
+        // 2. Sinon, utiliser les champs d'affichage
+        else if (latDisplay?.value && lngDisplay?.value && latDisplay.value.trim() !== '' && lngDisplay.value.trim() !== '') {
+            finalLat = latDisplay.value.replace(',', '.');
+            finalLng = lngDisplay.value.replace(',', '.');
+            console.log('✅ Coordonnées récupérées depuis les champs d\'affichage');
+        }
+
+        if (finalLat && finalLng) {
+            // Vérifier que ce sont des nombres valides
+            const latNum = parseFloat(finalLat);
+            const lngNum = parseFloat(finalLng);
+
+            if (!isNaN(latNum) && !isNaN(lngNum) && Math.abs(latNum) <= 90 && Math.abs(lngNum) <= 180) {
+
+                // Déterminer les noms corrects des champs
+                let latFieldName = 'lieu[latitude]';
+                let lngFieldName = 'lieu[longitude]';
+
+                // Si on a les noms des inputs Symfony, les utiliser
+                if (latInput?.name && lngInput?.name) {
+                    latFieldName = latInput.name;
+                    lngFieldName = lngInput.name;
+                }
+
+                // Mettre à jour le FormData
+                formData.set(latFieldName, latNum.toString());
+                formData.set(lngFieldName, lngNum.toString());
+
+                console.log('✅ Coordonnées forcées dans FormData:', {
+                    [latFieldName]: latNum.toString(),
+                    [lngFieldName]: lngNum.toString()
+                });
+
+                // Mettre à jour aussi les champs Symfony pour cohérence
+                if (latInput) latInput.value = latNum.toString();
+                if (lngInput) lngInput.value = lngNum.toString();
+
+                return true;
+            } else {
+                console.error('❌ Coordonnées invalides:', { finalLat, finalLng, latNum, lngNum });
+            }
+        } else {
+            console.warn('⚠️ Aucune coordonnée trouvée');
+            console.log('Détails:', {
+                latDisplay: latDisplay?.value,
+                lngDisplay: lngDisplay?.value,
+                latInput: latInput?.value,
+                lngInput: lngInput?.value
+            });
+        }
+
+        return false;
+    }
     /**
      * Gérer la soumission du formulaire lieu
      */
     async handleLieuFormSubmission(event, lieuForm, modal) {
         event.preventDefault();
 
+        // Validation de l'autocomplétion de ville
+        if (!this.validateVilleAutocompletion()) {
+            return;
+        }
+
         const formData = new FormData(lieuForm);
         const submitButton = event.submitter;
 
-        // Ajouter le bouton cliqué aux données
-        if (submitButton) {
-            formData.append(submitButton.name, submitButton.value);
+        // S'assurer que le bouton de soumission est correctement ajouté
+        if (submitButton && submitButton.name) {
+            formData.set(submitButton.name, submitButton.value || '1');
+        } else {
+            formData.set('lieu[createLieu]', '1');
         }
+
+        // CRITIQUE: S'assurer que les coordonnées sont dans le FormData
+        const coordsOk = this.ensureCoordinatesInFormData(formData);
+        if (!coordsOk) {
+            this.displayModalErrors('Impossible de récupérer les coordonnées GPS. Veuillez re-sélectionner l\'adresse.');
+            return;
+        }
+
+        // Corriger le format des coordonnées
+        this.fixCoordinatesFormat(formData);
 
         try {
             console.log('📤 Envoi des données du lieu...');
+
+            // Debug: Afficher toutes les données envoyées
+            console.log('=== DONNÉES FINALES ENVOYÉES ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ':', value);
+            }
 
             // Envoyer la requête AJAX
             const response = await fetch(lieuForm.action, {
@@ -202,27 +306,42 @@ class SortieForm {
                 }
             });
 
+            console.log('Response status:', response.status);
+
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Détail erreur serveur:', errorText);
                 throw new Error(`Erreur HTTP: ${response.status}`);
             }
 
-            const result = await response.text();
-            console.log('📥 Réponse reçue');
+            // Gérer les réponses JSON et HTML
+            const contentType = response.headers.get('content-type');
 
-            // Analyser la réponse pour voir si c'est un succès
-            if (this.isSuccessResponse(result)) {
-                console.log('✅ Lieu créé avec succès');
+            if (contentType && contentType.includes('application/json')) {
+                const result = await response.json();
+                console.log('📥 Réponse JSON reçue:', result);
 
-                // Récupérer les données du nouveau lieu depuis le formulaire
-                const nouveauLieu = this.extractLieuFromForm(formData);
-
-                // Mettre à jour les données et la sélection
-                await this.handleSuccessfulLieuCreation(nouveauLieu, modal);
-
+                if (result.success) {
+                    console.log('✅ Lieu créé avec succès');
+                    const nouveauLieu = this.extractLieuFromForm(formData);
+                    nouveauLieu.id = result.lieu_id;
+                    await this.handleSuccessfulLieuCreation(nouveauLieu, modal);
+                } else {
+                    console.log('❌ Erreur JSON:', result.error);
+                    this.displayModalErrors(result.error);
+                }
             } else {
-                console.log('❌ Erreur lors de la création');
-                // Afficher les erreurs dans la modal
-                this.displayModalErrors(result);
+                const result = await response.text();
+                console.log('📥 Réponse HTML reçue');
+
+                if (this.isSuccessResponse(result)) {
+                    console.log('✅ Lieu créé avec succès');
+                    const nouveauLieu = this.extractLieuFromForm(formData);
+                    await this.handleSuccessfulLieuCreation(nouveauLieu, modal);
+                } else {
+                    console.log('❌ Erreur lors de la création');
+                    this.displayModalErrors(result);
+                }
             }
 
         } catch (error) {
@@ -231,22 +350,123 @@ class SortieForm {
         }
     }
 
+    fixCoordinatesFormat(formData) {
+        // Récupérer les coordonnées
+        const latitude = formData.get('lieu[latitude]');
+        const longitude = formData.get('lieu[longitude]');
+
+        if (latitude) {
+            // Convertir virgule en point pour la base de données
+            const latFixed = parseFloat(latitude.toString().replace(',', '.')).toString();
+            formData.set('lieu[latitude]', latFixed);
+            console.log('🔧 Latitude corrigée:', latitude, '=>', latFixed);
+        }
+
+        if (longitude) {
+            // Convertir virgule en point pour la base de données
+            const lngFixed = parseFloat(longitude.toString().replace(',', '.')).toString();
+            formData.set('lieu[longitude]', lngFixed);
+            console.log('🔧 Longitude corrigée:', longitude, '=>', lngFixed);
+        }
+    }
+
+    /**
+     * NOUVELLE MÉTHODE: Valider l'autocomplétion de ville
+     */
+    validateVilleAutocompletion() {
+        const villeSearchInput = document.getElementById('ville-search');
+        const form = document.getElementById('lieu-form');
+
+        console.log('🔍 Validation autocomplétion ville...');
+
+        // Vérifier qu'une ville a été saisie
+        if (!villeSearchInput || !villeSearchInput.value.trim()) {
+            console.log('❌ Aucune ville saisie');
+            this.showValidationError('Veuillez sélectionner une ville via l\'autocomplétion.');
+            this.highlightErrorField(villeSearchInput);
+            return false;
+        }
+
+        // Vérifier qu'on a bien les données de ville (champs cachés créés par l'autocomplétion)
+        const villeNomField = form.querySelector('input[name="ville_nom"]');
+        const villeCodePostalField = form.querySelector('input[name="ville_code_postal"]');
+
+        if (!villeNomField || !villeNomField.value || !villeCodePostalField || !villeCodePostalField.value) {
+            console.log('❌ Données de ville manquantes - ville non sélectionnée via autocomplétion');
+            console.log('ville_nom:', villeNomField?.value);
+            console.log('ville_code_postal:', villeCodePostalField?.value);
+
+            this.showValidationError('Veuillez sélectionner une ville dans la liste des suggestions (pas de saisie libre).');
+            this.highlightErrorField(villeSearchInput);
+            return false;
+        }
+
+        console.log('✅ Validation ville réussie');
+        console.log('Ville:', villeNomField.value, '- CP:', villeCodePostalField.value);
+        return true;
+    }
+
+    /**
+     * NOUVELLE MÉTHODE: Afficher un message d'erreur dans la modal
+     */
+    showValidationError(message) {
+        const messagesDiv = document.getElementById('messages');
+        if (messagesDiv) {
+            messagesDiv.innerHTML = `
+                <div class="uk-alert uk-alert-danger">
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * NOUVELLE MÉTHODE: Mettre en évidence un champ en erreur
+     */
+    highlightErrorField(field) {
+        if (!field) return;
+
+        field.focus();
+        field.style.borderColor = '#dc3545';
+        field.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+
+        // Retirer le style d'erreur après 3 secondes
+        setTimeout(() => {
+            field.style.borderColor = '';
+            field.style.boxShadow = '';
+        }, 3000);
+    }
+
     /**
      * Vérifier si la réponse indique un succès
      */
     isSuccessResponse(responseText) {
         // Méthodes pour détecter le succès :
-        // 1. Rechercher un message de succès
-        // 2. Vérifier si on a une redirection (nouveau HTML)
-        // 3. Vérifier l'absence d'erreurs de formulaire
-
         const hasSuccessMessage = responseText.includes('Lieu créé avec succès') ||
-            responseText.includes('success');
+            responseText.includes('success') ||
+            responseText.includes('uk-alert-success');
+
+        const hasErrorMessage = responseText.includes('Veuillez sélectionner une ville') ||
+            responseText.includes('Une erreur est survenue') ||
+            responseText.includes('uk-alert-danger') ||
+            responseText.includes('form-error');
+
+        // Si on a explicitement une erreur, c'est un échec
+        if (hasErrorMessage) {
+            return false;
+        }
+
+        // Si on a un message de succès, c'est un succès
+        if (hasSuccessMessage) {
+            return true;
+        }
+
+        // Sinon, vérifier s'il y a des erreurs de formulaire
         const hasFormErrors = responseText.includes('has-error') ||
-            responseText.includes('form-error') ||
             responseText.includes('uk-form-danger');
 
-        return hasSuccessMessage || (!hasFormErrors && responseText.includes('<!DOCTYPE html>'));
+        // C'est un succès s'il n'y a pas d'erreurs de formulaire et qu'on a du HTML (redirection)
+        return !hasFormErrors && responseText.includes('<!DOCTYPE html>');
     }
 
     /**
@@ -266,10 +486,28 @@ class SortieForm {
             } else if (key.includes('[ville]')) {
                 lieuData.villeId = value;
             }
+            // NOUVEAU: Récupérer les données d'autocomplétion de ville
+            else if (key === 'ville_nom') {
+                lieuData.villeNom = value;
+            } else if (key === 'ville_code_postal') {
+                lieuData.codePostal = value;
+            } else if (key === 'ville_departement') {
+                lieuData.departement = value;
+            }
+        }
+
+        // AMÉLIORATION: Utiliser les données d'autocomplétion pour remplir ville et codePostal
+        if (lieuData.villeNom && !lieuData.ville) {
+            lieuData.ville = lieuData.villeNom;
+        }
+        if (lieuData.codePostal && !lieuData.codePostal) {
+            lieuData.codePostal = lieuData.codePostal;
         }
 
         // Générer un ID temporaire (sera remplacé par le vrai ID plus tard)
-        lieuData.id = 'temp_' + Date.now();
+        if (!lieuData.id) {
+            lieuData.id = 'temp_' + Date.now();
+        }
 
         console.log('🏗️ Données du nouveau lieu extraites:', lieuData);
         return lieuData;
@@ -407,25 +645,42 @@ class SortieForm {
      */
     displayModalErrors(errorContent) {
         const messagesDiv = document.getElementById('messages');
-        if (messagesDiv) {
-            // Extraire les messages d'erreur du HTML retourné
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = errorContent;
+        if (!messagesDiv) return;
 
-            // Chercher les erreurs de formulaire
-            const errors = tempDiv.querySelectorAll('.uk-form-danger, .has-error, .form-error');
+        let errorMessage = '';
 
-            if (errors.length > 0) {
-                let errorHtml = '<div class="uk-alert uk-alert-danger">';
-                errors.forEach(error => {
-                    errorHtml += '<p>' + error.textContent + '</p>';
-                });
-                errorHtml += '</div>';
-                messagesDiv.innerHTML = errorHtml;
+        if (typeof errorContent === 'string') {
+            if (errorContent.includes('<')) {
+                // C'est du HTML, extraire les messages d'erreur
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = errorContent;
+
+                // Chercher les messages flash
+                const flashMessages = tempDiv.querySelectorAll('.uk-alert-danger, .alert-danger');
+                if (flashMessages.length > 0) {
+                    flashMessages.forEach(msg => {
+                        errorMessage += '<p>' + msg.textContent.trim() + '</p>';
+                    });
+                } else {
+                    // Chercher les erreurs de formulaire
+                    const formErrors = tempDiv.querySelectorAll('.uk-form-danger, .has-error, .form-error');
+                    if (formErrors.length > 0) {
+                        formErrors.forEach(error => {
+                            errorMessage += '<p>' + error.textContent.trim() + '</p>';
+                        });
+                    } else {
+                        errorMessage = '<p>Une erreur est survenue lors de la création du lieu.</p>';
+                    }
+                }
             } else {
-                messagesDiv.innerHTML = '<div class="uk-alert uk-alert-danger">Une erreur est survenue lors de la création du lieu.</div>';
+                // C'est du texte simple
+                errorMessage = '<p>' + errorContent + '</p>';
             }
+        } else {
+            errorMessage = '<p>Une erreur est survenue lors de la création du lieu.</p>';
         }
+
+        messagesDiv.innerHTML = `<div class="uk-alert uk-alert-danger">${errorMessage}</div>`;
     }
 
     /**
@@ -497,9 +752,16 @@ class SortieForm {
      * Notifier la carte d'un changement de lieu
      */
     notifyMapUpdate(lieu) {
+        console.log('📍 Notification carte pour le lieu:', lieu);
+
         // Méthode 1: Via l'instance globale
         if (window.sortieMapInstance) {
-            if (lieu) {
+            // CORRECTION: Passer les coordonnées GPS directement si disponibles
+            if (lieu && this.hasGPSCoordinates(lieu)) {
+                console.log('🎯 Utilisation coordonnées GPS directes pour la carte');
+                window.sortieMapInstance.updateFromCoordinates(lieu);
+            } else if (lieu) {
+                console.log('🔍 Pas de coordonnées GPS - géocodage de l\'adresse');
                 window.sortieMapInstance.updateFromExternalData(lieu);
             } else {
                 window.sortieMapInstance.clearMap();
@@ -511,6 +773,38 @@ class SortieForm {
             detail: { lieu: lieu }
         });
         document.dispatchEvent(event);
+    }
+    hasGPSCoordinates(lieu) {
+        // Vérifier dans les données du lieu
+        if (lieu.latitude && lieu.longitude) {
+            const lat = parseFloat(lieu.latitude);
+            const lng = parseFloat(lieu.longitude);
+
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                console.log('✅ Coordonnées GPS trouvées dans lieu:', { lat, lng });
+                return true;
+            }
+        }
+
+        // Sinon, vérifier dans les champs du formulaire
+        const latInput = document.querySelector('input[id*="latitude"]');
+        const lngInput = document.querySelector('input[id*="longitude"]');
+
+        if (latInput?.value && lngInput?.value) {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                console.log('✅ Coordonnées GPS trouvées dans formulaire:', { lat, lng });
+                // Ajouter les coordonnées au lieu pour les passer à la carte
+                lieu.latitude = lat;
+                lieu.longitude = lng;
+                return true;
+            }
+        }
+
+        console.log('❌ Aucune coordonnée GPS valide trouvée');
+        return false;
     }
 
     /**
@@ -631,6 +925,7 @@ class SortieForm {
         sessionStorage.removeItem('sortie_brouillon');
         console.log('🗑️ Session nettoyée');
     }
+
 }
 
 // Initialisation avec gestion des différents événements de chargement
@@ -655,3 +950,6 @@ document.addEventListener('turbo:load', initSortieForm);
 
 // Backup window.onload
 window.addEventListener('load', initSortieForm);
+
+
+

@@ -8,6 +8,7 @@ use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,24 +25,22 @@ class LieuType extends AbstractType
             ->add('rue', null, [
                 'label' => 'N° et rue du lieu',
             ])
-            ->add('ville', EntityType::class, [
-                'label' => 'Code postal - Ville',
-                'class' => Ville::class,
-                'choice_label' => fn(Ville $v) => $v->getCp().' - '.$v->getNom(),
-                'placeholder' => 'Sélectionner une ville',
+            ->add('latitude', NumberType::class, [
+                'label' => 'Latitude',
+                'required' => false,
+                'scale' => 8,  // Précision décimale
                 'attr' => [
-                    'name' => 'ville',
-                    'id' => 'ville',
+                    'step' => 'any'  // Permet n'importe quelle précision
                 ]
             ])
-            ->add('latitude', null, [
-                'label' => 'Latitude',
-            ])
-            ->add('longitude', null, [
+            ->add('longitude', NumberType::class, [
                 'label' => 'Longitude',
+                'required' => false,
+                'scale' => 8,
+                'attr' => [
+                    'step' => 'any'
+                ]
             ])
-
-
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom', // Adapte selon ton entité Campus
@@ -58,7 +57,7 @@ class LieuType extends AbstractType
             ->add('cancel', ButtonType::class, [
                 'label' => 'Annuler',
                 'attr' => ['class' => ' uk-button-default cm-text-charcoal uk-margin-small-right',
-                    'uk-toggle'=>'target: #mon-modal'],
+                    'uk-toggle' => 'target: #mon-modal'],
             ]);
 
     }

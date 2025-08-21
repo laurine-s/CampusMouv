@@ -59,14 +59,14 @@
     </div>
 
     <!-- Select Symfony ville (masqué avec clip-path pour éviter l'erreur de validation) -->
-    <div class="uk-margin" style="position: absolute; clip: rect(0 0 0 0); width: 1px; height: 1px; overflow: hidden;">
-        {{ form_row(formLieu.ville) }}
-    </div>
+    {#    <div class="uk-margin" style="position: absolute; clip: rect(0 0 0 0); width: 1px; height: 1px; overflow: hidden;"> #}
+    {#        {{ form_row(formLieu.ville) }} #}
+    {#    </div> #}
 
     <!-- Informations complémentaires (lecture seule) -->
     <div class="uk-margin">
         <div class="uk-grid-small" uk-grid>
-            <div class="uk-width-1-3">
+            <div class="uk-width-1-2">
                 <label for="codePostal" class="uk-form-label">Code postal</label>
                 <input type="text"
                        id="codePostal"
@@ -74,7 +74,7 @@
                        placeholder="Rempli automatiquement"
                        readonly>
             </div>
-            <div class="uk-width-1-3">
+            <div class="uk-width-1-2">
                 <label for="departement" class="uk-form-label">Département</label>
                 <input type="text"
                        id="departement"
@@ -82,27 +82,26 @@
                        placeholder="Rempli automatiquement"
                        readonly>
             </div>
-            <div class="uk-width-1-3">
-                <label class="uk-form-label">Coordonnées GPS</label>
-                <div class="uk-grid-small" uk-grid>
-                    <div class="uk-width-1-2">
-                        <input type="text"
-                               id="latitude-display"
-                               class="uk-input uk-border-rounded"
-                               placeholder="Latitude"
-                               readonly>
-                    </div>
-                    <div class="uk-width-1-2">
-                        <input type="text"
-                               id="longitude-display"
-                               class="uk-input uk-border-rounded"
-                               placeholder="Longitude"
-                               readonly>
-                    </div>
-                </div>
+        </div>
+        <label class="uk-form-label">Coordonnées GPS</label>
+        <div class="uk-grid-small" uk-grid>
+            <div class="uk-width-1-2">
+                <input type="text"
+                       id="latitude-display"
+                       class="uk-input uk-border-rounded"
+                       placeholder="Latitude"
+                       readonly>
+            </div>
+            <div class="uk-width-1-2">
+                <input type="text"
+                       id="longitude-display"
+                       class="uk-input uk-border-rounded"
+                       placeholder="Longitude"
+                       readonly>
             </div>
         </div>
     </div>
+
 
     <!-- Champs Symfony cachés pour latitude et longitude -->
     <div style="position: absolute; left: -9999px; opacity: 0;">

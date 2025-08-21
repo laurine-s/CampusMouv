@@ -314,6 +314,74 @@ class SortieMapManager {
     updateFromExternalData(lieu) {
         this.updateMapLocation(lieu);
     }
+
+    updateFromCoordinates(lieu) {
+        if (!this.map || !lieu) return;
+
+        console.log('🎯 Mise à jour carte avec coordonnées GPS directes:', lieu);
+
+        const lat = parseFloat(lieu.latitude);
+        const lng = parseFloat(lieu.longitude);
+
+        if (isNaN(lat) || isNaN(lng)) {
+            console.error('❌ Coordonnées GPS invalides:', { lat, lng });
+            return;
+        }
+
+        console.log('📍 Coordonnées GPS valides:', { lat, lng });
+
+        // Effacer les marqueurs existants
+        this.clearMarkers();
+
+        // Centrer la carte
+        this.map.setView([lat, lng], 16);
+
+        // Ajouter le marqueur
+        const marker = L.marker([lat, lng]).addTo(this.map);
+
+        // Popup avec les infos du lieu
+        const popupContent = this.createPopupContent(lieu, lat, lng);
+        marker.bindPopup(popupContent).openPopup();
+
+        // Sauvegarder le marqueur
+        this.currentMarker = marker;
+
+        console.log('✅ Carte mise à jour avec coordonnées GPS');
+    }
+
+    /**
+     * Créer le contenu de la popup
+     */
+    createPopupContent(lieu, lat, lng) {
+        let content = `<div class="lieu-popup">`;
+
+        if (lieu.nom) {
+            content += `<h4>${lieu.nom}</h4>`;
+        }
+
+        if (lieu.rue) {
+            content += `<p><strong>Adresse:</strong> ${lieu.rue}</p>`;
+        }
+
+        if (lieu.ville || lieu.codePostal) {
+            content += `<p><strong>Ville:</strong> ${lieu.codePostal ? lieu.codePostal + ' ' : ''}${lieu.ville || ''}</p>`;
+        }
+
+        content += `<p><small>GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}</small></p>`;
+        content += `</div>`;
+
+        return content;
+    }
+
+    /**
+     * Effacer les marqueurs existants
+     */
+    clearMarkers() {
+        if (this.currentMarker) {
+            this.map.removeLayer(this.currentMarker);
+            this.currentMarker = null;
+        }
+    }
 }
 
 // Initialisation
