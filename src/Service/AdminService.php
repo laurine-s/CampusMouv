@@ -175,12 +175,4 @@ class AdminService
         return $this->campusRepository->findCampusOrderedByNom();
     }
 
-    // Suppression pas encore opérationnelle, il faut gérer côté vue l'affichage quand un campus est supprimé
-//    public function deleteCampus($campus)
-//    {
-//        $this->entityManager->remove($campus);
-//        $this->entityManager->flush();
-//    }
-
-
 }

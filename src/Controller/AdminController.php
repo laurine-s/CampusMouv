@@ -173,14 +173,6 @@ final class AdminController extends AbstractController
         return $this->render('admin/campus.html.twig', ['campus' => $campus]);
     }
 
-    // Suppression pas encore opérationnelle, il faut gérer côté vue l'affichage quand un campus est supprimé
-
-//    #[Route('/campus/{id}/delete', name: 'delete_campus', methods: ['GET'])]
-//    public function deleteCampus(Campus $campus, AdminService $adminService): Response
-//    {
-//        $adminService->deleteCampus($campus);
-//        return $this->redirectToRoute('admin_list_campus');
-//    }
     #[Route('/register/campus', name: 'register_campus')]
     #[IsGranted(Role::ADMIN->value)]
     public function registerCampus(Request $request, EntityManagerInterface $entityManager): Response

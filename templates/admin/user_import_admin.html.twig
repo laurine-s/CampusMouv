@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    {# Messages flash (même rendu que dashboard) #}
+    {# Section de gestion des erreurs #}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             <div class="uk-alert-{{ label == 'danger' ? 'danger' : (label == 'success' ? 'success' : 'primary') }} uk-margin"
@@ -40,11 +40,11 @@
                     <div class="uk-alert-primary" uk-alert>
                         <p class="uk-margin-small">Exemple valide :</p>
                         <pre class="uk-margin-small uk-overflow-auto">
-email,prenom,nom,password,campus
-alice.dupont@campus-eni.fr,Alice,Dupont,MonPass123!,Nantes
-bruno.martin@campus-eni.fr,Bruno,Martin,Secret42?,Rennes
-clara.moreau@campus-eni.fr,Clara,Moreau,Azerty!2025,Niort
-</pre>
+                            email,prenom,nom,password,campus
+                            alice.dupont@campus-eni.fr,Alice,Dupont,MonPass123!,Nantes
+                            bruno.martin@campus-eni.fr,Bruno,Martin,Secret42?,Rennes
+                            clara.moreau@campus-eni.fr,Clara,Moreau,Azerty!2025,Niort
+                        </pre>
                         <a class="uk-button uk-button-primary uk-border-pill uk-width-1-1"
                            href="{{ asset('files/modele_import_utilisateurs.csv') }}"
                            download
